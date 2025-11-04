@@ -84,7 +84,23 @@ const Header = () => {
     }
 
     // Timeline para el menú móvil
-    tl.current = gsap.timeline({ paused: true });
+    tl.current = gsap.timeline({ 
+      paused: true,
+      onReverseComplete: () => {
+        // ESTA ES LA CLAVE: Solo cerrar el menú cuando la animación de reversa termine
+        setIsMenuOpen(false);
+        document.body.style.overflow = 'unset';
+        
+        // Mostrar hamburguesa después de que el menú se cierre completamente
+        gsap.to(hamburgerRef.current, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out",
+          delay: 0.1
+        });
+      }
+    });
     
     if (menuRef.current) {
       tl.current
@@ -138,10 +154,11 @@ const Header = () => {
 
   const toggleMenu = () => {
     if (!isMenuOpen) {
+      // ABRIR MENÚ
       setIsMenuOpen(true);
       document.body.style.overflow = 'hidden';
       
-      // Ocultar hamburguesa
+      // Ocultar hamburguesa inmediatamente
       gsap.to(hamburgerRef.current, {
         opacity: 0,
         scale: 0,
@@ -149,24 +166,23 @@ const Header = () => {
         ease: "power2.in"
       });
       
+      // Reproducir animación de apertura
       if (tl.current) tl.current.play();
     } else {
-      // Mostrar hamburguesa de nuevo
-      gsap.to(hamburgerRef.current, {
-        opacity: 1,
-        scale: 1,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-
+      // CERRAR MENÚ - SOLO REVERTIR LA ANIMACIÓN
+      // No cambiar el estado aquí, se hará en onReverseComplete
       if (tl.current) {
-        tl.current.reverse().then(() => {
-          setIsMenuOpen(false);
-          document.body.style.overflow = 'unset';
-        });
+        tl.current.reverse();
       } else {
+        // Fallback si no hay timeline
         setIsMenuOpen(false);
         document.body.style.overflow = 'unset';
+        gsap.to(hamburgerRef.current, {
+          opacity: 1,
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out"
+        });
       }
     }
   };
@@ -174,7 +190,6 @@ const Header = () => {
   // Función para navegación suave en la página de inicio
   const scrollToSection = (sectionId) => {
     if (location.pathname === '/') {
-      // Si estamos en la página de inicio, hacer scroll suave
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
@@ -183,7 +198,6 @@ const Header = () => {
         }
       }
     } else {
-      // Si estamos en otra página, redirigir al inicio con hash usando navigate
       navigate(`/#${sectionId}`);
       if (isMenuOpen) {
         toggleMenu();
@@ -201,7 +215,8 @@ const Header = () => {
 
   const menuItems = [
     { id: 'inicio', label: 'Inicio', path: '/', type: 'scroll' },
-    { id: 'proyectos', label: 'Proyectos', path: '/#proyectos', type: 'scroll' },
+    { id: 'nosotros', label: 'Nosotros', path: '/about', type: 'page' },
+    { id: 'proyectos', label: 'Proyectos', path: '/projects', type: 'page' },
     { id: 'servicios', label: 'Servicios', path: '/services', type: 'page' },
     { id: 'contacto', label: 'Contacto', path: '/contact', type: 'page' }
   ];
@@ -231,7 +246,6 @@ const Header = () => {
             <div ref={navRef} className="hidden lg:flex items-center gap-8 z-40">
               {menuItems.map((item) => (
                 item.type === 'page' ? (
-                  // Enlace directo para páginas (Services, Contact)
                   <Link
                     key={item.id}
                     to={item.path}
@@ -245,7 +259,6 @@ const Header = () => {
                     }`}></div>
                   </Link>
                 ) : (
-                  // Botones para secciones de la página de inicio
                   <button
                     key={item.id}
                     onClick={() => scrollToSection(item.id)}
@@ -262,7 +275,7 @@ const Header = () => {
               ))}
             </div>
 
-            {/* Botón Hamburguesa - Se oculta cuando el menú está abierto */}
+            {/* Botón Hamburguesa */}
             <button 
               ref={hamburgerRef}
               className="lg:hidden flex flex-col justify-center items-center w-12 h-12 relative z-60 group"
@@ -300,7 +313,7 @@ const Header = () => {
                 </Link>
               </div>
               
-              {/* Botón de Cerrar (X) - BLANCO Y VISIBLE */}
+              {/* Botón de Cerrar (X) */}
               <button 
                 ref={closeButtonRef}
                 className="flex items-center justify-center w-12 h-12 opacity-0 z-[9999]"
@@ -321,7 +334,6 @@ const Header = () => {
               <div className="flex flex-col gap-8">
                 {menuItems.map((item, index) => (
                   item.type === 'page' ? (
-                    // Enlace para páginas (Services, Contact)
                     <Link
                       key={item.id}
                       to={item.path}
@@ -333,7 +345,6 @@ const Header = () => {
                       <span className="block w-0 group-hover:w-16 h-0.5 bg-red-600 mx-auto mt-2 transition-all duration-500"></span>
                     </Link>
                   ) : (
-                    // Botones para secciones de la página de inicio
                     <button
                       key={item.id}
                       ref={el => menuItemsRef.current[index] = el}

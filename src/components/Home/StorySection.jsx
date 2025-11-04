@@ -165,22 +165,19 @@ const StorySection = () => {
       id: "marcas",
       number: 30,
       suffix: "+",
-      title: "Marcas",
-      description: "360° Producción | Dirección | Fotografía | Sonido | Postproducción | Streaming | Renta"
+      title: "Marcas"
     },
     {
       id: "proyectos", 
       number: 50,
       suffix: "+",
-      title: "Proyectos",
-      description: "Producciones a nivel nacional e internacional"
+      title: "Proyectos"
     },
     {
       id: "producciones",
       number: 140,
       suffix: "+", 
-      title: "Producciones",
-      description: "Experiencia consolidada en el mercado"
+      title: "Producciones"
     }
   ];
 
@@ -473,7 +470,7 @@ const StorySection = () => {
                   <div className="w-8 lg:w-12 h-px bg-red-600"></div>
                   <h2 
                     ref={titleRef}
-                    className="text-xl lg:text-2xl xl:text-3xl font-gotham-cond-black text-white uppercase tracking-tight opacity-0"
+                    className="font-bold text-white uppercase leading-tight mb-4 lg:mb-6 opacity-0 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl"
                   >
                     Nuestra Filosofía
                   </h2>
@@ -492,7 +489,7 @@ const StorySection = () => {
                   ))}
                 </div>
 
-                {/* Stats con contadores */}
+                {/* Stats con contadores - SIN DESCRIPCIÓN */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
                   {stats.map((stat, index) => (
                     <div 
@@ -509,9 +506,6 @@ const StorySection = () => {
                       <h3 className="text-base lg:text-lg font-gotham-cond-black text-white mb-1 uppercase tracking-tight">
                         {stat.title}
                       </h3>
-                      <p className="text-white/60 font-gotham-book text-xs leading-tight">
-                        {stat.description}
-                      </p>
                       
                       {/* Línea decorativa inferior */}
                       <div className="mt-2 w-8 h-0.5 bg-red-600 mx-auto group-hover:w-12 transition-all duration-400"></div>

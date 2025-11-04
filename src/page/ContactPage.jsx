@@ -237,7 +237,7 @@ const ContactForm = () => {
                 ref={titleRef}
                 className="text-3xl sm:text-4xl lg:text-6xl xl:text-7xl font-gotham-cond-black text-white leading-none tracking-tight mb-4 sm:mb-6 opacity-0"
               >
-                <span className="block">CREEMOS</span>
+                <span className="block">CRECEMOS</span>
                 <span className="block text-red-600 mt-2 sm:mt-4">JUNTOS</span>
               </h1>
               

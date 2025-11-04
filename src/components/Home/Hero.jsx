@@ -182,10 +182,10 @@ const Hero = () => {
   }, [isMobile]);
 
   const projects = [
-    { number: "01", title: "CINE PUBLICITARIO", year: "2024" },
-    { number: "02", title: "DOCUMENTAL", year: "2024" },
+    { number: "01", title: "CINE PUBLICITARIO", year: "2025" },
+    { number: "02", title: "DOCUMENTAL", year: "2025" },
     { number: "03", title: "CORTOMETRAJE", year: "2023" },
-    { number: "04", title: "EVENTOS CORPORATIVOS", year: "2024" },
+    { number: "04", title: "EVENTOS CORPORATIVOS", year: "2025" },
     { number: "05", title: "MUSICAL", year: "2023" }
   ];
 

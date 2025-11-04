@@ -1,9 +1,9 @@
 import React from 'react';
-import Hero from '../components/Hero';
-import StorySection from '../components/StorySection';
-import BrandsSlider from '../components/BrandsSlider';
-import Works from '../components/works';
-import CallToAction from '../components/CallToAction';
+import Hero from '../components/Home/Hero';
+import StorySection from '../components/Home/StorySection';
+import BrandsSlider from '../components/Home/BrandsSlider';
+import Works from '../components/Home/Works';
+import CallToAction from '../components/Home/CallToAction';
 
 function Home() {
     return (

@@ -3,6 +3,8 @@
 @tailwind utilities;
 @import url('https://fonts.cdnfonts.com/css/gotham-condensed');
 
+
+
 /* Efectos de partículas cuánticas */
 .quantum-particle {
   animation: quantum-float 3s ease-in-out infinite;
