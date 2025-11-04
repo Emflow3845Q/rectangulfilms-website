@@ -138,7 +138,6 @@ const AboutRectangulo = () => {
 
   const rectangulos = [
     { size: "w-20 h-20", position: "top-4 -right-4", border: "border-red-600/80" },
-    { size: "w-16 h-16", position: "bottom-8 -left-4", border: "border-red-600/60" },
     { size: "w-12 h-12", position: "top-12 left-8", border: "border-red-600/40" },
     { size: "w-10 h-10", position: "bottom-4 right-12", border: "border-red-600/20" }
   ];

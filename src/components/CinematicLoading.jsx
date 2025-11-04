@@ -168,9 +168,9 @@ const CameraFrameUI = ({ onLoadingComplete }) => {
             <div className="text-white/80 text-xs sm:text-sm hidden xs:block">4K 24p</div>
             <div className="flex items-center space-x-1 sm:space-x-2">
               <div className="text-white/60 text-[10px] sm:text-xs">BATT</div>
-              {/* BATERÍA VERDE - Responsive */}
+              {/* BATERÍA ROJA - Responsive */}
               <div className="w-12 sm:w-16 md:w-20 h-1 sm:h-2 bg-gray-700 rounded border border-gray-600">
-                <div className="h-full bg-green-500 rounded w-3/4"></div>
+                <div className="h-full bg-red-500 rounded w-3/4"></div>
               </div>
             </div>
           </div>
@@ -187,10 +187,10 @@ const CameraFrameUI = ({ onLoadingComplete }) => {
         {/* Panel Derecho - Niveles - Responsive */}
         <div className="absolute right-4 sm:right-6 md:right-8 lg:right-16 top-1/2 transform -translate-y-1/2 space-y-4 sm:space-y-6 md:space-y-8">
           <div className="text-white/80 text-xs sm:text-sm text-center">AUDIO</div>
-          {/* NIVELES DE AUDIO VERDES - Responsive */}
+          {/* NIVELES DE AUDIO ROJOS - Responsive */}
           <div className="w-6 h-20 sm:w-7 sm:h-24 md:w-8 md:h-32 bg-gray-800 rounded border border-gray-600 relative">
-            <div className="absolute bottom-0 left-0 right-0 bg-green-500 rounded h-3/4"></div>
-            <div className="absolute top-1/4 left-0 right-0 h-px bg-green-500/60"></div>
+            <div className="absolute bottom-0 left-0 right-0 bg-red-500 rounded h-3/4"></div>
+            <div className="absolute top-1/4 left-0 right-0 h-px bg-red-500/60"></div>
           </div>
         </div>
 

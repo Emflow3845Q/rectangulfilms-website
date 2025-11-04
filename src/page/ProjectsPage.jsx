@@ -12,6 +12,10 @@ const ProjectsPage = () => {
   const projectRefs = useRef([]);
   const frameRefs = useRef([]);
   const [activeProject, setActiveProject] = useState(null);
+  
+  // Estado para la paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const [projectsPerPage] = useState(4); // 2 filas de 2 proyectos cada una
 
   const projects = [
     {
@@ -112,14 +116,78 @@ const ProjectsPage = () => {
     }
   ];
 
-  // Agrupar proyectos en pares
+  // Cálculos de paginación
+  const indexOfLastProject = currentPage * projectsPerPage;
+  const indexOfFirstProject = indexOfLastProject - projectsPerPage;
+  const currentProjects = projects.slice(indexOfFirstProject, indexOfLastProject);
+  const totalPages = Math.ceil(projects.length / projectsPerPage);
+
+  // Agrupar proyectos en pares para la página actual
   const projectPairs = [];
-  for (let i = 0; i < projects.length; i += 2) {
-    projectPairs.push(projects.slice(i, i + 2));
+  for (let i = 0; i < currentProjects.length; i += 2) {
+    projectPairs.push(currentProjects.slice(i, i + 2));
   }
 
+  // Función para cambiar de página con animación
+  const handlePageChange = (pageNumber) => {
+    // Animación de salida
+    const exitTL = gsap.timeline();
+    
+    exitTL.to(".project-row", {
+      opacity: 0,
+      y: 50,
+      duration: 0.4,
+      ease: "power2.in",
+      onComplete: () => {
+        setCurrentPage(pageNumber);
+      }
+    });
+  };
+
+  // Efecto para animar la entrada cuando cambia la página
   useEffect(() => {
-    // Animación del título y subtítulo
+    if (currentPage > 0) {
+      const enterTL = gsap.timeline();
+      
+      enterTL.fromTo(".project-row",
+        {
+          opacity: 0,
+          y: 50
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out"
+        }
+      );
+
+      // Re-animar proyectos individuales
+      projectRefs.current.forEach((project, index) => {
+        if (project) {
+          gsap.fromTo(project,
+            {
+              y: 30,
+              opacity: 0,
+              rotationX: 5
+            },
+            {
+              y: 0,
+              opacity: 1,
+              rotationX: 0,
+              duration: 0.5,
+              delay: index * 0.1,
+              ease: "back.out(1.2)"
+            }
+          );
+        }
+      });
+    }
+  }, [currentPage]);
+
+  useEffect(() => {
+    // Animación del título y subtítulo (solo una vez)
     const titleTL = gsap.timeline({
       scrollTrigger: {
         trigger: titleRef.current,
@@ -153,59 +221,6 @@ const ProjectsPage = () => {
       },
       "-=0.8"
     );
-
-    // Animación de las filas
-    projectRowRefs.current.forEach((row, index) => {
-      if (row) {
-        gsap.fromTo(row,
-          {
-            y: 80,
-            opacity: 0,
-            scale: 0.95
-          },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: row,
-              start: "top 85%",
-              end: "bottom 20%",
-              toggleActions: "play none none none"
-            }
-          }
-        );
-      }
-    });
-
-    // Animación de los proyectos individuales
-    projectRefs.current.forEach((project, index) => {
-      if (project) {
-        gsap.fromTo(project,
-          {
-            y: 40,
-            opacity: 0,
-            rotationX: 8
-          },
-          {
-            y: 0,
-            opacity: 1,
-            rotationX: 0,
-            duration: 0.6,
-            delay: index * 0.08,
-            ease: "back.out(1.3)",
-            scrollTrigger: {
-              trigger: project,
-              start: "top 90%",
-              end: "bottom 20%",
-              toggleActions: "play none none none"
-            }
-          }
-        );
-      }
-    });
 
     // Animación de marcos decorativos
     frameRefs.current.forEach((frame, index) => {
@@ -252,7 +267,6 @@ const ProjectsPage = () => {
       duration: 0.2
     }, "-=0.3");
 
-    // Ocultar la información del proyecto
     const projectInfo = document.querySelector(`.project-${rowIndex}-${projectIndex} .project-info`);
     if (projectInfo) {
       gsap.to(projectInfo, {
@@ -277,7 +291,6 @@ const ProjectsPage = () => {
       ease: "power2.out"
     });
 
-    // Mostrar nuevamente la información del proyecto
     const projectInfo = document.querySelector(`.project-${rowIndex}-${projectIndex} .project-info`);
     if (projectInfo) {
       gsap.to(projectInfo, {
@@ -290,9 +303,7 @@ const ProjectsPage = () => {
   };
 
   const handleProjectClick = (project) => {
-    // Aquí puedes manejar la navegación a la página de detalle del proyecto
     console.log("Navegar al proyecto:", project.title);
-    // Ejemplo: router.push(`/proyectos/${project.id}`)
   };
 
   const addToRefs = (el, index, refArray) => {
@@ -306,6 +317,81 @@ const ProjectsPage = () => {
     if (el && !projectRefs.current.includes(el)) {
       projectRefs.current[index] = el;
     }
+  };
+
+  // Componente de paginación simplificado
+  const Pagination = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="flex flex-col items-center gap-8 mt-16 lg:mt-24">
+        {/* Línea decorativa */}
+        <div className="w-24 h-px bg-gradient-to-r from-transparent via-red-600 to-transparent"></div>
+        
+        {/* Controles de paginación */}
+        <div className="flex items-center gap-4">
+          {/* Botón anterior */}
+          <button
+            onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`p-3 border border-white/20 rounded-lg transition-all duration-300 ${
+              currentPage === 1 
+                ? "opacity-30 cursor-not-allowed" 
+                : "hover:border-red-600 hover:bg-red-600/10 hover:scale-105"
+            }`}
+          >
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Números de página */}
+          <div className="flex items-center gap-2">
+            {pageNumbers.map(number => (
+              <button
+                key={number}
+                onClick={() => handlePageChange(number)}
+                className={`px-4 py-2 rounded-lg font-gotham-cond-bold text-sm uppercase tracking-wider transition-all duration-300 ${
+                  currentPage === number
+                    ? "bg-red-600 text-white shadow-lg shadow-red-600/25 scale-105"
+                    : "text-white/60 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/20"
+                }`}
+              >
+                {number}
+              </button>
+            ))}
+          </div>
+
+          {/* Botón siguiente */}
+          <button
+            onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`p-3 border border-white/20 rounded-lg transition-all duration-300 ${
+              currentPage === totalPages 
+                ? "opacity-30 cursor-not-allowed" 
+                : "hover:border-red-600 hover:bg-red-600/10 hover:scale-105"
+            }`}
+          >
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Barra de progreso minimalista */}
+        <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-red-600 transition-all duration-500 ease-out"
+            style={{ 
+              width: `${(currentPage / totalPages) * 100}%` 
+            }}
+          ></div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -353,13 +439,13 @@ const ProjectsPage = () => {
             <div
               key={rowIndex}
               ref={el => addToRefs(el, rowIndex, projectRowRefs)}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 opacity-0 transform-gpu"
+              className="project-row grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 transform-gpu"
             >
               {pair.map((project, projectIndex) => (
                 <div
                   key={project.id}
                   ref={el => addToProjectRefs(el, rowIndex, projectIndex)}
-                  className={`project-${rowIndex}-${projectIndex} group relative bg-black/50 backdrop-blur-sm overflow-hidden border border-white/10 cursor-pointer transition-all duration-400 opacity-0 transform-gpu hover:border-red-600/50 hover:z-50`}
+                  className={`project-${rowIndex}-${projectIndex} group relative bg-black/50 backdrop-blur-sm overflow-hidden border border-white/10 cursor-pointer transition-all duration-400 transform-gpu hover:border-red-600/50 hover:z-50`}
                   onMouseEnter={() => handleProjectHover(project, rowIndex, projectIndex)}
                   onMouseLeave={() => handleProjectLeave(rowIndex, projectIndex)}
                   onClick={() => handleProjectClick(project)}
@@ -452,14 +538,8 @@ const ProjectsPage = () => {
           ))}
         </div>
 
-        {/* Load More Button */}
-        <div className="text-center mt-16 lg:mt-24">
-          <button className="bg-red-600 hover:bg-red-700 text-white px-8 py-4 border border-red-600/50 hover:border-red-400 transition-all duration-300 group">
-            <span className="font-gotham-cond-bold text-lg uppercase tracking-wider group-hover:tracking-widest transition-all duration-300">
-              CARGAR MÁS PROYECTOS
-            </span>
-          </button>
-        </div>
+        {/* Componente de Paginación */}
+        <Pagination />
       </div>
 
       {/* Elementos decorativos */}

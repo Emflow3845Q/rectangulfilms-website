@@ -8,6 +8,7 @@ import ServicesPage from './page/ServicesPage';
 import ProjectsPage from './page/ProjectsPage';
 import Footer from './layout/Footer';
 import CinematicLoading from './components/CinematicLoading';
+import TargetCursor from './components/TargetCursor';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -21,29 +22,29 @@ function App() {
     }, 500);
   };
 
-  // useEffect(() => {
-  //   const handleContextMenu = (e) => e.preventDefault();
+  useEffect(() => {
+    const handleContextMenu = (e) => e.preventDefault();
 
-  //   const handleKeyDown = (e) => {
-  //     if (
-  //       e.key === "F12" || // DevTools
-  //       (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") || // Ctrl+Shift+I
-  //       (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") || // Ctrl+Shift+J
-  //       (e.ctrlKey && e.key.toLowerCase() === "u") // Ctrl+U (ver código fuente)
-  //     ) {
-  //       e.preventDefault();
-  //       e.stopPropagation();
-  //     }
-  //   };
+    const handleKeyDown = (e) => {
+      if (
+        e.key === "F12" || // DevTools
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") || // Ctrl+Shift+I
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") || // Ctrl+Shift+J
+        (e.ctrlKey && e.key.toLowerCase() === "u") // Ctrl+U (ver código fuente)
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
 
-  //   document.addEventListener("contextmenu", handleContextMenu);
-  //   document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("keydown", handleKeyDown);
 
-  //   return () => {
-  //     document.removeEventListener("contextmenu", handleContextMenu);
-  //     document.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, []);
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <Router>
@@ -56,6 +57,14 @@ function App() {
         {/* Contenido principal */}
         {showContent && (
           <>
+            {/* Cursor personalizado - Cubre toda la página */}
+            <TargetCursor 
+              spinDuration={2}
+              hideDefaultCursor={true}
+              cornerColor="#ef4444" // Rojo que coincide con tu tema
+              targetSelector="a, button, input, textarea, select, [role='button'], [tabindex]:not([tabindex='-1']), [onclick], [onclick]:not([onclick='']), .interactive, .cursor-target, .project-card, .service-item, .nav-link, .menu-item, .card, .btn, .link"
+            />
+            
             <Header />
             <Routes>
               <Route path="/" element={<Home />} />

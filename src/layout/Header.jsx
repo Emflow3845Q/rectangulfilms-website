@@ -91,6 +91,11 @@ const Header = () => {
         setIsMenuOpen(false);
         document.body.style.overflow = 'unset';
         
+        // Deshabilitar clicks del botón X
+        if (closeButtonRef.current) {
+          closeButtonRef.current.style.pointerEvents = 'none';
+        }
+        
         // Mostrar hamburguesa después de que el menú se cierre completamente
         gsap.to(hamburgerRef.current, {
           opacity: 1,
@@ -131,7 +136,13 @@ const Header = () => {
             scale: 1,
             opacity: 1,
             duration: 0.6,
-            ease: "back.out(1.7)"
+            ease: "back.out(1.7)",
+            onStart: () => {
+              // Habilitar clicks cuando la animación comience
+              if (closeButtonRef.current) {
+                closeButtonRef.current.style.pointerEvents = 'auto';
+              }
+            }
           },
           "-=0.3"
         )
@@ -291,6 +302,20 @@ const Header = () => {
           </div>
         </nav>
 
+        {/* Botón de Cerrar (X) - Fuera del menú para que siempre sea clickeable */}
+        <button 
+          ref={closeButtonRef}
+          className="lg:hidden fixed top-8 right-6 flex items-center justify-center w-12 h-12 z-[60] pointer-events-none"
+          style={{ opacity: 0, scale: 0 }}
+          onClick={toggleMenu}
+          aria-label="Cerrar menú"
+        >
+          <div className="relative w-6 h-6">
+            <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-white transform -rotate-45"></span>
+            <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-white transform rotate-45"></span>
+          </div>
+        </button>
+
         {/* Menú Mobile */}
         <div 
           ref={menuRef}
@@ -299,7 +324,7 @@ const Header = () => {
             clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)"
           }}
         >
-          {/* Header del menú móvil con logo y botón cerrar */}
+          {/* Header del menú móvil con logo */}
           <div className="container mx-auto px-6 pt-8 relative z-10">
             <div className="flex justify-between items-center">
               {/* Logo en el menú móvil */}
@@ -312,19 +337,6 @@ const Header = () => {
                   />
                 </Link>
               </div>
-              
-              {/* Botón de Cerrar (X) */}
-              <button 
-                ref={closeButtonRef}
-                className="flex items-center justify-center w-12 h-12 opacity-0 z-[9999]"
-                onClick={toggleMenu}
-                aria-label="Cerrar menú"
-              >
-                <div className="relative w-6 h-6">
-                  <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-white transform -rotate-45"></span>
-                  <span className="absolute top-1/2 left-0 w-6 h-0.5 bg-white transform rotate-45"></span>
-                </div>
-              </button>
             </div>
           </div>
 

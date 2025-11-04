@@ -10,19 +10,19 @@ const CinematicBrandsShowcase = () => {
   const [activeBrand, setActiveBrand] = useState(null);
   const hasAnimatedRef = useRef(false);
   const isHoveringRef = useRef(false);
-  const [animationsEnabled, setAnimationsEnabled] = useState(false); // Cambiado a estado
+  const [animationsEnabled, setAnimationsEnabled] = useState(false);
 
   const brands = [
     { name: "DIVISION", image: "/brand1.webp", color: "#DC2626" },
     { name: "SONY PICTURES", image: "/brand2.webp", color: "#DC2626" },
     { name: "SOVAGE", image: "/brand3.webp", color: "#DC2626" },
     { name: "INSURRECTION", image: "/brand4.webp", color: "#DC2626" },
-    { name: "DISNEY", image: "/brand5.webp", color: "#DC2626" },
+    { name: "КИЇВСТАР", image: "/brand5.webp", color: "#DC2626" },
     { name: "MAGDONAL", image: "/brand6.webp", color: "#DC2626" },
     { name: "MOONWALK FILMS", image: "/brand7.webp", color: "#DC2626" },
     { name: "NIKE", image: "/brand8.webp", color: "#DC2626" },
     { name: "PARTIZAN", image: "/brand9.webp", color: "#DC2626" },
-    { name: "LIONSGATE", image: "/brand10.webp", color: "#DC2626" },
+    { name: "SOIXANZE QUINSE", image: "/brand10.webp", color: "#DC2626" },
     { name: "TBWAI", image: "/brand11.webp", color: "#DC2626" },
     { name: "VODAFONE", image: "/brand12.webp", color: "#DC2626" },
   ];
@@ -32,19 +32,19 @@ const CinematicBrandsShowcase = () => {
     const isMobile = window.innerWidth < 768;
     const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
     
-    // Configuraciones responsivas
+    // CONFIGURACIÓN MEJORADA PARA MÓVIL - MÁS ESPACIO
     let gridCols, gridRows, spacingX, spacingY;
     
     if (isMobile) {
       gridCols = 3;
       gridRows = 4;
-      spacingX = 70;
-      spacingY = 60;
+      spacingX = 90;
+      spacingY = 80;
     } else if (isTablet) {
       gridCols = 4;
       gridRows = 3;
-      spacingX = 90;
-      spacingY = 80;
+      spacingX = 100;
+      spacingY = 90;
     } else {
       // Desktop
       gridCols = 4;
@@ -181,7 +181,7 @@ const CinematicBrandsShowcase = () => {
             delay: 0.8 + (index * 0.08),
             ease: "power2.out"
           },
-          index * 0.08 // Stagger effect
+          index * 0.08
         );
       });
 
@@ -265,8 +265,8 @@ const CinematicBrandsShowcase = () => {
     gsap.killTweensOf(ref.querySelector('.logo-container'));
     gsap.killTweensOf(ref.querySelector('.logo-border'));
 
-    // Escala responsiva
-    const scale = windowSize.width < 768 ? 2.2 : 1.8;
+    // Escala responsiva - MANTENEMOS el mismo valor para consistencia
+    const scale = windowSize.width < 768 ? 1.8 : 1.8;
 
     // Aplicar animación de activación
     gsap.to(ref, {
@@ -294,14 +294,10 @@ const CinematicBrandsShowcase = () => {
   };
 
   const handleBrandHover = (brand, index) => {
-    // Verificar si las animaciones están habilitadas
     if (!animationsEnabled) return;
     
     isHoveringRef.current = true;
-
-    // Resetear todas las marcas excepto la que va a ser activada
     resetAllBrandsExcept(index);
-    
     setActiveBrand(brand);
     activateBrand(index);
   };
@@ -367,23 +363,30 @@ const CinematicBrandsShowcase = () => {
     }
   };
 
-  // Tamaños responsivos para los logos
+  // TAMAÑOS AUMENTADOS PARA MÓVIL - LOGOS MÁS GRANDES
   const getLogoSize = () => {
-    if (windowSize.width < 768) return "h-8 w-8";
+    if (windowSize.width < 768) return "h-12 w-12"; // AUMENTADO de h-6 w-6 a h-12 w-12
     if (windowSize.width < 1024) return "h-10 w-10";
     return "h-12 w-12";
   };
 
   const getContainerHeight = () => {
-    if (windowSize.width < 768) return "h-80";
+    if (windowSize.width < 768) return "h-96";
     if (windowSize.width < 1024) return "h-96";
     return "h-[500px]";
   };
 
+  // Tamaño del área de la marca - AUMENTADO para móvil para acomodar logos más grandes
   const getBrandAreaSize = () => {
-    if (windowSize.width < 768) return "60px";
+    if (windowSize.width < 768) return "70px"; // AUMENTADO de 50px a 70px
     if (windowSize.width < 1024) return "70px";
     return "80px";
+  };
+
+  // Padding interno aumentado para móvil
+  const getLogoPadding = () => {
+    if (windowSize.width < 768) return "p-3"; // AUMENTADO de p-2 a p-3
+    return "p-2 lg:p-3";
   };
 
   return (
@@ -391,12 +394,12 @@ const CinematicBrandsShowcase = () => {
       ref={sectionRef}
       className="relative w-full bg-black overflow-hidden"
       style={{ 
-        minHeight: windowSize.width < 768 ? '500px' : '600px',
-        padding: windowSize.width < 768 ? '1.5rem 0' : '2rem 0'
+        minHeight: windowSize.width < 768 ? '550px' : '600px',
+        padding: windowSize.width < 768 ? '2rem 0' : '2rem 0'
       }}
     >
       {/* Contenedor principal con tamaño limitado */}
-      <div className={`relative w-full max-w-7xl mx-auto ${windowSize.width < 768 ? 'py-6' : 'py-8 lg:py-16'}`}>
+      <div className={`relative w-full max-w-7xl mx-auto ${windowSize.width < 768 ? 'py-8' : 'py-8 lg:py-16'}`}>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="flex flex-col lg:flex-row items-center justify-between w-full">
             
@@ -460,10 +463,10 @@ const CinematicBrandsShowcase = () => {
                     }}
                   >
                     <div className="relative group w-full h-full flex items-center justify-center">
-                      {/* Área de hover expandida - más pequeña en móvil */}
+                      {/* Área de hover expandida - ajustada para logos más grandes */}
                       <div 
                         className={`absolute z-0 ${
-                          windowSize.width < 768 ? '-inset-4' : 
+                          windowSize.width < 768 ? '-inset-2' : // AJUSTADO de -inset-3
                           windowSize.width < 1024 ? '-inset-5' : '-inset-6'
                         }`}
                       ></div>
@@ -474,7 +477,7 @@ const CinematicBrandsShowcase = () => {
                         animationsEnabled ? 'opacity-0 group-hover:opacity-100' : 'opacity-0'
                       }`}></div>
                       
-                      <div className="relative z-10 p-2 lg:p-3 flex items-center justify-center">
+                      <div className={`relative z-10 ${getLogoPadding()} flex items-center justify-center w-full h-full`}>
                         <img
                           src={brand.image}
                           alt={brand.name}
