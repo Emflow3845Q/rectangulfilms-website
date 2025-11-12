@@ -6,10 +6,32 @@ export default {
   ],
   theme: {
     extend: {
+      colors: {
+        // Colores principales
+        black: {
+          DEFAULT: 'rgb(0, 0, 0)',
+          pure: 'rgb(0, 0, 0)'
+        },
+        gray: {
+          DEFAULT: 'rgb(65, 69, 80)',
+          dark: 'rgb(65, 69, 80)'
+        },
+        white: {
+          DEFAULT: 'rgb(255, 255, 255)',
+          pure: 'rgb(255, 255, 255)'
+        },
+        // Colores rojos/acento
+        red: {
+          primary: 'rgb(236, 35, 60)',
+          dark: 'rgb(214, 4, 41)',
+          darker: 'rgb(154, 10, 0)'
+        }
+      },
       animation: {
         'film-grain': 'film-grain 0.3s infinite',
         'scanline': 'scanline 2s linear infinite',
         'float': 'float 3s ease-in-out infinite',
+        'shift': 'shift 3s ease-in-out infinite',
       },
       keyframes: {
         'film-grain': {
@@ -32,10 +54,11 @@ export default {
         'float': {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
+        },
+        'shift': {
+          '0%, 100%': { transform: 'translateX(0%)' },
+          '50%': { transform: 'translateX(10%)' },
         }
-      },
-      backgroundImage: {
-        'film-grain': 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
       },
       fontFamily: {
         'gotham-cond-black': ['Gotham Condensed Black', 'sans-serif'],

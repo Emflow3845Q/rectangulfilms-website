@@ -1,0 +1,459 @@
+{
+  "en": {
+    "header": {
+      "menu": {
+        "home": "Home",
+        "about": "About",
+        "motion": "Motion",
+        "still": "Still",
+        "rentals": "Rentals",
+        "services": "Services"
+      },
+      "aria": {
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu"
+      }
+    },
+    "footer": {
+      "navigation": "Navigation",
+      "contact": "Contact",
+      "socialMedia": "Social Media",
+      "description": "Rectángulo is a creative audiovisual production company located in Guadalajara, Mexico. With a multidisciplinary crew specialized in areas such as Production, Direction, Cinematography, Sound Design, Art Direction among others. Our mission: to produce high-quality products with fair budgets, achieving the expected results for each of our clients. How do we achieve it? By establishing quality standards, applying our methodologies, talent and creativity.",
+      "copyright": "© 2025 Rectángulo. All rights reserved."
+    },
+    "common": {
+      "email": "contacto@rectangulofilms.com",
+      "phone": "+52 3323 88 1333",
+      "followUs": "Follow us"
+    },
+    "rentals": {
+      "title": "RENTALS",
+      "heroDescription": "From cameras to lighting, our rental gear and studio space are ready for any set — reliable, professional, and built for filmmakers who demand more.",
+      "contactTitle": "For equipment or studio rental inquiries, please contact our team",
+      "downloadCatalog": "DOWNLOAD CATALOG"
+    },
+    "motion": {
+      "title": "WORK",
+      "description": "Each director we work with has their own unique way of bringing visuals to life. See their work below."
+    },
+    "still": {
+      "title": "STILLS",
+      "subtitle": "Our work",
+      "description": "Our Still photography gallery. Drag to explore each interactive project. Hovering over images activates motion animations showing project name and type.",
+      "allProjects": "ALL PROJECTS",
+      "dragInstruction": "← Drag to explore →"
+    },
+    "about": {
+      "title": "ABOUT",
+      "heroText1": "Rectángulo is a film and content studio based in Guadalajara.",
+      "heroText2": "We work as an extension of your team, from development to post-production: we ask, listen, and refine. The result? Tailor-made pieces with high impact, crafted to transcend.",
+      "btsTitle": "Behind the Scenes",
+      "servicesTitle": "How We Can Help",
+      "contactTitle": "We're interested in hearing about your project.",
+      "locationTitle": "Location",
+      "commercialProjects": "For commercial projects, contact us",
+      "careers": "Careers:",
+      "talentSubject": "Please use the email subject line: Talent",
+      "services": {
+        "production": "Production",
+        "liveEvents": "Live Events & Broadcasts",
+        "photography": "Photography",
+        "equipment": "Equipment Rental"
+      },
+      "serviceItems": {
+        "production": [
+          "Advertising and commercial videos",
+          "Music videos",
+          "Corporate and institutional productions",
+          "High-end social media content",
+          "Testimonial capsules and interviews",
+          "Product and fashion spots",
+          "Series and cinematic projects",
+          "Event coverage",
+          "Aerial drone filming"
+        ],
+        "liveEvents": [
+          "Live event production and coverage",
+          "Real-time multiplatform streaming",
+          "Live graphics integration (visuals and overlays)",
+          "Screen setup and AV equipment",
+          "Technical and creative coordination",
+          "Multicam closed-circuit operation (CCTV)",
+          "Event recording and post-event recap videos"
+        ],
+        "photography": [
+          "Product photography",
+          "Fashion and editorial campaigns",
+          "Corporate and artistic portraits",
+          "Advertising photography",
+          "Film and video stills",
+          "Event photo coverage"
+        ],
+        "equipment": [
+          "Digital cinema cameras",
+          "Cinema lenses and accessories",
+          "Professional lighting",
+          "Professional audio and microphones",
+          "Grip gear, tripods, C-stands, and rigging",
+          "Monitors, transmitters, and on-set accessories",
+          "Fully equipped soundstage"
+        ]
+      }
+    },
+    "motionProjects": {
+      "billionsFashion": {
+        "client": "Billions Fashion",
+        "title": "Billions Fashion",
+        "category": "Fashion / Commercial"
+      },
+      "hpFinance": {
+        "client": "HP Finance",
+        "title": "HP Finance",
+        "category": "Corporate Video"
+      },
+      "ohLaLashes": {
+        "client": "Oh La Lashes",
+        "title": "Oh La Lashes",
+        "category": "Beauty / Product"
+      },
+      "gnpEncore": {
+        "client": "GNP Encore Event",
+        "title": "GNP Encore",
+        "category": "Event Coverage"
+      },
+      "grupoAeropuertario": {
+        "client": "Grupo Aeroportuario",
+        "title": "Corporate Reel",
+        "category": "Corporate"
+      },
+      "dac": {
+        "client": "Derma Aesthetics Congress",
+        "title": "DAC 2025",
+        "category": "Medical / Event"
+      },
+      "dac2025": {
+        "client": "Derma Aesthetics Congress",
+        "title": "DAC 2025",
+        "category": "Medical / Event"
+      },
+      "drCamilo": {
+        "client": "Dr. Camilo",
+        "title": "Aesthetic Campaign",
+        "category": "Health / Campaign"
+      },
+      "mickFlores": {
+        "client": "Mick Flores & Red Sauce",
+        "title": "Music Video",
+        "category": "Music Video"
+      },
+      "casaIdea": {
+        "client": "Casa Idea",
+        "title": "Casa Idea",
+        "category": "Commercial"
+      },
+      "laPerla": {
+        "client": "La Perla",
+        "title": "La Perla Campaign",
+        "category": "Commercial / Fashion"
+      },
+      "billionsTrade": {
+        "client": "Billions Trade Club",
+        "title": "Billions Trade Club",
+        "category": "Corporate"
+      },
+      "ramsesSoriano": {
+        "client": "Ramses Soriano",
+        "title": "Cinematic Portrait",
+        "category": "Creative Film"
+      },
+      "elAfilador": {
+        "client": "El Afilador",
+        "title": "El Afilador",
+        "category": "Short Film"
+      }
+    },
+    "stillProjects": {
+      "billionsFashion": {
+        "title": "Billions Fashion",
+        "category": "Fashion / Commercial"
+      },
+      "hpFinance": {
+        "title": "HP Finance",
+        "category": "Corporate"
+      },
+      "ohLaLashes": {
+        "title": "Oh La Lashes",
+        "category": "Beauty / Product"
+      },
+      "gnpEncore": {
+        "title": "GNP Encore",
+        "category": "Event Coverage"
+      },
+      "grupoAeropuertario": {
+        "title": "Corporate Photography",
+        "category": "Corporate"
+      },
+      "dac": {
+        "title": "DAC 2025",
+        "category": "Medical / Event"
+      },
+      "drCamilo": {
+        "title": "Aesthetic Campaign",
+        "category": "Health / Campaign"
+      },
+      "mickFlores": {
+        "title": "Music Photography",
+        "category": "Music"
+      },
+      "casaIdea": {
+        "title": "Casa Idea",
+        "category": "Commercial"
+      },
+      "laPerla": {
+        "title": "La Perla Campaign",
+        "category": "Fashion"
+      },
+      "billionsTrade": {
+        "title": "Billions Trade Club",
+        "category": "Corporate"
+      },
+      "ramsesSoriano": {
+        "title": "Portrait Photography",
+        "category": "Creative"
+      },
+      "elAfilador": {
+        "title": "El Afilador",
+        "category": "Creative Film"
+      }
+    }
+  },
+
+  "es": {
+    "header": {
+      "menu": {
+        "home": "Inicio",
+        "about": "Nosotros",
+        "motion": "Motion",
+        "still": "Still",
+        "rentals": "Rentas",
+        "services": "Servicios"
+      },
+      "aria": {
+        "openMenu": "Abrir menú",
+        "closeMenu": "Cerrar menú"
+      }
+    },
+    "footer": {
+      "navigation": "Navegación",
+      "contact": "Contacto",
+      "socialMedia": "Redes Sociales",
+      "description": "Rectángulo es una productora audiovisual creativa ubicada en Guadalajara México. Con un Crew multidisciplinario, y especializado en áreas como Producción, Dirección, Cine fotografía, Diseño sonoro, Dirección de arte entre otras. Nuestra misión: realizar productos de alta calidad con presupuestos justos, logrando el resultado esperado por cada uno de nuestros clientes. ¿Cómo lo logramos? Estableciendo estándares de calidad, aplicando nuestras metodologías, talento y creatividad.",
+      "copyright": "© 2025 Rectángulo. Todos los derechos reservados."
+    },
+    "common": {
+      "email": "contacto@rectangulofilms.com",
+      "phone": "+52 3323 88 1333",
+      "followUs": "Síguenos"
+    },
+    "rentals": {
+      "title": "RENTAS",
+      "heroDescription": "Desde cámaras hasta iluminación, nuestro equipo de renta y espacio de estudio están listos para cualquier set — confiable, profesional y construido para cineastas que exigen más.",
+      "contactTitle": "Para consultas sobre equipo o renta de estudio, por favor contacta a nuestro equipo",
+      "downloadCatalog": "DESCARGAR CATÁLOGO"
+    },
+    "motion": {
+      "title": "TRABAJOS",
+      "description": "Cada director con el que trabajamos tiene su propio estilo de dar vida a las ideas visuales. Mira su trabajo a continuación."
+    },
+    "still": {
+      "title": "STILLS",
+      "subtitle": "Nuestro trabajo",
+      "description": "Nuestra galería de fotografía Still. Desliza para explorar cada proyecto interactivo. Al pasar sobre las imágenes se activan animaciones mostrando nombre y tipo de proyecto.",
+      "allProjects": "TODOS LOS PROYECTOS",
+      "dragInstruction": "← Desliza para explorar →"
+    },
+    "about": {
+      "title": "NOSOTROS",
+      "heroText1": "Rectángulo es un estudio de cine y contenido con sede en Guadalajara.",
+      "heroText2": "Trabajamos como una extensión de tu equipo, desde el desarrollo hasta la postproducción: preguntamos, escuchamos y refinamos. ¿El resultado? Piezas a medida con alto impacto, creadas para trascender.",
+      "btsTitle": "Detrás de Cámaras",
+      "servicesTitle": "Cómo Podemos Ayudar",
+      "contactTitle": "Estamos interesados en escuchar sobre tu proyecto.",
+      "locationTitle": "Ubicación",
+      "commercialProjects": "Para proyectos comerciales, contáctanos",
+      "careers": "Carreras:",
+      "talentSubject": "Por favor usa la línea de asunto: Talent",
+      "services": {
+        "production": "Producción",
+        "liveEvents": "Eventos en Vivo & Transmisiones",
+        "photography": "Fotografía",
+        "equipment": "Renta de Equipo"
+      },
+      "serviceItems": {
+        "production": [
+          "Videos publicitarios y comerciales",
+          "Videos musicales",
+          "Producciones corporativas e institucionales",
+          "Contenido de alta calidad para redes sociales",
+          "Cápsulas de testimonio y entrevistas",
+          "Spots de producto y moda",
+          "Proyectos de series y cine",
+          "Cobertura de eventos",
+          "Filmación con drones aéreos"
+        ],
+        "liveEvents": [
+          "Producción y cobertura de eventos en vivo",
+          "Transmisión multiplataforma en tiempo real",
+          "Integración de gráficos en vivo (visuales y overlays)",
+          "Configuración de pantallas y equipo AV",
+          "Coordinación técnica y creativa",
+          "Operación multicámara de circuito cerrado (CCTV)",
+          "Grabación de eventos y videos resumen post-evento"
+        ],
+        "photography": [
+          "Fotografía de producto",
+          "Campañas de moda y editorial",
+          "Retratos corporativos y artísticos",
+          "Fotografía publicitaria",
+          "Fotografías fijas de cine y video",
+          "Cobertura fotográfica de eventos"
+        ],
+        "equipment": [
+          "Cámaras de cine digital",
+          "Lentes de cine y accesorios",
+          "Iluminación profesional",
+          "Audio profesional y micrófonos",
+          "Equipo de grip, tripies, C-stands y rigging",
+          "Monitores, transmisores y accesorios de set",
+          "Soundstage completamente equipado"
+        ]
+      }
+    },
+    "motionProjects": {
+      "billionsFashion": {
+        "client": "Billions Fashion",
+        "title": "Billions Fashion",
+        "category": "Moda / Comercial"
+      },
+      "hpFinance": {
+        "client": "HP Finance",
+        "title": "HP Finance",
+        "category": "Video Corporativo"
+      },
+      "ohLaLashes": {
+        "client": "Oh La Lashes",
+        "title": "Oh La Lashes",
+        "category": "Belleza / Producto"
+      },
+      "gnpEncore": {
+        "client": "Evento GNP Encore",
+        "title": "GNP Encore",
+        "category": "Cobertura de Evento"
+      },
+      "grupoAeropuertario": {
+        "client": "Grupo Aeroportuario",
+        "title": "Reel Corporativo",
+        "category": "Corporativo"
+      },
+      "dac": {
+        "client": "Derma Aesthetics Congress",
+        "title": "DAC 2025",
+        "category": "Médico / Evento"
+      },
+      "dac2025": {
+        "client": "Derma Aesthetics Congress",
+        "title": "DAC 2025",
+        "category": "Médico / Evento"
+      },
+      "drCamilo": {
+        "client": "Dr. Camilo",
+        "title": "Campaña Estética",
+        "category": "Salud / Campaña"
+      },
+      "mickFlores": {
+        "client": "Mick Flores & Red Sauce",
+        "title": "Video Musical",
+        "category": "Video Musical"
+      },
+      "casaIdea": {
+        "client": "Casa Idea",
+        "title": "Casa Idea",
+        "category": "Comercial"
+      },
+      "laPerla": {
+        "client": "La Perla",
+        "title": "Campaña La Perla",
+        "category": "Comercial / Moda"
+      },
+      "billionsTrade": {
+        "client": "Billions Trade Club",
+        "title": "Billions Trade Club",
+        "category": "Corporativo"
+      },
+      "ramsesSoriano": {
+        "client": "Ramses Soriano",
+        "title": "Retrato Cinematográfico",
+        "category": "Cine Creativo"
+      },
+      "elAfilador": {
+        "client": "El Afilador",
+        "title": "El Afilador",
+        "category": "Cortometraje"
+      }
+    },
+    "stillProjects": {
+      "billionsFashion": {
+        "title": "Billions Fashion",
+        "category": "Moda / Comercial"
+      },
+      "hpFinance": {
+        "title": "HP Finance",
+        "category": "Corporativo"
+      },
+      "ohLaLashes": {
+        "title": "Oh La Lashes",
+        "category": "Belleza / Producto"
+      },
+      "gnpEncore": {
+        "title": "GNP Encore",
+        "category": "Cobertura de Evento"
+      },
+      "grupoAeropuertario": {
+        "title": "Fotografía Corporativa",
+        "category": "Corporativo"
+      },
+      "dac": {
+        "title": "DAC 2025",
+        "category": "Médico / Evento"
+      },
+      "drCamilo": {
+        "title": "Campaña Estética",
+        "category": "Salud / Campaña"
+      },
+      "mickFlores": {
+        "title": "Fotografía Musical",
+        "category": "Música"
+      },
+      "casaIdea": {
+        "title": "Casa Idea",
+        "category": "Comercial"
+      },
+      "laPerla": {
+        "title": "Campaña La Perla",
+        "category": "Moda"
+      },
+      "billionsTrade": {
+        "title": "Billions Trade Club",
+        "category": "Corporativo"
+      },
+      "ramsesSoriano": {
+        "title": "Fotografía de Retrato",
+        "category": "Creativo"
+      },
+      "elAfilador": {
+        "title": "El Afilador",
+        "category": "Cine Creativo"
+      }
+    }
+  }
+}
