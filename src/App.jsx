@@ -18,29 +18,29 @@ function App() {
     setIsLoading(false);
   };
 
-  // useEffect(() => {
-  //   const handleContextMenu = (e) => e.preventDefault();
+  useEffect(() => {
+    const handleContextMenu = (e) => e.preventDefault();
 
-  //   const handleKeyDown = (e) => {
-  //     if (
-  //       e.key === "F12" || // DevTools
-  //       (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") || // Ctrl+Shift+I
-  //       (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") || // Ctrl+Shift+J
-  //       (e.ctrlKey && e.key.toLowerCase() === "u") // Ctrl+U (ver código fuente)
-  //     ) {
-  //       e.preventDefault();
-  //       e.stopPropagation();
-  //     }
-  //   };
+    const handleKeyDown = (e) => {
+      if (
+        e.key === "F12" || // DevTools
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") || // Ctrl+Shift+I
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") || // Ctrl+Shift+J
+        (e.ctrlKey && e.key.toLowerCase() === "u") // Ctrl+U (ver código fuente)
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
 
-  //   document.addEventListener("contextmenu", handleContextMenu);
-  //   document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("keydown", handleKeyDown);
 
-  //   return () => {
-  //     document.removeEventListener("contextmenu", handleContextMenu);
-  //     document.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, []);
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <LanguageProvider>
