@@ -55,13 +55,13 @@ const CameraFrameUI = ({ onLoadingComplete }) => {
         />
       </div>
 
-      {/* CONTENIDO PRINCIPAL */}
+      {/* CONTENIDO PRINCIPAL - LIMPIO */}
       <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
         
         {/* LOGO BIEN VISIBLE */}
         <div 
           ref={logoRef}
-          className="relative opacity-0 mb-8"
+          className="relative opacity-0"
         >
           <div className="relative">
             <img 
@@ -82,16 +82,6 @@ const CameraFrameUI = ({ onLoadingComplete }) => {
           </div>
         </div>
 
-        {/* LÍNEA DIVISORIA */}
-        <div className="w-48 h-1 bg-gradient-to-r from-transparent via-red-primary to-transparent opacity-85 mb-6"></div>
-
-        {/* TEXTO */}
-        <div className="text-center">
-          <p className="text-white-pure/90 text-sm uppercase tracking-widest font-light">
-            Creative Audiovisual Production
-          </p>
-        </div>
-
         {/* BARRA DE PROGRESO */}
         <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
           <div className="w-56 h-1 bg-gray-dark/40 rounded-full overflow-hidden">
@@ -106,12 +96,6 @@ const CameraFrameUI = ({ onLoadingComplete }) => {
           </div>
         </div>
       </div>
-
-      {/* ESQUINAS */}
-      <div className="absolute top-6 left-6 w-3 h-3 border-t-2 border-l-2 border-red-primary opacity-90"></div>
-      <div className="absolute top-6 right-6 w-3 h-3 border-t-2 border-r-2 border-red-primary opacity-90"></div>
-      <div className="absolute bottom-6 left-6 w-3 h-3 border-b-2 border-l-2 border-red-primary opacity-80"></div>
-      <div className="absolute bottom-6 right-6 w-3 h-3 border-b-2 border-r-2 border-red-primary opacity-80"></div>
     </div>
   );
 };

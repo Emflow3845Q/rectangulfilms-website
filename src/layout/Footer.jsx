@@ -13,7 +13,6 @@ const Footer = () => {
   const { t } = useLanguage();
 
   const menuItems = [
-    { label: t('header.menu.home'), path: "/" },
     { label: t('header.menu.about'), path: "/about" },
     { label: t('header.menu.motion'), path: "/motion" },
     { label: t('header.menu.still'), path: "/still" },
