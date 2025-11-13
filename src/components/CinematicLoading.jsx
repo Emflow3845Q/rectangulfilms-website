@@ -1,102 +1,92 @@
-import React, { useEffect, useRef } from "react";
-import { gsap } from "gsap";
+import React, { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CameraFrameUI = ({ onLoadingComplete }) => {
-  const containerRef = useRef(null);
-  const logoRef = useRef(null);
-  const progressRef = useRef(null);
-
   useEffect(() => {
-    const masterTL = gsap.timeline();
-    
-    // Logo aparece con buena animación en 0.6s
-    masterTL.fromTo(logoRef.current,
-      {
-        opacity: 0,
-        scale: 0.85
-      },
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 0.6,
-        ease: "power2.out"
-      }
-    )
-    // Barra de progreso en 1.2s
-    .to(progressRef.current, {
-      scaleX: 1,
-      duration: 1.2,
-      ease: "power1.out"
-    }, "-=0.3")
-    // Delay final para completar 2s total
-    .to({}, { 
-      duration: 0.4,
-      onComplete: onLoadingComplete
-    });
-
+    const timer = setTimeout(() => {
+      if (onLoadingComplete) onLoadingComplete();
+    }, 2500);
+    return () => clearTimeout(timer);
   }, [onLoadingComplete]);
 
   return (
-    <div 
-      ref={containerRef}
-      className="fixed inset-0 z-50 overflow-hidden bg-black-pure"
-    >
-      {/* FONDO CON MEJOR CONTRASTE */}
-      <div className="absolute inset-0">
-        <div 
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-96 opacity-35"
-          style={{
-            background: `radial-gradient(ellipse at center, 
-              rgba(236, 35, 60, 0.6) 0%, 
-              rgba(236, 35, 60, 0.35) 40%,
-              transparent 70%)`,
-            filter: 'blur(60px)'
-          }}
-        />
-      </div>
-
-      {/* CONTENIDO PRINCIPAL - LIMPIO */}
-      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
-        
-        {/* LOGO BIEN VISIBLE */}
-        <div 
-          ref={logoRef}
-          className="relative opacity-0"
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.8 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black-pure overflow-hidden"
+      >
+        {/* === FONDO CON OLAS DE PUNTICOS === */}
+        <svg
+          className="absolute inset-0 w-full h-full"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="xMidYMid slice"
         >
-          <div className="relative">
-            <img 
-              src="/logo.svg" 
-              alt="Rectángulo Films"
-              className="w-80 h-40 sm:w-96 sm:h-48 object-contain filter brightness-110 contrast-105"
-            />
-            
-            {/* RESPLANDOR MEJORADO */}
-            <div 
-              className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 opacity-35"
-              style={{
-                background: 'radial-gradient(circle, rgba(236, 35, 60, 0.7) 0%, rgba(236, 35, 60, 0.3) 40%, transparent 65%)',
-                filter: 'blur(50px)',
-                zIndex: -1
-              }}
-            />
-          </div>
-        </div>
+          <defs>
+            {/* patrón de punticos con el rojo corporativo */}
+            <pattern
+              id="dotPattern"
+              patternUnits="userSpaceOnUse"
+              width="16"
+              height="16"
+            >
+              <circle cx="8" cy="8" r="3" fill="rgb(236, 35, 60)" />
+            </pattern>
 
-        {/* BARRA DE PROGRESO */}
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2">
-          <div className="w-56 h-1 bg-gray-dark/40 rounded-full overflow-hidden">
-            <div 
-              ref={progressRef}
-              className="h-full bg-gradient-to-r from-red-primary to-red-600 rounded-full"
-              style={{
-                transform: 'scaleX(0)',
-                transformOrigin: 'left center'
-              }}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+            {/* máscara radial para difuminar el final de los puntos */}
+            <radialGradient id="maskGradient">
+              <stop offset="60%" stopColor="white" />
+              <stop offset="100%" stopColor="black" />
+            </radialGradient>
+            <mask id="fadeMask">
+              <rect width="100%" height="100%" fill="url(#maskGradient)" />
+            </mask>
+          </defs>
+
+          {/* ---- OLA SUPERIOR IZQUIERDA ---- */}
+          <path
+            d="
+              M -300,0
+              C 200,150 600,0 1200,0
+              L 1200,-200
+              L -300,-200
+              Z
+            "
+            fill="url(#dotPattern)"
+            opacity="0.5"
+            transform="translate(-400,-300) scale(1.6)"
+            mask="url(#fadeMask)"
+          />
+
+          {/* ---- OLA INFERIOR DERECHA ---- */}
+          <path
+            d="
+              M 0,900
+              C 700,750 1000,1050 1800,900
+              L 1800,1200
+              L 0,1200
+              Z
+            "
+            fill="url(#dotPattern)"
+            opacity="0.5"
+            transform="translate(150,150) scale(1.4)"
+            mask="url(#fadeMask)"
+          />
+        </svg>
+
+        {/* === LOGO CENTRAL === */}
+        <motion.img
+          src="/logo.svg"
+          alt="Rectángulo Films"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="relative z-10 w-72 sm:w-96 object-contain brightness-110 contrast-105 animate-float"
+        />
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

@@ -6,79 +6,100 @@ import { useLanguage } from '../context/LanguageContext';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [currentImage, setCurrentImage] = useState('');
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const ticking = useRef(false);
+  const [currentVideo, setCurrentVideo] = useState('');
   const { currentLanguage, toggleLanguage, t } = useLanguage();
 
   const menuRef = useRef(null);
   const menuItemsRef = useRef([]);
   const logoRef = useRef(null);
   const hamburgerButtonRef = useRef(null);
-  const imageContainerRef = useRef(null);
+  const videoContainerRef = useRef(null);
+  const videoRef = useRef(null);
+  const headerRef = useRef(null);
   const tl = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Menú items usando las traducciones con imágenes asociadas - SOLO 5 OPCIONES
+  // Menú items usando las traducciones con VIDEOS asociados
   const menuItems = [
     {
       id: 'motion',
       label: t('header.menu.motion'),
       path: '/motion',
       type: 'page',
-      image: '/bts/bts1.jpg'
+      video: '/videos/CamiloRegresa.mp4'
     },
     {
       id: 'still',
       label: t('header.menu.still'),
       path: '/stills',
       type: 'page',
-      image: '/bts/bts2.jpg'
+      video: '/videos/DemoRectangulo2025.mp4'
     },
     {
       id: 'about',
       label: t('header.menu.about'),
       path: '/about',
       type: 'page',
-      image: '/bts/bts3.jpg'
+      video: '/videos/MotionGraphics.mp4'
     },
     {
       id: 'rentals',
       label: t('header.menu.rentals'),
       path: '/rentals',
       type: 'page',
-      image: '/bts/bts.jpg' // Cambiado de bts.jpg a bts4.jpg
+      video: '/videos/CamiloRegresa.mp4'
     },
-    {
-      id: 'services',
-      label: t('header.menu.services'),
-      path: '/services',
-      type: 'page',
-      image: '/bts/bts5.jpg' // Cambiado a bts5.jpg
-    }
   ];
 
-  // Efecto para detectar scroll
+  // Efecto para detectar scroll y mostrar/ocultar header
   useEffect(() => {
+    const minDelta = 3;
+    const hideThreshold = 10;
+
+    lastScrollY.current = window.scrollY || window.pageYOffset || 0;
+
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 50);
+      const scrollTop = window.scrollY || window.pageYOffset;
+
+      if (!ticking.current) {
+        window.requestAnimationFrame(() => {
+          const delta = scrollTop - lastScrollY.current;
+
+          if (scrollTop <= 10) {
+            setIsVisible(true);
+          } else if (Math.abs(delta) > minDelta) {
+            if (delta > 0 && scrollTop > hideThreshold) {
+              setIsVisible(false);
+            } else if (delta < 0) {
+              setIsVisible(true);
+            }
+          }
+
+          setIsScrolled(scrollTop > 50);
+          lastScrollY.current = scrollTop;
+          ticking.current = false;
+        });
+        ticking.current = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Precargar imágenes del menú con manejo de errores mejorado
+  // Precargar videos del menú
   useEffect(() => {
     menuItems.forEach(item => {
-      if (item.image) {
-        const img = new Image();
-        img.src = item.image;
-        img.onerror = () => {
-          console.warn(`⚠️ No se pudo cargar la imagen: ${item.image}`);
-        };
-        img.onload = () => {
-          console.log(`✅ Imagen cargada: ${item.image}`);
+      if (item.video) {
+        const video = document.createElement('video');
+        video.src = item.video;
+        video.preload = 'metadata';
+        video.onerror = () => {
+          console.warn(`⚠️ No se pudo cargar el video: ${item.video}`);
         };
       }
     });
@@ -97,22 +118,26 @@ const Header = () => {
   }, [isMenuOpen]);
 
   useEffect(() => {
-    // Reinicializar las referencias del menú
     menuItemsRef.current = menuItemsRef.current.slice(0, menuItems.length);
 
-    // Timeline para el menú hamburguesa
     tl.current = gsap.timeline({
       paused: true,
       onReverseComplete: () => {
         setIsMenuOpen(false);
         document.body.style.overflow = 'unset';
-        setCurrentImage('');
+        setCurrentVideo('');
+        // Pausar video cuando se cierra el menú
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = 0;
+        }
+        setIsVisible(true);
       },
       onStart: () => {
-        // Establecer imagen inicial si existe y es desktop
-        if (menuItems[0]?.image && window.innerWidth > 768) {
-          setCurrentImage(menuItems[0].image);
+        if (menuItems[0]?.video && window.innerWidth > 768) {
+          setCurrentVideo(menuItems[0].video);
         }
+        setIsVisible(false);
       }
     });
 
@@ -120,7 +145,6 @@ const Header = () => {
       const isMobile = window.innerWidth <= 768;
       
       if (isMobile) {
-        // Animación para móvil - deslizamiento desde arriba
         tl.current
           .to(menuRef.current, {
             duration: 0.5,
@@ -142,7 +166,6 @@ const Header = () => {
             "-=0.2"
           );
       } else {
-        // Animación para desktop - deslizamiento horizontal
         tl.current
           .to(menuRef.current, {
             duration: 0.8,
@@ -163,7 +186,7 @@ const Header = () => {
             },
             "-=0.4"
           )
-          .fromTo(imageContainerRef.current,
+          .fromTo(videoContainerRef.current,
             {
               x: 50,
               opacity: 0
@@ -184,7 +207,6 @@ const Header = () => {
     if (!isMenuOpen) {
       setIsMenuOpen(true);
       document.body.style.overflow = 'hidden';
-
       if (tl.current) tl.current.play();
     } else {
       if (tl.current) {
@@ -192,12 +214,18 @@ const Header = () => {
       } else {
         setIsMenuOpen(false);
         document.body.style.overflow = 'unset';
-        setCurrentImage('');
+        setCurrentVideo('');
+        // Pausar video cuando se cierra el menú
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = 0;
+        }
         const isMobile = window.innerWidth <= 768;
         gsap.to(menuRef.current, { 
           [isMobile ? 'y' : 'x']: isMobile ? '-100%' : '-100%', 
           duration: 0.5 
         });
+        setIsVisible(true);
       }
     }
   };
@@ -214,16 +242,22 @@ const Header = () => {
   };
 
   const handleMenuItemHover = (item) => {
-    if (window.innerWidth > 768 && item.image) {
-      gsap.to(imageContainerRef.current, {
+    if (window.innerWidth > 768 && item.video) {
+      gsap.to(videoContainerRef.current, {
         y: -30,
         opacity: 0,
         duration: 0.3,
         ease: "power2.inOut",
         onComplete: () => {
-          setCurrentImage(item.image);
-          gsap.set(imageContainerRef.current, { y: 30 });
-          gsap.to(imageContainerRef.current, {
+          // Pausar video actual antes de cambiar
+          if (videoRef.current) {
+            videoRef.current.pause();
+            videoRef.current.currentTime = 0;
+          }
+          
+          setCurrentVideo(item.video);
+          gsap.set(videoContainerRef.current, { y: 30 });
+          gsap.to(videoContainerRef.current, {
             y: 0,
             opacity: 1,
             duration: 0.4,
@@ -234,14 +268,36 @@ const Header = () => {
     }
   };
 
-  // Función para manejar errores de imagen
-  const handleImageError = (e) => {
-    console.error('❌ Error cargando imagen del menú:', e.target.src);
+  // Efecto para manejar la reproducción del video cuando cambia
+  useEffect(() => {
+    if (videoRef.current && currentVideo) {
+      const playVideo = async () => {
+        try {
+          videoRef.current.currentTime = 0;
+          await videoRef.current.play();
+        } catch (error) {
+          console.warn('No se pudo reproducir el video automáticamente:', error);
+        }
+      };
+
+      playVideo();
+    }
+  }, [currentVideo]);
+
+  const handleVideoError = (e) => {
+    console.error('❌ Error cargando video del menú:', e.target.src);
     e.target.style.display = 'none';
     const parent = e.target.parentElement;
     if (parent) {
       parent.style.backgroundColor = '#1f2937';
-      parent.innerHTML = '<div class="flex items-center justify-center h-full text-white/50 text-lg">Imagen no disponible</div>';
+      parent.innerHTML = '<div class="flex items-center justify-center h-full text-white/50 text-lg">Video no disponible</div>';
+    }
+  };
+
+  const handleVideoLoaded = () => {
+    // Video cargado correctamente
+    if (videoRef.current) {
+      videoRef.current.style.display = 'block';
     }
   };
 
@@ -249,9 +305,12 @@ const Header = () => {
     <>
       {/* HEADER PRINCIPAL */}
       <header
-        className={`fixed top-0 left-0 w-full z-[100] py-3 md:py-4 transition-all duration-500
-          ${isScrolled ? 'bg-black/95 backdrop-blur-xl border-b border-red-600/30' : 'bg-transparent'}
-          ${isMenuOpen ? 'bg-black/95 backdrop-blur-xl border-b border-red-600/30' : ''}`}
+        ref={headerRef}
+        className={`fixed top-0 left-0 w-full z-[100] py-2 md:py-3 transform transition-all duration-500 ${
+          !isVisible || isMenuOpen 
+            ? '-translate-y-full opacity-0' 
+            : 'translate-y-0 opacity-100'
+        } bg-transparent`}
       >
         <nav className="container mx-auto px-4 sm:px-6 relative">
           <div className="flex justify-between items-center">
@@ -271,7 +330,7 @@ const Header = () => {
               {/* Selector de idioma */}
               <button
                 onClick={toggleLanguage}
-                className="text-white text-sm uppercase tracking-widest hover:text-red-600 transition-colors duration-300 px-2 py-1"
+                className="text-white text-sm uppercase tracking-widest hover:text-red-600 transition-colors duration-300 px-2 py-1 font-gotham font-medium"
               >
                 {currentLanguage === 'en' ? 'ES' : 'EN'}
               </button>
@@ -284,14 +343,12 @@ const Header = () => {
                 aria-label={isMenuOpen ? t('header.aria.closeMenu') : t('header.aria.openMenu')}
               >
                 {!isMenuOpen ? (
-                  // Ícono Hamburguesa
                   <div className="flex flex-col justify-center items-center w-5 sm:w-6 gap-1 sm:gap-1.5">
                     <span className="w-full h-0.5 bg-white transition-all duration-300 group-hover:bg-red-600"></span>
                     <span className="w-full h-0.5 bg-white transition-all duration-300 group-hover:bg-red-600"></span>
                     <span className="w-full h-0.5 bg-white transition-all duration-300 group-hover:bg-red-600"></span>
                   </div>
                 ) : (
-                  // Ícono X
                   <div className="relative w-5 sm:w-6 h-5 sm:h-6">
                     <span className="absolute top-1/2 left-0 w-5 sm:w-6 h-0.5 bg-white transform -rotate-45 transition-all duration-300 group-hover:bg-red-600"></span>
                     <span className="absolute top-1/2 left-0 w-5 sm:w-6 h-0.5 bg-white transform rotate-45 transition-all duration-300 group-hover:bg-red-600"></span>
@@ -306,20 +363,32 @@ const Header = () => {
       {/* MENÚ DESPLEGABLE */}
       <div
         ref={menuRef}
-        className="fixed top-0 left-0 w-full bg-black backdrop-blur-xl overflow-hidden"
+        className="fixed top-0 left-0 w-full h-full bg-black backdrop-blur-xl overflow-hidden"
         style={{
           transform: window.innerWidth <= 768 ? 'translateY(-100%)' : 'translateX(-100%)',
-          height: '100vh',
-          zIndex: window.innerWidth <= 768 ? 90 : 60,
-          paddingTop: window.innerWidth <= 768 ? '80px' : '0'
+          zIndex: 99,
+          opacity: isMenuOpen ? 1 : 0,
+          pointerEvents: isMenuOpen ? 'auto' : 'none'
         }}
       >
+        {/* Botón de cerrar */}
+        <button
+          className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[110] flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-black/50 rounded-full backdrop-blur-sm group"
+          onClick={toggleMenu}
+          aria-label={t('header.aria.closeMenu')}
+        >
+          <div className="relative w-5 sm:w-6 h-5 sm:h-6">
+            <span className="absolute top-1/2 left-0 w-5 sm:w-6 h-0.5 bg-white transform -rotate-45 transition-all duration-300 group-hover:bg-red-600"></span>
+            <span className="absolute top-1/2 left-0 w-5 sm:w-6 h-0.5 bg-white transform rotate-45 transition-all duration-300 group-hover:bg-red-600"></span>
+          </div>
+        </button>
+
         <div className={`h-full ${window.innerWidth <= 768 ? '' : 'flex flex-col md:flex-row'}`}>
-          {/* En móvil: contenedor único que ocupa toda la pantalla */}
+          {/* VERSIÓN MÓVIL - SIN LÍNEAS */}
           {window.innerWidth <= 768 ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="w-full max-w-md px-6">
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-8">
                   {menuItems.map((item, index) => (
                     <div
                       key={item.id}
@@ -330,13 +399,13 @@ const Header = () => {
                         }
                       }}
                       onClick={() => handleMenuItemClick(item)}
-                      className="text-white text-2xl font-gotham-cond-black uppercase tracking-wide text-left py-4 transition-all duration-300 border-b border-white/10 last:border-b-0 active:bg-white/5 active:scale-95 group cursor-pointer"
+                      className="text-white text-4xl font-accent uppercase tracking-wide text-center py-6 transition-all duration-300 active:bg-white/10 active:scale-95 group cursor-pointer font-black"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="group-hover:text-red-600 transition-colors duration-300">
+                        <span className="group-hover:text-red-600 transition-colors duration-300 text-5xl">
                           {item.label}
                         </span>
-                        <span className="text-red-600 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1">
+                        <span className="text-red-600 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2 text-3xl">
                           →
                         </span>
                       </div>
@@ -346,11 +415,11 @@ const Header = () => {
               </div>
             </div>
           ) : (
-            // En desktop: layout dividido con imagen
+            // VERSIÓN DESKTOP - SIN LÍNEAS
             <>
-              <div className="w-full md:w-1/2 lg:w-2/5 relative z-10 flex items-center justify-center">
-                <div className="w-full max-w-2xl px-4 sm:px-6">
-                  <div className="flex flex-col gap-2 sm:gap-3 md:gap-4">
+              <div className="w-full md:w-1/2 relative z-10 flex items-center justify-center">
+                <div className="w-full max-w-2xl px-8">
+                  <div className="flex flex-col gap-8">
                     {menuItems.map((item, index) => (
                       <div
                         key={item.id}
@@ -362,10 +431,9 @@ const Header = () => {
                         }}
                         onClick={() => handleMenuItemClick(item)}
                         onMouseEnter={() => handleMenuItemHover(item)}
-                        className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-gotham-cond-black uppercase tracking-wider text-left py-1 sm:py-2 hover:text-red-600 transition-all duration-500 border-b border-white/10 last:border-b-0 hover:translate-x-2 md:hover:translate-x-4 group block cursor-pointer"
+                        className="text-white text-5xl xl:text-6xl font-accent uppercase tracking-wider text-left py-4 hover:text-red-600 transition-all duration-500 hover:translate-x-6 group block cursor-pointer font-black"
                       >
                         {item.label}
-                        <span className="block w-0 group-hover:w-12 sm:group-hover:w-16 md:group-hover:w-20 h-0.5 bg-red-600 mt-1 sm:mt-2 transition-all duration-500"></span>
                       </div>
                     ))}
                   </div>
@@ -373,23 +441,30 @@ const Header = () => {
               </div>
 
               <div
-                ref={imageContainerRef}
-                className="hidden md:block w-1/2 lg:w-3/5 relative overflow-hidden"
+                ref={videoContainerRef}
+                className="hidden md:block w-1/2 relative overflow-hidden"
               >
-                {currentImage && (
-                  <div className="absolute inset-0 bg-gray-900">
-                    <img
-                      src={currentImage}
-                      alt="Menu preview"
+                {currentVideo ? (
+                  <div className="absolute inset-0 w-full h-full">
+                    <video
+                      ref={videoRef}
+                      key={currentVideo} // Forzar re-render cuando cambia el video
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
                       className="w-full h-full object-cover"
-                      onError={handleImageError}
-                    />
-                    <div className="absolute inset-0 bg-black/20"></div>
+                      onError={handleVideoError}
+                      onLoadedData={handleVideoLoaded}
+                    >
+                      <source src={currentVideo} type="video/mp4" />
+                      Tu navegador no soporta el elemento de video.
+                    </video>
+                    <div className="absolute inset-0 bg-black/20 pointer-events-none"></div>
                   </div>
-                )}
-                {!currentImage && (
-                  <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
-                    <span className="text-white/50 text-lg">Selecciona una opción</span>
+                ) : (
+                  <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+                    <span className="text-white/50 text-xl font-gotham font-light">Selecciona una opción</span>
                   </div>
                 )}
               </div>
@@ -397,9 +472,6 @@ const Header = () => {
           )}
         </div>
       </div>
-
-      {/* ESPACIO PARA EL HEADER */}
-      <div className="h-16 sm:h-20"></div>
     </>
   );
 };

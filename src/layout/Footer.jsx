@@ -1,133 +1,91 @@
 import React from "react";
-import { Link } from 'react-router-dom';
-import { 
-  FaYoutube, 
-  FaLinkedinIn, 
-  FaInstagram, 
-  FaTiktok 
-} from 'react-icons/fa';
-import { useLanguage } from '../context/LanguageContext';
-import ClientLogosCarousel from '../components/ClientLogosCarousel';
+import ClientLogosCarousel from "../components/ClientLogosCarousel";
 
 const Footer = () => {
-  const { t } = useLanguage();
-
-  const menuItems = [
-    { label: t('header.menu.about'), path: "/about" },
-    { label: t('header.menu.motion'), path: "/motion" },
-    { label: t('header.menu.still'), path: "/still" },
-    { label: t('header.menu.rentals'), path: "/rentals" },
-    { label: t('header.menu.services'), path: "/services" }
-  ];
-
-  const socialLinks = [
-    { icon: FaYoutube, name: "YouTube", url: "#" },
-    { icon: FaLinkedinIn, name: "LinkedIn", url: "#" },
-    { icon: FaInstagram, name: "Instagram", url: "#" },
-    { icon: FaTiktok, name: "TikTok", url: "#" }
-  ];
-
   return (
-    <footer className="bg-black">
-      
-      {/* Carrusel de Logos de Clientes - USANDO EL COMPONENTE */}
+    <footer className="bg-black text-white">
+      {/* Carrusel de logos */}
       <ClientLogosCarousel />
 
-      {/* Contenido Principal */}
-      <div className="container mx-auto px-6 py-12">
-        
-        {/* Grid Principal */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          
-          {/* Columna 1: Logo y Descripción COMPLETA */}
-          <div className="lg:col-span-2">
-            <div className="mb-6">
-              <img 
-                src="/logo.svg" 
-                alt="Rectángulo" 
-                className="h-12 w-auto mb-4"
-              />
-            </div>
-            
-            <p className="text-white text-sm leading-relaxed">
-              {t('footer.description')}
-            </p>
-          </div>
-
-          {/* Columna 2: Navegación */}
-          <div>
-            <h3 className="text-white font-gotham-cond-black text-lg uppercase tracking-wider mb-6">
-              {t('footer.navigation')}
-            </h3>
-            <div className="space-y-3">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className="text-white/80 hover:text-red-primary transition-colors duration-300 text-base block font-gotham-cond-black"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Columna 3: Contacto y Redes */}
-          <div>
-            <h3 className="text-white font-gotham-cond-black text-lg uppercase tracking-wider mb-6">
-              {t('footer.contact')}
-            </h3>
-            
-            <div className="space-y-4 mb-6">
-              <div>
-                <a 
-                  href={`mailto:${t('common.email')}`} 
-                  className="text-white hover:text-red-primary transition-colors duration-300 text-base block mb-2"
-                >
-                  {t('common.email')}
-                </a>
-                <a 
-                  href={`tel:${t('common.phone')}`} 
-                  className="text-white hover:text-red-primary transition-colors duration-300 text-base block"
-                >
-                  {t('common.phone')}
-                </a>
-              </div>
-            </div>
-
-            {/* Redes Sociales */}
-            <div>
-              <h4 className="text-white font-gotham-cond-black text-md uppercase tracking-wider mb-4">
-                {t('common.followUs')}
-              </h4>
-              <div className="flex space-x-3">
-                {socialLinks.map((social) => {
-                  const IconComponent = social.icon;
-                  return (
-                    <a
-                      key={social.name}
-                      href={social.url}
-                      className="w-10 h-10 bg-white/10 hover:bg-red-primary flex items-center justify-center text-white hover:text-white transition-all duration-300 rounded-sm"
-                      title={social.name}
-                    >
-                      <IconComponent className="w-5 h-5" />
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+      {/* Contenido principal */}
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-stretch px-6 md:px-10 py-10 gap-10">
+        {/* Logo principal - Centrado verticalmente en toda la altura de la sección */}
+        <div className="flex-shrink-0 w-full md:w-auto flex justify-center items-center md:min-h-[200px]">
+          <img
+            src="/logo.svg"
+            alt="Rectángulo Films"
+            className="w-52"
+          />
         </div>
 
-        {/* Copyright */}
-        <div className="border-t border-red-primary pt-6">
-          <div className="text-center">
-            <p className="text-white/60 text-sm">
-              {t('footer.copyright')}
-            </p>
-          </div>
+        {/* Menú - CON HOVER ROJO */}
+        <div className="flex gap-20 text-sm uppercase tracking-wide justify-center md:justify-start items-center">
+          <ul className="space-y-2">
+            <li>
+              <a href="/motion" className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
+                MOTION
+              </a>
+            </li>
+            <li>
+              <a href="/stills" className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
+                STILL
+              </a>
+            </li>
+            <li>
+              <a href="/about" className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
+                ABOUT
+              </a>
+            </li>
+            <li>
+              <a href="/rentals" className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
+                RENTALS
+              </a>
+            </li>
+          </ul>
+
+          <ul className="space-y-2">
+            <li>
+              <a href="#" className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
+                LINKEDIN
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
+                INSTAGRAM
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
+                VIMEO
+              </a>
+            </li>
+            <li>
+              <a href="#" className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
+                FACEBOOK
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Descripción */}
+        <div className="max-w-md text-xs leading-relaxed text-gray-300 flex items-center">
+          <p className="font-gotham font-light">
+            Rectángulo es una productora audiovisual creativa ubicada en Guadalajara México, con un crew multidisciplinario, especializado en áreas como <strong className="font-gotham font-bold">producción</strong>, <strong className="font-gotham font-bold">dirección</strong>, <strong className="font-gotham font-bold">cinefotografía</strong>, <strong className="font-gotham font-bold">diseño sonoro</strong>, <strong className="font-gotham font-bold">dirección de arte</strong> y entre otras. Nuestra meta es realizar producciones de alta calidad con pensamiento juicioso, logrando el resultado esperado por cada uno de nuestros clientes. ¿Cómo lo logramos? Estableciendo estándares de calidad, aplicando nuestras metodologías, talento y creatividad.
+          </p>
         </div>
       </div>
+
+      {/* Contacto */}
+      <div className="text-center text-xs text-gray-400 pb-4">
+        <p className="font-gotham font-light">
+          contacto@hotmail.com
+          <br />
+          +52 3323 88 1333
+        </p>
+      </div>
+
+      {/* Línea roja inferior */}
+      <div className="h-[6px] bg-red-primary"></div>
     </footer>
   );
 };

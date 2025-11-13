@@ -61,8 +61,21 @@ export default {
         }
       },
       fontFamily: {
-        'gotham-cond-black': ['Gotham Condensed Black', 'sans-serif'],
+        'sans': ['GOTHAM', 'system-ui', 'sans-serif'], // Base tipográfica por defecto
+        'gotham': ['GOTHAM', 'system-ui', 'sans-serif'],
+        'accent': ['BBH_Sans_Bartle', 'system-ui', 'sans-serif'], // Fuente de acento
+        'bbh-sans-bartle': ['BBH_Sans_Bartle', 'system-ui', 'sans-serif'], // Alias alternativo
       },
+      fontWeight: {
+        'thin': '100',
+        'extralight': '200',
+        'light': '300',
+        'normal': '400',
+        'medium': '500',
+        'semibold': '600',
+        'bold': '700',
+        'black': '900',
+      }
     }
   },
   plugins: [],

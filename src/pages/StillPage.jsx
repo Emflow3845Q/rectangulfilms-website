@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 
@@ -6,6 +6,7 @@ const StillPage = () => {
   const { t } = useLanguage();
   const [hoveredProject, setHoveredProject] = useState(null);
   const [activeProject, setActiveProject] = useState(null);
+  const [imageDimensions, setImageDimensions] = useState({});
   const scrollContainerRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -107,6 +108,49 @@ const StillPage = () => {
     }
   ];
 
+  // Efecto para cargar y medir las dimensiones reales de las imágenes
+  useEffect(() => {
+    const loadImageDimensions = async () => {
+      const dimensions = {};
+      
+      for (const project of projects) {
+        try {
+          const img = new Image();
+          img.src = project.image;
+          
+          await new Promise((resolve, reject) => {
+            img.onload = () => {
+              // Calcular el ancho que tendría la imagen a 400px de altura manteniendo la relación de aspecto
+              const aspectRatio = img.width / img.height;
+              const expandedWidth = 400 * aspectRatio;
+              
+              dimensions[project.id] = {
+                originalWidth: img.width,
+                originalHeight: img.height,
+                aspectRatio,
+                expandedWidth: Math.min(expandedWidth, 1200) // Limitar máximo ancho
+              };
+              resolve();
+            };
+            img.onerror = reject;
+          });
+        } catch (error) {
+          console.warn(`No se pudo cargar la imagen: ${project.image}`);
+          dimensions[project.id] = {
+            originalWidth: 800,
+            originalHeight: 600,
+            aspectRatio: 4/3,
+            expandedWidth: 600
+          };
+        }
+      }
+      
+      setImageDimensions(dimensions);
+    };
+
+    loadImageDimensions();
+  }, []);
+
   // Manejar el arrastre del mouse
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -181,7 +225,7 @@ const StillPage = () => {
       <div className="px-4 sm:px-6 lg:px-8 mb-8 relative z-10">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
           <motion.h1
-            className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-gotham-cond-black uppercase tracking-tight text-white-pure leading-[0.9]"
+            className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-accent uppercase tracking-tight text-white-pure leading-[0.9] font-black"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
@@ -190,7 +234,7 @@ const StillPage = () => {
           </motion.h1>
           
           <motion.button
-            className="text-xs sm:text-sm uppercase tracking-widest text-gray-dark hover:text-white-pure transition-colors border-b border-white-pure pb-1 self-start sm:self-auto"
+            className="text-xs sm:text-sm uppercase tracking-widest text-white-pure hover:text-red-primary transition-colors border-b border-white-pure pb-1 self-start sm:self-auto font-gotham font-medium"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -200,7 +244,7 @@ const StillPage = () => {
         </div>
 
         <motion.p
-          className="text-sm text-gray-dark mt-4 max-w-xl"
+          className="text-sm text-white-pure mt-4 max-w-xl font-gotham font-light"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
@@ -212,7 +256,7 @@ const StillPage = () => {
       {/* ================= FILTROS COMPACTOS ================= */}
       <div className="px-4 sm:px-6 lg:px-8 mb-6 relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-gotham-cond-black uppercase tracking-wide text-white-pure">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-accent uppercase tracking-wide text-white-pure font-bold">
             {t("still.subtitle")}
           </h2>
           
@@ -221,10 +265,10 @@ const StillPage = () => {
             {categories.map((category) => (
               <motion.button
                 key={category}
-                className={`px-3 py-2 text-xs sm:text-sm uppercase tracking-widest border transition-all duration-200 font-gotham-cond-black whitespace-nowrap ${
+                className={`px-3 py-2 text-xs sm:text-sm uppercase tracking-widest border transition-all duration-200 font-gotham font-bold whitespace-nowrap ${
                   selectedCategory === category
                     ? 'bg-red-primary border-red-primary text-white-pure'
-                    : 'bg-transparent border-gray-dark text-gray-dark hover:border-red-primary hover:text-red-primary'
+                    : 'bg-transparent border-white-pure text-white-pure hover:border-red-primary hover:text-red-primary'
                 }`}
                 onClick={() => setSelectedCategory(category)}
                 whileHover={{ scale: 1.03 }}
@@ -237,7 +281,7 @@ const StillPage = () => {
         </div>
       </div>
 
-      {/* ================= CAROUSEL RESPONSIVE ================= */}
+      {/* ================= CAROUSEL RESPONSIVE CON ANCHO REAL DE LA IMAGEN ================= */}
       <div className="relative overflow-hidden">
         <div
           ref={scrollContainerRef}
@@ -252,202 +296,195 @@ const StillPage = () => {
             cursor: isDragging ? 'grabbing' : 'grab'
           }}
         >
-          {filteredProjects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              className="relative flex-shrink-0 group cursor-pointer bg-gray-dark overflow-hidden"
-              style={{
-                width: '280px',
-                height: project.size === 'large' ? '350px' : '280px'
-              }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.08, duration: 0.5 }}
-              onMouseEnter={() => {
-                setHoveredProject(project.id);
-                setActiveProject(project.id);
-              }}
-              onMouseLeave={() => {
-                setHoveredProject(null);
-                setActiveProject(null);
-              }}
-              whileHover={{ 
-                scale: 1.03,
-                y: -5,
-                transition: { 
-                  type: "spring", 
-                  stiffness: 400, 
-                  damping: 25 
-                }
-              }}
-            >
-              {/* Marco rectangular rojo en hover */}
+          {filteredProjects.map((project, index) => {
+            const dimensions = imageDimensions[project.id];
+            const expandedWidth = dimensions?.expandedWidth || 600;
+            
+            return (
               <motion.div
-                className="absolute inset-0 border-2 border-transparent z-20 pointer-events-none"
-                initial={{ borderColor: 'transparent' }}
-                animate={{
-                  borderColor: hoveredProject === project.id ? 'rgb(236, 35, 60)' : 'transparent'
+                key={project.id}
+                className="relative flex-shrink-0 group cursor-pointer bg-gray-dark overflow-hidden"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.08, duration: 0.5 }}
+                onMouseEnter={() => {
+                  setHoveredProject(project.id);
+                  setActiveProject(project.id);
                 }}
-                transition={{ duration: 0.2 }}
-              />
-
-              {/* Contenedor principal de la imagen */}
-              <div className="relative w-full h-full bg-gray-dark overflow-hidden">
-                {/* Imagen con efecto de zoom */}
-                <motion.img
-                  src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover"
-                  initial={{ scale: 1.05 }}
-                  animate={{ 
-                    scale: hoveredProject === project.id ? 1.1 : 1.05 
-                  }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                />
-                
-                {/* Overlay rojo sutil en hover */}
+                onMouseLeave={() => {
+                  setHoveredProject(null);
+                  setActiveProject(null);
+                }}
+                layout
+                whileHover={{ 
+                  zIndex: 50,
+                  transition: { duration: 0.2 }
+                }}
+              >
+                {/* Contenedor principal que se alarga al ancho real de la imagen */}
                 <motion.div
-                  className="absolute inset-0 bg-red-primary/5"
-                  initial={{ opacity: 0 }}
-                  animate={{ 
-                    opacity: hoveredProject === project.id ? 1 : 0
+                  className="relative bg-gray-dark overflow-hidden"
+                  initial={{ 
+                    width: '300px',
+                    height: '400px'
                   }}
-                  transition={{ duration: 0.3 }}
-                />
-                
-                {/* Efecto de brillo rectangular */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white-pure/15 to-transparent"
-                  initial={{ x: '-100%' }}
                   animate={{ 
-                    x: hoveredProject === project.id ? '100%' : '-100%'
+                    width: hoveredProject === project.id ? `${expandedWidth}px` : '300px',
+                    height: '400px'
                   }}
                   transition={{ 
-                    duration: 0.6,
-                    ease: "easeInOut"
+                    type: "spring", 
+                    stiffness: 200, 
+                    damping: 25,
+                    duration: 0.5
                   }}
-                />
-
-                {/* Información del proyecto - COMPACTA */}
-                <div className="absolute inset-0 flex flex-col justify-end p-4">
-                  {/* Fondo del texto */}
+                >
+                  {/* Marco rectangular rojo en hover */}
                   <motion.div
-                    className="absolute inset-0 bg-gradient-to-t from-black-pure/90 via-black-pure/40 to-transparent"
-                    initial={{ opacity: 0.7 }}
-                    animate={{ opacity: hoveredProject === project.id ? 0.9 : 0.7 }}
+                    className="absolute inset-0 border-2 border-transparent z-20 pointer-events-none"
+                    initial={{ borderColor: 'transparent' }}
+                    animate={{
+                      borderColor: hoveredProject === project.id ? 'rgb(236, 35, 60)' : 'transparent'
+                    }}
                     transition={{ duration: 0.2 }}
                   />
-                  
-                  {/* Contenido del texto compacto */}
-                  <motion.div
-                    className="relative z-10"
-                    initial={{ y: 0 }}
-                    animate={{ y: hoveredProject === project.id ? -3 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {/* Badge de categoría compacto */}
-                    <motion.div
-                      className="inline-flex items-center px-3 py-1 border text-xs uppercase tracking-widest mb-2 font-gotham-cond-black"
-                      style={{
-                        backgroundColor: hoveredProject === project.id ? 'rgb(236, 35, 60)' : 'transparent',
-                        color: 'rgb(255, 255, 255)',
-                        borderColor: hoveredProject === project.id ? 'rgb(236, 35, 60)' : 'rgb(255, 255, 255)'
+
+                  {/* Contenedor de la imagen */}
+                  <div className="relative w-full h-full bg-gray-dark overflow-hidden">
+                    {/* Imagen que muestra su ancho completo */}
+                    <motion.img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                      initial={{ 
+                        objectPosition: 'center'
                       }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {project.category}
-                    </motion.div>
-                    
-                    <motion.h3
-                      className="text-lg sm:text-xl font-gotham-cond-black text-white-pure uppercase leading-tight"
-                      initial={{ opacity: 1, x: 0 }}
                       animate={{ 
-                        x: hoveredProject === project.id ? 3 : 0
+                        objectPosition: hoveredProject === project.id ? 'left center' : 'center'
                       }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {project.title}
-                    </motion.h3>
-                  </motion.div>
-                </div>
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                    />
+                    
+                    {/* Overlay rojo sutil en hover */}
+                    <motion.div
+                      className="absolute inset-0 bg-red-primary/5"
+                      initial={{ opacity: 0 }}
+                      animate={{ 
+                        opacity: hoveredProject === project.id ? 1 : 0
+                      }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    
+                    {/* Efecto de brillo rectangular */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white-pure/15 to-transparent"
+                      initial={{ x: '-100%' }}
+                      animate={{ 
+                        x: hoveredProject === project.id ? '100%' : '-100%'
+                      }}
+                      transition={{ 
+                        duration: 0.6,
+                        ease: "easeInOut"
+                      }}
+                    />
 
-                {/* Efecto de resplandor rectangular exterior */}
-                <motion.div
-                  className="absolute inset-0 border-2 border-transparent"
-                  initial={{ boxShadow: '0 0 0 0 rgba(236, 35, 60, 0)' }}
-                  animate={{
-                    boxShadow: hoveredProject === project.id ? 
-                      '0 0 0 2px rgba(236, 35, 60, 0.8), 0 0 20px 8px rgba(236, 35, 60, 0.3)' : 
-                      '0 0 0 0 rgba(236, 35, 60, 0)'
-                  }}
-                  transition={{ duration: 0.3 }}
-                />
-              </div>
-
-              {/* Efecto de partículas rectangulares en hover */}
-              <AnimatePresence>
-                {hoveredProject === project.id && (
-                  <>
-                    {[...Array(3)].map((_, i) => (
+                    {/* Información del proyecto */}
+                    <div className="absolute inset-0 flex flex-col justify-end p-4">
                       <motion.div
-                        key={i}
-                        className="absolute w-3 h-3 border border-red-primary pointer-events-none"
-                        initial={{ 
-                          scale: 0, 
-                          opacity: 0,
-                          x: Math.random() * 280 - 140,
-                          y: Math.random() * 350 - 175
-                        }}
-                        animate={{ 
-                          scale: [0, 1, 0],
-                          opacity: [0, 0.6, 0],
-                        }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        transition={{ 
-                          duration: 1,
-                          delay: i * 0.15,
-                          repeat: Infinity
-                        }}
+                        className="absolute inset-0 bg-gradient-to-t from-black-pure/90 via-black-pure/40 to-transparent"
+                        initial={{ opacity: 0.7 }}
+                        animate={{ opacity: hoveredProject === project.id ? 0.9 : 0.7 }}
+                        transition={{ duration: 0.2 }}
                       />
-                    ))}
-                  </>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
-        </div>
+                      
+                      <motion.div
+                        className="relative z-10"
+                        initial={{ y: 0 }}
+                        animate={{ y: hoveredProject === project.id ? -3 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <motion.div
+                          className="inline-flex items-center px-3 py-1 border text-xs uppercase tracking-widest mb-2 font-gotham font-bold"
+                          style={{
+                            backgroundColor: hoveredProject === project.id ? 'rgb(236, 35, 60)' : 'transparent',
+                            color: 'rgb(255, 255, 255)',
+                            borderColor: hoveredProject === project.id ? 'rgb(236, 35, 60)' : 'rgb(255, 255, 255)'
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          {project.category}
+                        </motion.div>
+                        
+                        <motion.h3
+                          className="text-lg sm:text-xl font-accent text-white-pure uppercase leading-tight font-bold"
+                          initial={{ opacity: 1, x: 0 }}
+                          animate={{ 
+                            x: hoveredProject === project.id ? 3 : 0
+                          }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          {project.title}
+                        </motion.h3>
+                      </motion.div>
+                    </div>
 
-        {/* Indicadores de scroll responsivos */}
-        <div className="absolute right-4 sm:right-6 top-1/2 transform -translate-y-1/2 flex flex-col gap-2 z-10">
-          <motion.div
-            className="w-2 h-6 sm:w-3 sm:h-8 bg-gray-dark border border-white-pure/30 cursor-pointer hover:bg-red-primary hover:border-red-primary"
-            whileHover={{ scale: 1.1 }}
-            onClick={() => {
-              scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
-            }}
-          />
-          <motion.div
-            className="w-2 h-6 sm:w-3 sm:h-8 bg-gray-dark border border-white-pure/30 cursor-pointer hover:bg-red-primary hover:border-red-primary"
-            whileHover={{ scale: 1.1 }}
-            onClick={() => {
-              scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-            }}
-          />
+                    {/* Efecto de resplandor rectangular exterior */}
+                    <motion.div
+                      className="absolute inset-0 border-2 border-transparent"
+                      initial={{ boxShadow: '0 0 0 0 rgba(236, 35, 60, 0)' }}
+                      animate={{
+                        boxShadow: hoveredProject === project.id ? 
+                          '0 0 0 2px rgba(236, 35, 60, 0.8), 0 0 20px 8px rgba(236, 35, 60, 0.3)' : 
+                          '0 0 0 0 rgba(236, 35, 60, 0)'
+                      }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </div>
+
+                  {/* Efecto de partículas rectangulares en hover */}
+                  <AnimatePresence>
+                    {hoveredProject === project.id && (
+                      <>
+                        {[...Array(3)].map((_, i) => (
+                          <motion.div
+                            key={i}
+                            className="absolute w-3 h-3 border border-red-primary pointer-events-none"
+                            initial={{ 
+                              scale: 0, 
+                              opacity: 0,
+                              x: Math.random() * expandedWidth - (expandedWidth / 2),
+                              y: Math.random() * 400 - 200
+                            }}
+                            animate={{ 
+                              scale: [0, 1, 0],
+                              opacity: [0, 0.6, 0],
+                            }}
+                            exit={{ scale: 0, opacity: 0 }}
+                            transition={{ 
+                              duration: 1,
+                              delay: i * 0.15,
+                              repeat: Infinity
+                            }}
+                          />
+                        ))}
+                      </>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
 
       {/* ================= PIE COMPACTO ================= */}
       <div className="px-4 sm:px-6 lg:px-8 mt-6 flex flex-col sm:flex-row justify-between items-center gap-3 relative z-10">
-        <p className="text-xs text-gray-dark uppercase tracking-wider order-2 sm:order-1">
+        <p className="text-xs text-white-pure uppercase tracking-wider font-gotham font-light">
           {t("still.dragInstruction")}
         </p>
         
-        <div className="text-xs text-gray-dark flex items-center gap-2 order-1 sm:order-2">
-          <span className="text-red-primary font-gotham-cond-black text-sm">
-            {filteredProjects.findIndex(p => p.id === activeProject) + 1 || 1}
-          </span>
-          /{filteredProjects.length}
-          <span className="px-2 py-1 border border-gray-dark text-gray-dark text-xs">
+        <div className="text-xs text-white-pure flex items-center gap-2 font-gotham font-medium">
+          <span className="px-2 py-1 border border-white-pure text-white-pure text-xs">
             {selectedCategory}
           </span>
         </div>

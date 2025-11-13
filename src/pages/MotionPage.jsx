@@ -176,7 +176,7 @@ const MotionPage = () => {
       <div className="px-4 lg:px-20 mb-8 lg:mb-16">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
           <motion.h1
-            className="text-5xl lg:text-9xl font-gotham-cond-black uppercase tracking-tight text-white-pure"
+            className="text-5xl lg:text-9xl font-accent uppercase tracking-tight text-white-pure font-black"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -190,10 +190,10 @@ const MotionPage = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <p className="text-gray-dark text-sm uppercase tracking-widest mb-2">
+            <p className="text-gray-dark text-sm uppercase tracking-widest mb-2 font-gotham font-medium">
               {projects.length} {t("motion.projects")}
             </p>
-            <p className="text-gray-dark text-base lg:max-w-xs leading-relaxed">
+            <p className="text-gray-dark text-base lg:max-w-xs leading-relaxed font-gotham font-light">
               {t("motion.description")}
             </p>
           </motion.div>
@@ -205,7 +205,7 @@ const MotionPage = () => {
         <div className="hidden lg:block">
           <div className="px-6 lg:px-20">
             {/* Header de la tabla */}
-            <div className="grid grid-cols-4 gap-8 text-gray-dark uppercase tracking-widest text-sm border-b border-gray-dark/40 pb-4 mb-2 pl-8">
+            <div className="grid grid-cols-4 gap-8 text-gray-dark uppercase tracking-widest text-sm border-b border-gray-dark/40 pb-4 mb-2 pl-8 font-gotham font-medium">
               <div>{t("motion.client")}</div>
               <div>{t("motion.project")}</div>
               <div>{t("motion.category")}</div>
@@ -228,22 +228,22 @@ const MotionPage = () => {
                   <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-red-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   
                   {/* Client */}
-                  <div className="text-white-pure group-hover:text-red-primary transition-colors duration-300 font-gotham-cond-black uppercase">
+                  <div className="text-white-pure group-hover:text-red-primary transition-colors duration-300 font-accent uppercase font-bold">
                     {project.client}
                   </div>
                   
                   {/* Project Title */}
-                  <div className="text-white-pure group-hover:text-white-pure transition-colors duration-300">
+                  <div className="text-white-pure group-hover:text-white-pure transition-colors duration-300 font-gotham font-medium">
                     {project.title}
                   </div>
                   
                   {/* Category */}
-                  <div className="text-gray-dark group-hover:text-white-pure transition-colors duration-300">
+                  <div className="text-gray-dark group-hover:text-white-pure transition-colors duration-300 font-gotham font-light">
                     {project.category}
                   </div>
                   
                   {/* Year */}
-                  <div className="text-gray-dark text-right group-hover:text-white-pure transition-colors duration-300">
+                  <div className="text-gray-dark text-right group-hover:text-white-pure transition-colors duration-300 font-gotham font-light">
                     2025
                   </div>
 
@@ -258,7 +258,7 @@ const MotionPage = () => {
         /* ================= VERSIÓN MÓVIL ================= */
         <div className="lg:hidden px-4">
           {/* Header móvil simplificado */}
-          <div className="flex justify-between items-center text-gray-dark uppercase tracking-widest text-xs border-b border-gray-dark/40 pb-3 mb-4">
+          <div className="flex justify-between items-center text-gray-dark uppercase tracking-widest text-xs border-b border-gray-dark/40 pb-3 mb-4 font-gotham font-medium">
             <div>{t("motion.projects")}</div>
             <div>{projects.length} {t("motion.items")}</div>
           </div>
@@ -278,17 +278,17 @@ const MotionPage = () => {
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1">
-                      <h3 className="text-white-pure font-gotham-cond-black uppercase text-lg mb-1">
+                      <h3 className="text-white-pure font-accent uppercase text-lg mb-1 font-bold">
                         {project.title}
                       </h3>
-                      <p className="text-red-primary text-sm uppercase tracking-widest mb-2">
+                      <p className="text-red-primary text-sm uppercase tracking-widest mb-2 font-gotham font-medium">
                         {project.category}
                       </p>
-                      <p className="text-gray-dark text-sm">
+                      <p className="text-gray-dark text-sm font-gotham font-light">
                         {project.client}
                       </p>
                     </div>
-                    <div className="text-gray-dark text-sm ml-4">
+                    <div className="text-gray-dark text-sm ml-4 font-gotham font-light">
                       2025
                     </div>
                   </div>
@@ -340,7 +340,7 @@ const MotionPage = () => {
                             e.stopPropagation();
                             setActiveProject(null);
                           }}
-                          className="w-full mt-3 bg-gray-dark/50 text-white-pure py-2 rounded text-sm uppercase tracking-widest"
+                          className="w-full mt-3 bg-gray-dark/50 text-white-pure py-2 rounded text-sm uppercase tracking-widest font-gotham font-medium"
                         >
                           {t("motion.close")}
                         </button>
@@ -409,14 +409,14 @@ const MotionPage = () => {
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black-pure to-transparent p-4">
                   <div className="flex justify-between items-end">
                     <div>
-                      <h3 className="text-white-pure font-gotham-cond-black text-sm uppercase mb-1">
+                      <h3 className="text-white-pure font-accent text-sm uppercase mb-1 font-bold">
                         {activeProject.title}
                       </h3>
-                      <p className="text-red-primary text-xs uppercase tracking-widest">
+                      <p className="text-red-primary text-xs uppercase tracking-widest font-gotham font-medium">
                         {activeProject.category}
                       </p>
                     </div>
-                    <p className="text-gray-dark text-xs uppercase tracking-widest">
+                    <p className="text-gray-dark text-xs uppercase tracking-widest font-gotham font-light">
                       {activeProject.client}
                     </p>
                   </div>
@@ -432,7 +432,7 @@ const MotionPage = () => {
 
       {/* ================= FOOTER ================= */}
       <div className="px-4 lg:px-20 mt-8 lg:mt-12">
-        <div className="flex flex-col lg:flex-row justify-between items-center text-gray-dark text-sm uppercase tracking-widest gap-2">
+        <div className="flex flex-col lg:flex-row justify-between items-center text-gray-dark text-sm uppercase tracking-widest gap-2 font-gotham font-light">
           <div>Rectángulo Films © 2025</div>
           <div>Motion & Animation</div>
         </div>

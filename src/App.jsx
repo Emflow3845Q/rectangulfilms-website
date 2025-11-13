@@ -11,6 +11,7 @@ import Footer from './layout/Footer';
 import CameraFrameUI from './components/CinematicLoading';
 import TargetCursor from './components/TargetCursor';
 import Stillpages from './pages/StillPage';
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
 
