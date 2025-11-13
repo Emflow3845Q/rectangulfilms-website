@@ -469,27 +469,31 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Sección 2: Video de fondo */}
+      {/* Sección 2: Video de fondo - CORREGIDO */}
       <section
         ref={section2Ref}
         className="h-screen snap-start relative bg-black overflow-hidden"
       >
+        {/* Video de YouTube como fondo completo */}
         <div className="absolute inset-0 z-0">
           <iframe
             src="https://www.youtube.com/embed/Csyu_yJK-Sg?autoplay=1&mute=1&loop=1&playlist=Csyu_yJK-Sg&controls=0&modestbranding=1&rel=0&showinfo=0"
-            className="w-full h-full object-cover"
+            className="absolute top-0 left-0 w-full h-full object-cover scale-105"
             frameBorder="0"
             allow="autoplay; encrypted-media"
             allowFullScreen
             title="Background Video"
             style={{
-              transform: isMobile ? 'scale(1.1)' : isTablet ? 'scale(1.05)' : 'none'
+              transform: 'scale(1.1)',
+              minWidth: '100%',
+              minHeight: '100%'
             }}
           />
+          {/* Overlay para mejor contraste */}
           <div className={`absolute inset-0 ${
             isMobile ? 'bg-black/40' : 
-            isTablet ? 'bg-black/50' : 
-            'bg-black/60'
+            isTablet ? 'bg-black/30' : 
+            'bg-black/20'
           }`}></div>
         </div>
 
@@ -517,14 +521,15 @@ const Home = () => {
           </div>
         </div>
 
+        {/* Gradiente adicional para mejor legibilidad */}
         <div className={`absolute inset-0 bg-gradient-to-t ${
-          isMobile ? 'from-black/60 via-transparent to-black/60' : 
-          isTablet ? 'from-black/45 via-transparent to-black/45' :
+          isMobile ? 'from-black/70 via-transparent to-black/70' : 
+          isTablet ? 'from-black/60 via-transparent to-black/60' :
           'from-black/50 via-transparent to-black/50'
         } z-5`}></div>
       </section>
 
-      {/* Sección 3: Proyectos Destacados - MEJORADO RESPONSIVE */}
+      {/* Sección 3: Proyectos Destacados */}
       <section
         ref={section3Ref}
         className="h-screen snap-start relative bg-black flex items-center justify-center overflow-hidden"
@@ -585,7 +590,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Fullscreen Video Modal - MEJORADO RESPONSIVE */}
+      {/* Fullscreen Video Modal */}
       {fullscreenVideo && (
         <div
           className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-2 xs:p-3 sm:p-4 md:p-6"
@@ -668,7 +673,6 @@ const Home = () => {
           perspective: 1000px;
         }
 
-        /* Mejoras de responsive para textos largos */
         .line-clamp-2 {
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -676,12 +680,17 @@ const Home = () => {
           overflow: hidden;
         }
 
-        /* Asegurar que los videos se vean bien en móvil */
-        @media (max-width: 640px) {
-          .project-card video {
-            object-fit: cover;
-            min-height: 100%;
-          }
+        /* Estilos específicos para el iframe de YouTube */
+        .youtube-background {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 100vw;
+          height: 100vh;
+          transform: translate(-50%, -50%) scale(1.1);
+          min-width: 100%;
+          min-height: 100%;
+          object-fit: cover;
         }
       `}</style>
     </div>
