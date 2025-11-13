@@ -12,6 +12,7 @@ const Home = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [textAnimationReady, setTextAnimationReady] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
   const section1Ref = useRef(null);
   const section2Ref = useRef(null);
@@ -34,7 +35,7 @@ const Home = () => {
     "events"
   ];
 
-  // Proyectos destacados
+  // Proyectos destacados - Optimizados para responsive
   const featuredProjects = [
     {
       id: 1,
@@ -45,7 +46,8 @@ const Home = () => {
       width: "col-span-2 lg:col-span-2",
       height: "row-span-1 lg:row-span-2",
       rotation: "rotate-1",
-      mobileWidth: "col-span-2"
+      mobileWidth: "col-span-2",
+      tabletWidth: "col-span-2"
     },
     {
       id: 2,
@@ -56,7 +58,8 @@ const Home = () => {
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1",
       rotation: "-rotate-2",
-      mobileWidth: "col-span-1"
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
     },
     {
       id: 3,
@@ -67,7 +70,8 @@ const Home = () => {
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1",
       rotation: "rotate-3",
-      mobileWidth: "col-span-1"
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
     },
     {
       id: 4,
@@ -78,7 +82,8 @@ const Home = () => {
       width: "col-span-2 lg:col-span-2",
       height: "row-span-1",
       rotation: "-rotate-1",
-      mobileWidth: "col-span-2"
+      mobileWidth: "col-span-2",
+      tabletWidth: "col-span-2"
     },
     {
       id: 5,
@@ -89,7 +94,8 @@ const Home = () => {
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1 lg:row-span-2",
       rotation: "rotate-2",
-      mobileWidth: "col-span-1"
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
     },
     {
       id: 6,
@@ -100,20 +106,25 @@ const Home = () => {
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1",
       rotation: "-rotate-3",
-      mobileWidth: "col-span-1"
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
     },
   ];
 
-  // Detectar dispositivo
+  // Detectar dispositivo y tamaño de ventana
   useEffect(() => {
     const checkDevice = () => {
       const width = window.innerWidth;
+      const height = window.innerHeight;
+      
       setIsMobile(width < 768);
       setIsTablet(width >= 768 && width < 1024);
+      setWindowSize({ width, height });
     };
 
     checkDevice();
     window.addEventListener('resize', checkDevice);
+    
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
@@ -133,7 +144,7 @@ const Home = () => {
     let rafId = null;
 
     const handleMouseMove = (e) => {
-      if (rafId) return; // Throttle con requestAnimationFrame
+      if (rafId) return;
 
       rafId = requestAnimationFrame(() => {
         setMousePosition({ x: e.clientX, y: e.clientY });
@@ -162,7 +173,7 @@ const Home = () => {
     };
   }, [isMobile]);
 
-  // Animación de cambio de texto SIN DESTELLOS - Versión mejorada
+  // Animación de cambio de texto
   useEffect(() => {
     if (!dynamicTextRef.current || !dynamicTextRef2.current || !textContainerRef.current) return;
 
@@ -175,38 +186,36 @@ const Home = () => {
     let animationInterval;
     let isTextAnimating = false;
 
-    // Configuración inicial más robusta
     const initializeAnimation = () => {
-      // Forzar renderizado sincrónico
       gsap.set([text1, text2], {
         opacity: 0,
         willChange: 'opacity',
         force3D: true
       });
 
-      // Establecer contenido inicial
       text1.textContent = dynamicTexts[0];
       text2.textContent = dynamicTexts[1];
 
-      // Mostrar el primer texto inmediatamente
       gsap.set(text1, {
         opacity: 1,
         immediateRender: true
       });
 
-      // Asegurar que el contenedor tenga el ancho correcto
+      // Ajustar tamaño del contenedor según el dispositivo
       const tempSpan = document.createElement('span');
       tempSpan.style.visibility = 'hidden';
       tempSpan.style.position = 'absolute';
       tempSpan.style.whiteSpace = 'nowrap';
       tempSpan.textContent = dynamicTexts[0];
       container.appendChild(tempSpan);
-      container.style.minWidth = `${tempSpan.offsetWidth}px`;
+      
+      const minWidth = isMobile ? 'auto' : `${tempSpan.offsetWidth}px`;
+      container.style.minWidth = minWidth;
       container.removeChild(tempSpan);
     };
 
     const animateText = () => {
-      if (isTextAnimating) return; // Prevenir superposición
+      if (isTextAnimating) return;
 
       isTextAnimating = true;
       currentIndex = (currentIndex + 1) % dynamicTexts.length;
@@ -215,19 +224,16 @@ const Home = () => {
       const visibleText = isFirstVisible ? text1 : text2;
       const hiddenText = isFirstVisible ? text2 : text1;
 
-      // Preparar el texto siguiente ANTES de la animación
       hiddenText.textContent = dynamicTexts[currentIndex];
 
       const timeline = gsap.timeline({
         onComplete: () => {
-          // Preparar el próximo texto después de completar
           visibleText.textContent = dynamicTexts[nextIndex];
           isFirstVisible = !isFirstVisible;
           isTextAnimating = false;
         }
       });
 
-      // Animación más suave con easing mejorado
       timeline
         .to(visibleText, {
           opacity: 0,
@@ -243,7 +249,6 @@ const Home = () => {
         }, 0);
     };
 
-    // Inicializar y comenzar animación
     initializeAnimation();
 
     const timeoutId = setTimeout(() => {
@@ -256,15 +261,16 @@ const Home = () => {
       gsap.killTweensOf([text1, text2]);
       isTextAnimating = false;
     };
-  }, [dynamicTexts]);
+  }, [dynamicTexts, isMobile]);
 
+  // Animaciones principales con responsive
   useEffect(() => {
     const masterTL = gsap.timeline();
 
-    // Animación del slogan
+    // Animación del slogan responsive
     masterTL.fromTo(sloganRef.current,
       {
-        y: isMobile ? 20 : 60,
+        y: isMobile ? 20 : isTablet ? 40 : 60,
         opacity: 0,
         scale: 1.05
       },
@@ -272,14 +278,14 @@ const Home = () => {
         y: 0,
         opacity: 1,
         scale: 1,
-        duration: isMobile ? 0.9 : 1.5,
+        duration: isMobile ? 0.9 : isTablet ? 1.2 : 1.5,
         ease: "power2.out"
       }
     );
 
     masterTL.fromTo(buttonRef.current,
       {
-        y: isMobile ? 20 : 40,
+        y: isMobile ? 20 : isTablet ? 30 : 40,
         opacity: 0,
         scale: 0.95
       },
@@ -287,68 +293,59 @@ const Home = () => {
         y: 0,
         opacity: 1,
         scale: 1,
-        duration: isMobile ? 0.7 : 1.2,
+        duration: isMobile ? 0.7 : isTablet ? 1.0 : 1.2,
         ease: "power2.out"
       },
-      isMobile ? "-=0.6" : "-=0.8"
+      isMobile ? "-=0.6" : isTablet ? "-=0.7" : "-=0.8"
     );
 
-    // Animación marquee
+    // Animación marquee responsive
     if (marqueeRef.current) {
-      if (isMobile) {
-        gsap.to(marqueeRef.current, {
-          x: `-=${marqueeRef.current.scrollWidth / 2}`,
-          duration: 20,
-          ease: "none",
-          repeat: -1,
-          modifiers: {
-            x: gsap.utils.unitize(x => parseFloat(x) % (marqueeRef.current.scrollWidth / 2))
-          }
-        });
-      } else {
-        const marqueeContent = marqueeRef.current;
-        const contentWidth = marqueeContent.scrollWidth / 2;
+      const marqueeContent = marqueeRef.current;
+      const duration = isMobile ? 20 : isTablet ? 22 : 25;
+      const contentWidth = marqueeContent.scrollWidth / (isMobile ? 2 : 2);
 
-        gsap.to(marqueeContent, {
-          x: `-=${contentWidth}`,
-          duration: 25,
-          ease: "none",
-          repeat: -1,
-          modifiers: {
-            x: gsap.utils.unitize(x => parseFloat(x) % contentWidth)
-          }
-        });
-      }
+      gsap.to(marqueeContent, {
+        x: `-=${contentWidth}`,
+        duration: duration,
+        ease: "none",
+        repeat: -1,
+        modifiers: {
+          x: gsap.utils.unitize(x => parseFloat(x) % contentWidth)
+        }
+      });
     }
 
-    // Animación de entrada para proyectos
+    // Animación de entrada para proyectos responsive
+    const staggerAmount = isMobile ? 0.07 : isTablet ? 0.09 : 0.12;
+    const delayAmount = isMobile ? 0.3 : isTablet ? 0.4 : 0.6;
+
     gsap.fromTo(".project-card",
       {
         opacity: 0,
-        y: isMobile ? 20 : 50,
+        y: isMobile ? 20 : isTablet ? 35 : 50,
         scale: 0.9,
-        rotation: isMobile ? 0 : -5
+        rotation: isMobile ? 0 : isTablet ? -3 : -5
       },
       {
         opacity: 1,
         y: 0,
         scale: 1,
         rotation: 0,
-        duration: isMobile ? 0.7 : 1.1,
-        stagger: isMobile ? 0.07 : 0.12,
+        duration: isMobile ? 0.7 : isTablet ? 0.9 : 1.1,
+        stagger: staggerAmount,
         ease: "power2.out",
-        delay: isMobile ? 0.3 : 0.6
+        delay: delayAmount
       }
     );
 
-    // Iniciar animación después de que todo cargue
     setTimeout(() => {
       setIsAnimating(true);
       setTextAnimationReady(true);
     }, 1500);
 
     return () => { };
-  }, [isMobile]);
+  }, [isMobile, isTablet]);
 
   const handleButtonClick = () => {
     window.location.href = "/about";
@@ -378,17 +375,24 @@ const Home = () => {
     };
   }, [fullscreenVideo]);
 
+  // Función para obtener clase responsive del proyecto
+  const getProjectClass = (project) => {
+    if (isMobile) return project.mobileWidth;
+    if (isTablet) return project.tabletWidth || project.width;
+    return project.width;
+  };
+
   return (
     <div className="h-screen overflow-y-scroll snap-y snap-mandatory bg-black hide-scrollbar">
-      {/* SECCIÓN 1: HERO SOLO CON DARKVEIL - CONTENIDO EN ESQUINA INFERIOR IZQUIERDA */}
+      {/* SECCIÓN 1: HERO */}
       <section
         ref={section1Ref}
-        className="h-screen snap-start relative flex items-end justify-start overflow-hidden px-4 sm:px-6 pb-8 sm:pb-12 md:pb-16 lg:pb-20"
+        className="h-screen snap-start relative flex items-end justify-start overflow-hidden px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8 pb-6 xs:pb-8 sm:pb-10 md:pb-14 lg:pb-20"
       >
-        {/* DarkVeil como único fondo */}
+        {/* DarkVeil como fondo */}
         <div className="absolute inset-0 z-0">
           <DarkVeil
-            baseColor={[0.925, 0.137, 0.235]} // Color rojo de la marca
+            baseColor={[0.925, 0.137, 0.235]}
             speed={0.3}
             amplitude={0.4}
             frequencyX={2.5}
@@ -397,17 +401,17 @@ const Home = () => {
           />
         </div>
 
-        {/* Contenido principal - POSICIONADO EN ESQUINA INFERIOR IZQUIERDA */}
-        <div className="relative z-10 text-left w-full max-w-4xl mx-0 px-2 sm:px-4">
-          {/* Título principal con BBH_Sans_Bartle - EN LA MISMA LÍNEA */}
+        {/* Contenido principal */}
+        <div className="relative z-10 text-left w-full max-w-4xl mx-0 px-2 xs:px-3 sm:px-4 md:px-6">
+          {/* Título principal responsive */}
           <h1
             ref={sloganRef}
-            className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-accent text-white uppercase tracking-tight mb-4 sm:mb-6 md:mb-8 opacity-0 leading-tight sm:leading-normal flex flex-row items-center justify-start flex-nowrap gap-2 sm:gap-3 md:gap-4 whitespace-nowrap hardware-accelerated font-black"
+            className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-accent text-white uppercase tracking-tight mb-3 xs:mb-4 sm:mb-5 md:mb-6 lg:mb-8 opacity-0 leading-tight sm:leading-normal flex flex-col xs:flex-row items-start xs:items-center justify-start flex-nowrap gap-1 xs:gap-2 sm:gap-3 md:gap-4 hardware-accelerated font-black"
           >
-            <span className="block flex-shrink-0 font-accent font-black">we are</span>
+            <span className="block flex-shrink-0 font-accent font-black whitespace-nowrap">we are</span>
             <span
               ref={textContainerRef}
-              className="inline-block relative flex-shrink-0 pointer-events-none text-animation-container"
+              className="inline-block relative flex-shrink-0 pointer-events-none text-animation-container min-w-0"
               style={{
                 willChange: 'opacity',
                 backfaceVisibility: 'hidden',
@@ -444,7 +448,6 @@ const Home = () => {
               >
                 {dynamicTexts[1]}
               </span>
-              {/* Elemento invisible para mantener el espacio */}
               <span
                 className="invisible font-accent font-black"
                 aria-hidden="true"
@@ -455,11 +458,11 @@ const Home = () => {
             </span>
           </h1>
 
-          {/* Botón */}
+          {/* Botón responsive */}
           <button
             ref={buttonRef}
             onClick={handleButtonClick}
-            className="relative z-20 bg-white text-black px-6 sm:px-8 md:px-10 py-2 sm:py-3 md:py-4 font-gotham text-base sm:text-lg md:text-xl uppercase tracking-widest hover:bg-gray-100 transition-all duration-300 border-2 border-white hover:scale-105 transform opacity-0 hover:shadow-xl mt-4 sm:mt-6 font-bold"
+            className="relative z-20 bg-white text-black px-4 xs:px-5 sm:px-6 md:px-8 lg:px-10 py-1.5 xs:py-2 sm:py-2.5 md:py-3 lg:py-4 font-gotham text-sm xs:text-base sm:text-lg md:text-xl uppercase tracking-widest hover:bg-gray-100 transition-all duration-300 border-2 border-white hover:scale-105 transform opacity-0 hover:shadow-xl mt-3 xs:mt-4 sm:mt-5 md:mt-6 font-bold"
           >
             who we are
           </button>
@@ -480,27 +483,33 @@ const Home = () => {
             allowFullScreen
             title="Background Video"
             style={{
-              transform: isMobile ? 'scale(1.1)' : 'none'
+              transform: isMobile ? 'scale(1.1)' : isTablet ? 'scale(1.05)' : 'none'
             }}
           />
-          <div className={`absolute inset-0 ${isMobile ? 'bg-black/40' : 'bg-black/60'
-            }`}></div>
+          <div className={`absolute inset-0 ${
+            isMobile ? 'bg-black/40' : 
+            isTablet ? 'bg-black/50' : 
+            'bg-black/60'
+          }`}></div>
         </div>
 
-        {/* TEXTO MOVIÉNDOSE EN LA PARTE INFERIOR */}
-        <div className="absolute bottom-0 w-full overflow-hidden z-10 pb-4 sm:pb-8">
+        {/* Marquee responsive */}
+        <div className="absolute bottom-0 w-full overflow-hidden z-10 pb-3 xs:pb-4 sm:pb-6 md:pb-8">
           <div
             ref={marqueeRef}
             className="flex whitespace-nowrap"
             style={{ willChange: 'transform' }}
           >
-            {[...Array(isMobile ? 6 : 10)].map((_, i) => (
+            {[...Array(isMobile ? 6 : isTablet ? 8 : 10)].map((_, i) => (
               <span
                 key={i}
-                className={`font-accent text-white uppercase tracking-tighter font-black ${isMobile
-                    ? 'text-3xl xs:text-4xl mx-4 xs:mx-6 opacity-90'
+                className={`font-accent text-white uppercase tracking-tighter font-black ${
+                  isMobile 
+                    ? 'text-2xl xs:text-3xl mx-3 xs:mx-4 opacity-90' 
+                    : isTablet
+                    ? 'text-4xl sm:text-5xl mx-4 sm:mx-6 opacity-85'
                     : 'text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl mx-6 sm:mx-8 md:mx-10 lg:mx-12 opacity-80'
-                  }`}
+                }`}
               >
                 everything is a rectangle
               </span>
@@ -508,26 +517,36 @@ const Home = () => {
           </div>
         </div>
 
-        <div className={`absolute inset-0 bg-gradient-to-t ${isMobile ? 'from-black/60 via-transparent to-black/60' : 'from-black/50 via-transparent to-black/50'
-          } z-5`}></div>
+        <div className={`absolute inset-0 bg-gradient-to-t ${
+          isMobile ? 'from-black/60 via-transparent to-black/60' : 
+          isTablet ? 'from-black/45 via-transparent to-black/45' :
+          'from-black/50 via-transparent to-black/50'
+        } z-5`}></div>
       </section>
 
-      {/* Sección 3: Proyectos Destacados */}
+      {/* Sección 3: Proyectos Destacados - MEJORADO RESPONSIVE */}
       <section
         ref={section3Ref}
         className="h-screen snap-start relative bg-black flex items-center justify-center overflow-hidden"
       >
-        <div className="w-full h-full px-3 xs:px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-          <div className={`grid grid-cols-2 ${isMobile ? 'gap-2' : 'sm:gap-3 lg:gap-4'
-            } w-full h-full ${isMobile ? 'grid-rows-3' : 'lg:grid-cols-4 lg:grid-rows-2'
-            }`}>
-            {featuredProjects.map((project, index) => (
+        <div className="w-full h-full px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8 py-3 xs:py-4 sm:py-5 md:py-6 lg:py-8">
+          <div className={`grid ${
+            isMobile 
+              ? 'grid-cols-2 grid-rows-3 gap-1.5 xs:gap-2' 
+              : isTablet
+              ? 'grid-cols-2 lg:grid-cols-3 grid-rows-2 gap-2 sm:gap-3'
+              : 'grid-cols-2 lg:grid-cols-4 grid-rows-2 gap-3 lg:gap-4'
+          } w-full h-full`}>
+            {featuredProjects.map((project) => (
               <div
                 key={project.id}
-                className={`project-card group cursor-pointer bg-black rounded-none overflow-hidden relative ${isMobile ? project.mobileWidth : project.width
-                  } ${project.height} ${isMobile ? '' : project.rotation
-                  } transition-all duration-500 ${isMobile ? '' : 'hover:rotate-0'
-                  }`}
+                className={`project-card group cursor-pointer bg-black rounded-none overflow-hidden relative ${
+                  getProjectClass(project)
+                } ${project.height} ${
+                  isMobile ? '' : isTablet ? project.rotation.replace('rotate-', 'rotate-0.5') : project.rotation
+                } transition-all duration-500 ${
+                  isMobile ? '' : 'hover:rotate-0 hover:scale-105'
+                } hover:z-10`}
                 onClick={() => handleProjectClick(project)}
               >
                 <div className="relative w-full h-full bg-black">
@@ -541,19 +560,19 @@ const Home = () => {
                     <source src={project.video} type="video/mp4" />
                   </video>
 
-                  {/* INFORMACIÓN SIEMPRE VISIBLE */}
+                  {/* Información del proyecto responsive */}
                   <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/20 to-black/80">
-                    <div className="absolute bottom-0 left-0 right-0 p-2 xs:p-3 sm:p-3 lg:p-4">
-                      <h3 className="text-white font-accent text-xs sm:text-xs lg:text-sm uppercase mb-1 font-bold">
+                    <div className="absolute bottom-0 left-0 right-0 p-1.5 xs:p-2 sm:p-2.5 md:p-3 lg:p-4">
+                      <h3 className="text-white font-accent text-xs xs:text-xs sm:text-sm uppercase mb-0.5 xs:mb-1 font-bold truncate">
                         {project.client}
                       </h3>
-                      <p className="text-white/95 text-xs sm:text-xs leading-tight font-gotham font-medium">
-                        {isMobile ?
-                          (project.title.length > 20 ? project.title.substring(0, 20) + '...' : project.title)
-                          : project.title
-                        }
+                      <p className="text-white/95 text-xs xs:text-xs leading-tight font-gotham font-medium line-clamp-2">
+                        {project.title}
                       </p>
-                      <div className="w-4 xs:w-5 sm:w-6 lg:w-8 h-0.5 bg-red-primary mt-1 lg:mt-2" />
+                      <div className={`${
+                        isMobile ? 'w-3 xs:w-4 h-0.5 mt-0.5' : 
+                        'w-4 xs:w-5 sm:w-6 lg:w-8 h-0.5 mt-1 lg:mt-2'
+                      } bg-red-primary`} />
                     </div>
                   </div>
 
@@ -566,24 +585,24 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Fullscreen Video Modal */}
+      {/* Fullscreen Video Modal - MEJORADO RESPONSIVE */}
       {fullscreenVideo && (
         <div
-          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-3 xs:p-4 sm:p-6"
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-2 xs:p-3 sm:p-4 md:p-6"
           onClick={closeFullscreen}
         >
           <div
-            className="relative bg-black rounded-lg overflow-hidden shadow-2xl w-full mx-2 xs:mx-4 sm:mx-6 max-w-xs xs:max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl"
+            className="relative bg-black rounded-lg overflow-hidden shadow-2xl w-full mx-1 xs:mx-2 sm:mx-4 md:mx-6 max-w-xs xs:max-w-sm sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-5xl 2xl:max-w-6xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="absolute top-2 xs:top-3 sm:top-4 right-2 xs:right-3 sm:right-4 z-10 bg-black/80 hover:bg-red-600 text-white w-7 h-7 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-200 border border-white/30 hover:border-red-500"
+              className="absolute top-1.5 xs:top-2 sm:top-3 md:top-4 right-1.5 xs:right-2 sm:right-3 md:right-4 z-10 bg-black/80 hover:bg-red-600 text-white w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-200 border border-white/30 hover:border-red-500"
               onClick={(e) => {
                 e.stopPropagation();
                 closeFullscreen();
               }}
             >
-              <svg className="w-3 h-3 xs:w-4 xs:h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-2.5 h-2.5 xs:w-3 xs:h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -600,18 +619,18 @@ const Home = () => {
               </video>
             </div>
 
-            <div className="bg-gradient-to-t from-black to-black/80 p-3 xs:p-4 sm:p-4 md:p-6 border-t border-white/10">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-                <div className="flex-1">
-                  <h3 className="text-white font-accent text-base xs:text-lg sm:text-xl md:text-2xl uppercase mb-1 font-bold">
+            <div className="bg-gradient-to-t from-black to-black/80 p-2 xs:p-3 sm:p-4 md:p-6 border-t border-white/10">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1.5 xs:gap-2 sm:gap-3">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-white font-accent text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl uppercase mb-0.5 xs:mb-1 font-bold truncate">
                     {fullscreenVideo.client}
                   </h3>
-                  <p className="text-white/80 text-sm xs:text-base sm:text-lg md:text-xl font-gotham font-medium">
+                  <p className="text-white/80 text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl font-gotham font-medium line-clamp-2">
                     {fullscreenVideo.title}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-red-primary text-xs xs:text-sm sm:text-base md:text-lg uppercase tracking-widest font-gotham font-bold">
+                <div className="text-right flex-shrink-0">
+                  <p className="text-red-primary text-xs xs:text-sm sm:text-base md:text-lg uppercase tracking-widest font-gotham font-bold whitespace-nowrap">
                     {fullscreenVideo.category}
                   </p>
                 </div>
@@ -630,7 +649,6 @@ const Home = () => {
           display: none;
         }
         
-        /* Prevenir destellos en textos animados */
         .text-animation-container {
           backface-visibility: hidden;
           perspective: 1000px;
@@ -644,11 +662,26 @@ const Home = () => {
           will-change: opacity;
         }
         
-        /* Forzar hardware acceleration */
         .hardware-accelerated {
           transform: translateZ(0);
           backface-visibility: hidden;
           perspective: 1000px;
+        }
+
+        /* Mejoras de responsive para textos largos */
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        /* Asegurar que los videos se vean bien en móvil */
+        @media (max-width: 640px) {
+          .project-card video {
+            object-fit: cover;
+            min-height: 100%;
+          }
         }
       `}</style>
     </div>

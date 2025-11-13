@@ -171,7 +171,7 @@ const MotionPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black-pure text-white-pure pt-20 pb-12">
+    <div className="min-h-screen bg-black-pure text-white-pure pt-20">
       {/* ================= HEADER ================= */}
       <div className="px-4 lg:px-20 mb-8 lg:mb-16">
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-6">
@@ -190,10 +190,10 @@ const MotionPage = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <p className="text-gray-dark text-sm uppercase tracking-widest mb-2 font-gotham font-medium">
+            <p className="text-white text-sm uppercase tracking-widest mb-2 font-gotham font-medium">
               {projects.length} {t("motion.projects")}
             </p>
-            <p className="text-gray-dark text-base lg:max-w-xs leading-relaxed font-gotham font-light">
+            <p className="text-white text-base lg:max-w-xs leading-relaxed font-gotham font-light">
               {t("motion.description")}
             </p>
           </motion.div>
@@ -205,11 +205,11 @@ const MotionPage = () => {
         <div className="hidden lg:block">
           <div className="px-6 lg:px-20">
             {/* Header de la tabla */}
-            <div className="grid grid-cols-4 gap-8 text-gray-dark uppercase tracking-widest text-sm border-b border-gray-dark/40 pb-4 mb-2 pl-8 font-gotham font-medium">
-              <div>{t("motion.client")}</div>
-              <div>{t("motion.project")}</div>
-              <div>{t("motion.category")}</div>
-              <div className="text-right">{t("motion.year")}</div>
+            <div className="grid grid-cols-4 gap-8 text-white uppercase tracking-widest text-sm border-b border-white/40 pb-4 mb-2 pl-8 font-gotham font-medium">
+              <div>{t("client")}</div>
+              <div>{t("project")}</div>
+              <div>{t("category")}</div>
+              <div className="text-right">{t("year")}</div>
             </div>
 
             {/* Lista de proyectos */}
@@ -217,7 +217,7 @@ const MotionPage = () => {
               {projects.map((project, index) => (
                 <motion.div
                   key={project.id}
-                  className="grid grid-cols-4 gap-8 py-6 border-b border-gray-dark/20 group cursor-pointer relative pl-8"
+                  className="grid grid-cols-4 gap-8 py-6 border-b border-white/20 group cursor-pointer relative pl-8"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
@@ -238,17 +238,17 @@ const MotionPage = () => {
                   </div>
                   
                   {/* Category */}
-                  <div className="text-gray-dark group-hover:text-white-pure transition-colors duration-300 font-gotham font-light">
+                  <div className="text-white group-hover:text-white-pure transition-colors duration-300 font-gotham font-light">
                     {project.category}
                   </div>
                   
                   {/* Year */}
-                  <div className="text-gray-dark text-right group-hover:text-white-pure transition-colors duration-300 font-gotham font-light">
+                  <div className="text-white text-right group-hover:text-white-pure transition-colors duration-300 font-gotham font-light">
                     2025
                   </div>
 
                   {/* Efecto de fondo al hover */}
-                  <div className="absolute inset-0 bg-gray-dark/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
                 </motion.div>
               ))}
             </div>
@@ -258,7 +258,7 @@ const MotionPage = () => {
         /* ================= VERSIÓN MÓVIL ================= */
         <div className="lg:hidden px-4">
           {/* Header móvil simplificado */}
-          <div className="flex justify-between items-center text-gray-dark uppercase tracking-widest text-xs border-b border-gray-dark/40 pb-3 mb-4 font-gotham font-medium">
+          <div className="flex justify-between items-center text-white uppercase tracking-widest text-xs border-b border-white/40 pb-3 mb-4 font-gotham font-medium">
             <div>{t("motion.projects")}</div>
             <div>{projects.length} {t("motion.items")}</div>
           </div>
@@ -268,7 +268,7 @@ const MotionPage = () => {
             {projects.map((project, index) => (
               <motion.div
                 key={project.id}
-                className="bg-gray-dark/10 rounded-lg overflow-hidden border border-gray-dark/30"
+                className="bg-white/10 rounded-lg overflow-hidden border border-white/30"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
@@ -284,11 +284,11 @@ const MotionPage = () => {
                       <p className="text-red-primary text-sm uppercase tracking-widest mb-2 font-gotham font-medium">
                         {project.category}
                       </p>
-                      <p className="text-gray-dark text-sm font-gotham font-light">
+                      <p className="text-white text-sm font-gotham font-light">
                         {project.client}
                       </p>
                     </div>
-                    <div className="text-gray-dark text-sm ml-4 font-gotham font-light">
+                    <div className="text-white text-sm ml-4 font-gotham font-light">
                       2025
                     </div>
                   </div>
@@ -340,7 +340,7 @@ const MotionPage = () => {
                             e.stopPropagation();
                             setActiveProject(null);
                           }}
-                          className="w-full mt-3 bg-gray-dark/50 text-white-pure py-2 rounded text-sm uppercase tracking-widest font-gotham font-medium"
+                          className="w-full mt-3 bg-white/50 text-white-pure py-2 rounded text-sm uppercase tracking-widest font-gotham font-medium"
                         >
                           {t("motion.close")}
                         </button>
@@ -371,7 +371,7 @@ const MotionPage = () => {
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
               <motion.div
-                className="relative overflow-hidden border-2 border-gray-dark bg-black-pure shadow-2xl"
+                className="relative overflow-hidden border-2 border-white bg-black-pure shadow-2xl"
                 style={{ width: '400px', height: '225px' }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -416,7 +416,7 @@ const MotionPage = () => {
                         {activeProject.category}
                       </p>
                     </div>
-                    <p className="text-gray-dark text-xs uppercase tracking-widest font-gotham font-light">
+                    <p className="text-white text-xs uppercase tracking-widest font-gotham font-light">
                       {activeProject.client}
                     </p>
                   </div>
@@ -429,14 +429,6 @@ const MotionPage = () => {
           )}
         </AnimatePresence>
       )}
-
-      {/* ================= FOOTER ================= */}
-      <div className="px-4 lg:px-20 mt-8 lg:mt-12">
-        <div className="flex flex-col lg:flex-row justify-between items-center text-gray-dark text-sm uppercase tracking-widest gap-2 font-gotham font-light">
-          <div>Rectángulo Films © 2025</div>
-          <div>Motion & Animation</div>
-        </div>
-      </div>
     </div>
   );
 };
