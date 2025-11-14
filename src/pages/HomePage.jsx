@@ -469,26 +469,29 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Sección 2: Video de fondo - CORREGIDO */}
+      {/* Sección 2: Video de fondo - MODIFICADO SOLO EL VIDEO DE YOUTUBE */}
       <section
         ref={section2Ref}
         className="h-screen snap-start relative bg-black overflow-hidden"
       >
-        {/* Video de YouTube como fondo completo */}
-        <div className="absolute inset-0 z-0">
-          <iframe
-            src="https://www.youtube.com/embed/Csyu_yJK-Sg?autoplay=1&mute=1&loop=1&playlist=Csyu_yJK-Sg&controls=0&modestbranding=1&rel=0&showinfo=0"
-            className="absolute top-0 left-0 w-full h-full object-cover scale-105"
-            frameBorder="0"
-            allow="autoplay; encrypted-media"
-            allowFullScreen
-            title="Background Video"
+        {/* Video local como fondo completo - REEMPLAZO DEL YOUTUBE */}
+        <div className="absolute inset-0 z-0 w-full h-full">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover"
             style={{
-              transform: 'scale(1.1)',
-              minWidth: '100%',
-              minHeight: '100%'
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
             }}
-          />
+          >
+            <source src="/videos/kabravoraz.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          
           {/* Overlay para mejor contraste */}
           <div className={`absolute inset-0 ${
             isMobile ? 'bg-black/40' : 
@@ -678,19 +681,6 @@ const Home = () => {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
-        }
-
-        /* Estilos específicos para el iframe de YouTube */
-        .youtube-background {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 100vw;
-          height: 100vh;
-          transform: translate(-50%, -50%) scale(1.1);
-          min-width: 100%;
-          min-height: 100%;
-          object-fit: cover;
         }
       `}</style>
     </div>
