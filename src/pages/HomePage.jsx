@@ -1,12 +1,15 @@
 // pages/Home.jsx
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { HeroSection, VideoSection, ProjectsSection, VideoModal } from "../components/Home";
 import NoiseGradientBackground from "../components/Background/NoiseGradientBackground";
+import CameraFrameUI from "../components/CinematicLoading";
 
 const Home = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [fullscreenVideo, setFullscreenVideo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const dynamicTexts = [
     "rectángulo",
@@ -120,6 +123,10 @@ const Home = () => {
     };
   }, [fullscreenVideo]);
 
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+  };
+
   const handleButtonClick = () => {
     window.location.href = "/about";
   };
@@ -134,49 +141,84 @@ const Home = () => {
 
   return (
     <div className="relative min-h-screen bg-black">
-      {/* Fondo gradient SOLO para Home - con position absolute */}
-      <div className="absolute inset-0 z-0">
-        <NoiseGradientBackground />
-      </div>
-      
-      {/* Contenido de Home con z-index mayor */}
-      <div className="relative z-10 min-h-screen">
-        <div className="h-screen overflow-y-scroll snap-y snap-mandatory hide-scrollbar">
-          <HeroSection
-            dynamicTexts={dynamicTexts}
-            isMobile={isMobile}
-            isTablet={isTablet}
-            onButtonClick={handleButtonClick}
-          />
+      {/* AnimatePresence para manejar las transiciones */}
+      <AnimatePresence mode="wait">
+        {isLoading ? (
+          // PANTALLA DE CARGA
+          <motion.div
+            key="loading"
+            initial={{ opacity: 1 }}
+            exit={{ 
+              opacity: 0,
+              transition: { 
+                duration: 0.8, 
+                ease: "easeInOut" 
+              }
+            }}
+          >
+            <CameraFrameUI onLoadingComplete={handleLoadingComplete} />
+          </motion.div>
+        ) : (
+          // CONTENIDO PRINCIPAL
+          <motion.div
+            key="content"
+            initial={{ opacity: 0 }}
+            animate={{ 
+              opacity: 1,
+              transition: { 
+                duration: 0.5, 
+                ease: "easeOut",
+                delay: 0.3 // Pequeño delay después que el loading desaparece
+              }
+            }}
+            className="relative min-h-screen"
+          >
+            {/* Fondo gradient */}
+            <div className="absolute inset-0 z-0">
+              <NoiseGradientBackground />
+            </div>
+            
+            {/* Contenido de Home */}
+            <div className="relative z-10 min-h-screen">
+              <div className="h-screen overflow-y-scroll snap-y snap-mandatory hide-scrollbar">
+                <HeroSection
+                  dynamicTexts={dynamicTexts}
+                  isMobile={isMobile}
+                  isTablet={isTablet}
+                  onButtonClick={handleButtonClick}
+                />
 
-          <VideoSection
-            isMobile={isMobile}
-            isTablet={isTablet}
-          />
+                <VideoSection
+                  isMobile={isMobile}
+                  isTablet={isTablet}
+                />
 
-          <ProjectsSection
-            featuredProjects={featuredProjects}
-            isMobile={isMobile}
-            isTablet={isTablet}
-            onProjectClick={handleProjectClick}
-          />
+                <ProjectsSection
+                  featuredProjects={featuredProjects}
+                  isMobile={isMobile}
+                  isTablet={isTablet}
+                  onProjectClick={handleProjectClick}
+                />
 
-          <VideoModal
-            fullscreenVideo={fullscreenVideo}
-            onClose={closeFullscreen}
-          />
+                <VideoModal
+                  fullscreenVideo={fullscreenVideo}
+                  onClose={closeFullscreen}
+                />
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          <style>{`
-            .hide-scrollbar {
-              -ms-overflow-style: none;
-              scrollbar-width: none;
-            }
-            .hide-scrollbar::-webkit-scrollbar {
-              display: none;
-            }
-          `}</style>
-        </div>
-      </div>
+      <style jsx>{`
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 };
