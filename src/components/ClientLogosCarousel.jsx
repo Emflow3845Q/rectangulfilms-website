@@ -35,7 +35,7 @@ const ClientLogosCarousel = () => {
   }, []);
 
   return (
-    <div className="bg-black py-16 overflow-hidden border-t border-b border-gray-dark/30">
+    <div className="bg-black py-8 overflow-hidden border-t border-b border-gray-dark/30">
       <div className="relative">
         <div 
           ref={carouselRef}
@@ -45,7 +45,7 @@ const ClientLogosCarousel = () => {
           {duplicatedLogos.map((logo, index) => (
             <div
               key={index}
-              className="flex-shrink-0 w-32 h-16 flex items-center justify-center"
+              className="flex-shrink-0 w-32 h-12 flex items-center justify-center"
             >
               <img 
                 src={logo} 

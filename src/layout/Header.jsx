@@ -290,7 +290,7 @@ const Header = () => {
     const parent = e.target.parentElement;
     if (parent) {
       parent.style.backgroundColor = '#1f2937';
-      parent.innerHTML = '<div class="flex items-center justify-center h-full text-white/50 text-lg">Video no disponible</div>';
+      parent.innerHTML = '<div class="flex items-center justify-center h-full text-white/50 text-lg font-gotham font-bold">Video no disponible</div>';
     }
   };
 
@@ -303,7 +303,7 @@ const Header = () => {
 
   return (
     <>
-      {/* HEADER PRINCIPAL */}
+      {/* HEADER PRINCIPAL - ANCHO COMPLETO */}
       <header
         ref={headerRef}
         className={`fixed top-0 left-0 w-full z-[100] py-2 md:py-3 transform transition-all duration-500 ${
@@ -312,25 +312,26 @@ const Header = () => {
             : 'translate-y-0 opacity-100'
         } bg-transparent`}
       >
-        <nav className="container mx-auto px-4 sm:px-6 relative">
+        <nav className="w-full px-4 sm:px-6 relative">
           <div className="flex justify-between items-center">
-            {/* Logo */}
+            {/* Logo - SIN EFECTO HOVER */}
             <div ref={logoRef} className="flex items-center">
               <Link to="/" className="flex items-center">
                 <img
-                  src="/logo.svg"
+                  src="/logo.png"
                   alt="CSA STUDIO"
-                  className="h-7 sm:h-8 lg:h-10 w-auto cursor-pointer hover:scale-110 transition-transform duration-300"
+                  className="h-7 sm:h-8 lg:h-10 w-auto cursor-pointer"
+                  // Se removió: hover:scale-110 transition-transform duration-300
                 />
               </Link>
             </div>
 
             {/* Selector de idioma y Botón Hamburguesa */}
             <div className="flex items-center gap-4 sm:gap-6">
-              {/* Selector de idioma */}
+              {/* Selector de idioma - GOTHAM BOLD */}
               <button
                 onClick={toggleLanguage}
-                className="text-white text-sm uppercase tracking-widest hover:text-red-600 transition-colors duration-300 px-2 py-1 font-gotham font-medium"
+                className="text-white text-sm uppercase tracking-widest hover:text-red-600 transition-colors duration-300 px-2 py-1 font-gotham font-bold"
               >
                 {currentLanguage === 'en' ? 'ES' : 'EN'}
               </button>
@@ -349,9 +350,18 @@ const Header = () => {
                     <span className="w-full h-0.5 bg-white transition-all duration-300 group-hover:bg-red-600"></span>
                   </div>
                 ) : (
-                  <div className="relative w-5 sm:w-6 h-5 sm:h-6">
-                    <span className="absolute top-1/2 left-0 w-5 sm:w-6 h-0.5 bg-white transform -rotate-45 transition-all duration-300 group-hover:bg-red-600"></span>
-                    <span className="absolute top-1/2 left-0 w-5 sm:w-6 h-0.5 bg-white transform rotate-45 transition-all duration-300 group-hover:bg-red-600"></span>
+                  // Contenedor para el efecto hover de "CLOSE" - ANIMACIÓN DE SUBIDA
+                  <div className="relative h-6 overflow-hidden">
+                    <div className="flex flex-col transition-all duration-300 group-hover:-translate-y-6">
+                      {/* "CLOSE" normal - sube con animación */}
+                      <span className="text-white text-xs uppercase tracking-widest font-accent font-normal h-6 flex items-center justify-center">
+                        CLOSE
+                      </span>
+                      {/* "CLOSE" rojo que aparece desde abajo */}
+                      <span className="text-red-600 text-xs uppercase tracking-widest font-accent font-normal h-6 flex items-center justify-center">
+                        CLOSE
+                      </span>
+                    </div>
                   </div>
                 )}
               </button>
@@ -371,24 +381,32 @@ const Header = () => {
           pointerEvents: isMenuOpen ? 'auto' : 'none'
         }}
       >
-        {/* Botón de cerrar */}
+        {/* Botón de cerrar con texto "CLOSE" - ANIMACIÓN DE SUBIDA */}
         <button
-          className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[110] flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 bg-black/50 rounded-full backdrop-blur-sm group"
+          className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[110] flex items-center justify-center w-auto h-10 sm:h-12 px-4 sm:px-6 group"
           onClick={toggleMenu}
           aria-label={t('header.aria.closeMenu')}
         >
-          <div className="relative w-5 sm:w-6 h-5 sm:h-6">
-            <span className="absolute top-1/2 left-0 w-5 sm:w-6 h-0.5 bg-white transform -rotate-45 transition-all duration-300 group-hover:bg-red-600"></span>
-            <span className="absolute top-1/2 left-0 w-5 sm:w-6 h-0.5 bg-white transform rotate-45 transition-all duration-300 group-hover:bg-red-600"></span>
+          <div className="relative h-6 overflow-hidden">
+            <div className="flex flex-col transition-all duration-300 group-hover:-translate-y-6">
+              {/* "CLOSE" normal - sube con animación */}
+              <span className="text-white text-sm sm:text-base uppercase tracking-widest font-accent font-normal h-6 flex items-center justify-center">
+                CLOSE
+              </span>
+              {/* "CLOSE" rojo que aparece desde abajo */}
+              <span className="text-red-600 text-sm sm:text-base uppercase tracking-widest font-accent font-normal h-6 flex items-center justify-center">
+                CLOSE
+              </span>
+            </div>
           </div>
         </button>
 
         <div className={`h-full ${window.innerWidth <= 768 ? '' : 'flex flex-col md:flex-row'}`}>
-          {/* VERSIÓN MÓVIL - SIN LÍNEAS */}
+          {/* VERSIÓN MÓVIL - OPCIONES MÁS ALARGADAS Y MENOS ESPACIO */}
           {window.innerWidth <= 768 ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="w-full max-w-md px-6">
-                <div className="flex flex-col gap-8">
+                <div className="flex flex-col gap-6">
                   {menuItems.map((item, index) => (
                     <div
                       key={item.id}
@@ -399,13 +417,13 @@ const Header = () => {
                         }
                       }}
                       onClick={() => handleMenuItemClick(item)}
-                      className="text-white text-4xl font-accent uppercase tracking-wide text-center py-6 transition-all duration-300 active:bg-white/10 active:scale-95 group cursor-pointer font-black"
+                      className="text-white text-5xl font-accent uppercase tracking-wide text-center py-6 transition-all duration-300 active:bg-white/10 active:scale-95 group cursor-pointer font-black"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="group-hover:text-red-600 transition-colors duration-300 text-5xl">
+                        <span className="group-hover:text-red-600 transition-colors duration-300 text-6xl">
                           {item.label}
                         </span>
-                        <span className="text-red-600 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2 text-3xl">
+                        <span className="text-red-600 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2 text-4xl">
                           →
                         </span>
                       </div>
@@ -415,7 +433,7 @@ const Header = () => {
               </div>
             </div>
           ) : (
-            // VERSIÓN DESKTOP - SIN LÍNEAS
+            // VERSIÓN DESKTOP - OPCIONES MÁS ALARGADAS Y MENOS ESPACIO
             <>
               <div className="w-full md:w-1/2 relative z-10 flex items-center justify-center">
                 <div className="w-full max-w-2xl px-8">
@@ -431,7 +449,7 @@ const Header = () => {
                         }}
                         onClick={() => handleMenuItemClick(item)}
                         onMouseEnter={() => handleMenuItemHover(item)}
-                        className="text-white text-5xl xl:text-6xl font-accent uppercase tracking-wider text-left py-4 hover:text-red-600 transition-all duration-500 hover:translate-x-6 group block cursor-pointer font-black"
+                        className="text-white text-6xl xl:text-7xl font-accent uppercase tracking-wider text-left py-4 hover:text-red-600 transition-all duration-500 hover:translate-x-6 group block cursor-pointer font-black"
                       >
                         {item.label}
                       </div>
@@ -464,7 +482,7 @@ const Header = () => {
                   </div>
                 ) : (
                   <div className="absolute inset-0 w-full h-full flex items-center justify-center">
-                    <span className="text-white/50 text-xl font-gotham font-light">Selecciona una opción</span>
+                    <span className="text-white/50 text-xl font-gotham font-bold">Selecciona una opción</span>
                   </div>
                 )}
               </div>

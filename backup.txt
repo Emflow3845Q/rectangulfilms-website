@@ -2,6 +2,82 @@ import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 
+// Componente GlitchImage para el efecto de distorsión al hacer hover
+// Definido fuera del componente principal para evitar recreación innecesaria,
+// pero incluido en este mismo archivo.
+const GlitchImage = ({ project, delay, isInView }) => {
+  // Variantes para la aparición de la imagen dentro de la 'cortina'
+  const contentVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, delay: 0.3, ease: "easeOut" }
+    }
+  };
+
+  return (
+    <motion.div
+      className="w-full h-full relative overflow-hidden" 
+      initial="hidden"
+      animate={isInView ? "visible" : "hidden"}
+      variants={contentVariants}
+      // El retraso total es el retraso de la tarjeta (stagger) + 0.3s (retraso de aparición)
+      transition={{ delay: delay + 0.3 }} 
+    >
+      {/* CAPA BASE (Se desplaza ligeramente) */}
+      <motion.img
+        src={project.image}
+        alt={project.title}
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500"
+        draggable="false"
+        whileHover={{
+          scale: 1.05, 
+          x: 5, // Desviación de la capa base
+          filter: "grayscale(100%)", // Opcional: Desaturación sutil
+          transition: { duration: 0.2, type: "spring", stiffness: 300, damping: 20 }
+        }}
+      />
+      {/* CAPA SUPERIOR 1 (Bandas superiores) */}
+      <motion.img
+        src={project.image}
+        alt={project.title}
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{
+          clipPath: "inset(0% 0% 70% 0%)", // Muestra la parte superior (0% a 30%)
+          mixBlendMode: "screen", // Efecto de color
+        }}
+        whileHover={{
+          x: -15, // Desplazamiento horizontal opuesto
+          y: -8,
+          opacity: 0.8,
+          transition: { duration: 0.2, type: "spring", stiffness: 300, damping: 20 }
+        }}
+      />
+      {/* CAPA SUPERIOR 2 (Bandas medias/inferiores) */}
+      <motion.img
+        src={project.image}
+        alt={project.title}
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{
+          clipPath: "inset(55% 0% 25% 0%)", // Muestra la parte media (55% a 75%)
+          mixBlendMode: "overlay", // Efecto de color
+        }}
+        whileHover={{
+          x: 10, // Desplazamiento horizontal
+          y: 4,
+          opacity: 0.7,
+          transition: { duration: 0.2, type: "spring", stiffness: 300, damping: 20 }
+        }}
+      />
+    </motion.div>
+  );
+};
+
+// ----------------------------------------------------------------------
+// COMPONENTE PRINCIPAL STILLPAGE
+// ----------------------------------------------------------------------
+
 const StillPage = () => {
   const { t } = useLanguage();
   const carouselRef = useRef(null);
@@ -10,7 +86,7 @@ const StillPage = () => {
   const [isHovering, setIsHovering] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
 
-  // Variantes de animación para el efecto cortina
+  // Variantes de animación para el efecto cortina (SIN CAMBIOS)
   const curtainVariants = {
     hidden: {
       height: 0,
@@ -30,24 +106,24 @@ const StillPage = () => {
     }
   };
 
-  // Variantes para el contenido que aparece después
+  // Variantes para el contenido que aparece después (AJUSTADAS para usar 'custom' en el texto)
   const contentVariants = {
     hidden: {
       opacity: 0,
       y: 20
     },
-    visible: {
+    visible: (index) => ({
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.5,
-        delay: 0.3,
+        delay: index * 0.1 + 0.4, // Ajustamos el delay aquí para que el texto siga al stagger de la cortina
         ease: "easeOut"
       }
-    }
+    })
   };
 
-  // Variantes para el contenedor de cada tarjeta
+  // Variantes para el contenedor de cada tarjeta (Ya no las usamos para el opacity, se mantienen las de escala)
   const cardVariants = {
     hidden: {
       opacity: 0
@@ -61,7 +137,7 @@ const StillPage = () => {
     })
   };
 
-  // Variantes para el cursor de drag
+  // Variantes para el cursor de drag (SIN CAMBIOS)
   const dragCursorVariants = {
     hidden: {
       scale: 0,
@@ -77,10 +153,10 @@ const StillPage = () => {
     }
   };
 
-  // Manejar el movimiento del mouse
+  // Manejar el movimiento del mouse (SIN CAMBIOS)
   const handleMouseMove = (e) => {
     if (carouselRef.current) {
-      const rect = carouselRef.current.getBoundingClientRect();
+      // const rect = carouselRef.current.getBoundingClientRect(); // No se usa, se elimina
       setCursorPosition({
         x: e.clientX,
         y: e.clientY
@@ -88,30 +164,23 @@ const StillPage = () => {
     }
   };
 
-  // Deshabilitar el cursor personalizado cuando estamos sobre el carrusel
+  // Deshabilitar el cursor personalizado cuando estamos sobre el carrusel (SIN CAMBIOS)
   useEffect(() => {
     if (isHovering) {
-      // Ocultar el cursor personalizado
       const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
       if (customCursor) {
         customCursor.style.display = 'none';
       }
-      
-      // Ocultar el cursor del sistema
       document.body.style.cursor = 'none';
     } else {
-      // Restaurar el cursor personalizado
       const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
       if (customCursor) {
         customCursor.style.display = 'block';
       }
-      
-      // Restaurar cursor del sistema
       document.body.style.cursor = 'auto';
     }
 
     return () => {
-      // Limpiar al desmontar
       document.body.style.cursor = 'auto';
       const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
       if (customCursor) {
@@ -120,89 +189,24 @@ const StillPage = () => {
     };
   }, [isHovering]);
 
-  // Tus imágenes originales en su orden original
+  // Tus imágenes originales en su orden original (SIN CAMBIOS)
   const projects = [
-    {
-      id: 1,
-      title: t("stillProjects.billionsFashion.title"),
-      category: t("stillProjects.billionsFashion.category"),
-      image: "/motion/work1.webp",
-    },
-    {
-      id: 3,
-      title: t("stillProjects.ohLaLashes.title"),
-      category: t("stillProjects.ohLaLashes.category"),
-      image: "/motion/work3.webp",
-    },
-    {
-      id: 4,
-      title: t("stillProjects.gnpEncore.title"),
-      category: t("stillProjects.gnpEncore.category"),
-      image: "/motion/work4.webp",
-    },
-    {
-      id: 5,
-      title: t("stillProjects.grupoAeropuertario.title"),
-      category: t("stillProjects.grupoAeropuertario.category"),
-      image: "/motion/work5.webp",
-    },
-    {
-      id: 6,
-      title: t("stillProjects.dac.title"),
-      category: t("stillProjects.dac.category"),
-      image: "/motion/work6.webp",
-    },
-    {
-      id: 7,
-      title: t("stillProjects.drCamilo.title"),
-      category: t("stillProjects.drCamilo.category"),
-      image: "/motion/work7.webp",
-    },
-    {
-      id: 8,
-      title: t("stillProjects.mickFlores.title"),
-      category: t("stillProjects.mickFlores.category"),
-      image: "/motion/work8.webp",
-    },
-    {
-      id: 9,
-      title: t("stillProjects.casaIdea.title"),
-      category: t("stillProjects.casaIdea.category"),
-      image: "/motion/work9.webp",
-    },
-    {
-      id: 10,
-      title: t("stillProjects.laPerla.title"),
-      category: t("stillProjects.laPerla.category"),
-      image: "/motion/work10.webp",
-    },
-    {
-      id: 11,
-      title: t("stillProjects.billionsTrade.title"),
-      category: t("stillProjects.billionsTrade.category"),
-      image: "/motion/work11.webp",
-    },
-    {
-      id: 12,
-      title: t("stillProjects.ramsesSoriano.title"),
-      category: t("stillProjects.ramsesSoriano.category"),
-      image: "/motion/work12.webp",
-    },
-    {
-      id: 13,
-      title: t("stillProjects.elAfilador.title"),
-      category: t("stillProjects.elAfilador.category"),
-      image: "/motion/work13.webp",
-    },
-    {
-      id: 2,
-      title: t("stillProjects.hpFinance.title"),
-      category: t("stillProjects.hpFinance.category"),
-      image: "/motion/work2.webp",
-    }
+    { id: 1, title: t("stillProjects.billionsFashion.title"), category: t("stillProjects.billionsFashion.category"), image: "/motion/work1.webp" },
+    { id: 3, title: t("stillProjects.ohLaLashes.title"), category: t("stillProjects.ohLaLashes.category"), image: "/motion/work3.webp" },
+    { id: 4, title: t("stillProjects.gnpEncore.title"), category: t("stillProjects.gnpEncore.category"), image: "/motion/work4.webp" },
+    { id: 5, title: t("stillProjects.grupoAeropuertario.title"), category: t("stillProjects.grupoAeropuertario.category"), image: "/motion/work5.webp" },
+    { id: 6, title: t("stillProjects.dac.title"), category: t("stillProjects.dac.category"), image: "/motion/work6.webp" },
+    { id: 7, title: t("stillProjects.drCamilo.title"), category: t("stillProjects.drCamilo.category"), image: "/motion/work7.webp" },
+    { id: 8, title: t("stillProjects.mickFlores.title"), category: t("stillProjects.mickFlores.category"), image: "/motion/work8.webp" },
+    { id: 9, title: t("stillProjects.casaIdea.title"), category: t("stillProjects.casaIdea.category"), image: "/motion/work9.webp" },
+    { id: 10, title: t("stillProjects.laPerla.title"), category: t("stillProjects.laPerla.category"), image: "/motion/work10.webp" },
+    { id: 11, title: t("stillProjects.billionsTrade.title"), category: t("stillProjects.billionsTrade.category"), image: "/motion/work11.webp" },
+    { id: 12, title: t("stillProjects.ramsesSoriano.title"), category: t("stillProjects.ramsesSoriano.category"), image: "/motion/work12.webp" },
+    { id: 13, title: t("stillProjects.elAfilador.title"), category: t("stillProjects.elAfilador.category"), image: "/motion/work13.webp" },
+    { id: 2, title: t("stillProjects.hpFinance.title"), category: t("stillProjects.hpFinance.category"), image: "/motion/work2.webp" }
   ];
 
-  // Medir ancho total para calcular drag constraints
+  // Medir ancho total para calcular drag constraints (SIN CAMBIOS)
   useEffect(() => {
     if (carouselRef.current) {
       setWidth(
@@ -211,7 +215,7 @@ const StillPage = () => {
     }
   }, []);
 
-  // Observer para detectar cuando la sección entra en vista
+  // Observer para detectar cuando la sección entra en vista (SIN CAMBIOS)
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -242,9 +246,8 @@ const StillPage = () => {
         <h2 className="text-4xl sm:text-5xl md:text-6xl font-accent uppercase tracking-tight text-white-pure font-black">
           {t("still.title") || "Our Work"}
         </h2>
-
         <button className="text-xs uppercase tracking-[0.3em] border-b border-white-pure pb-1 text-white-pure hover:text-red-primary hover:border-red-primary transition-colors duration-300 font-gotham font-medium">
-          ALL PROJECTS
+          {t("still.viewAll") || "ALL PROJECTS"}
         </button>
       </motion.div>
 
@@ -288,7 +291,7 @@ const StillPage = () => {
             <motion.div
               key={project.id}
               className="min-w-[24vw] max-w-[24vw] flex-shrink-0 group"
-              whileHover={{ scale: 0.98 }}
+              whileHover={{ scale: 0.98 }} // Conservamos el scale: 0.98 original
               transition={{ duration: 0.2 }}
               custom={index}
               variants={cardVariants}
@@ -305,21 +308,12 @@ const StillPage = () => {
                   ease: [0.25, 0.1, 0.25, 1]
                 }}
               >
-                {/* IMAGEN que aparece después del efecto cortina */}
-                <motion.div
-                  initial="hidden"
-                  animate={isInView ? "visible" : "hidden"}
-                  variants={contentVariants}
-                  transition={{ delay: index * 0.1 + 0.3 }}
-                  className="w-full h-full"
-                >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    draggable="false"
-                  />
-                </motion.div>
+                {/* 🔄 Reemplazamos el div/img estático con el nuevo GlitchImage */}
+                <GlitchImage 
+                  project={project} 
+                  delay={index * 0.1} 
+                  isInView={isInView} 
+                />
               </motion.div>
 
               {/* TEXTO que aparece después */}
@@ -327,12 +321,11 @@ const StillPage = () => {
                 initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
                 variants={contentVariants}
-                transition={{ delay: index * 0.1 + 0.4 }}
+                custom={index} // Pasamos el índice para usar el delay escalonado en contentVariants
               >
                 <h3 className="mt-4 text-lg font-gotham font-medium text-white-pure">
                   {project.title}
                 </h3>
-
                 <p className="text-xs uppercase tracking-[0.2em] text-red-primary font-gotham font-light">
                   {project.category}
                 </p>
@@ -341,7 +334,6 @@ const StillPage = () => {
           ))}
         </motion.div>
       </motion.div>
-
     </section>
   );
 };

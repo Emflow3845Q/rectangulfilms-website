@@ -1,156 +1,129 @@
-import { useEffect, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from "react";
 
 const CleanCursor = () => {
   const canvasRef = useRef(null);
-  const particlesRef = useRef([]);
   const mouseRef = useRef({ x: 0, y: 0 });
-  const lastMouseRef = useRef({ x: 0, y: 0 });
-  const animationRef = useRef(null);
-  const isMovingRef = useRef(false);
-  
+  const smoothRef = useRef({ x: 0, y: 0 });
+  const animRef = useRef(null);
+  const trailRef = useRef([]);
+  const maxTrailLength = 20;
+
   const isMobile = useMemo(() => window.innerWidth <= 768, []);
-
-  // Partícula que no deja rastro
-  class CleanParticle {
-    constructor(x, y, velocity) {
-      this.x = x;
-      this.y = y;
-      this.vx = velocity.x * 0.4;
-      this.vy = velocity.y * 0.4;
-      this.size = Math.random() * 2 + 1;
-      this.alpha = 1;
-      this.life = 1;
-      this.decay = 0.05; // Desaparece más rápido
-    }
-
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-      this.life -= this.decay;
-      this.alpha = this.life;
-      
-      return this.life > 0;
-    }
-
-    draw(ctx) {
-      ctx.save();
-      ctx.globalAlpha = this.alpha;
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  }
 
   const initCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    particlesRef.current = [];
-  }, []);
-
-  const calculateVelocity = useCallback((currentX, currentY, lastX, lastY) => {
-    return {
-      x: currentX - lastX,
-      y: currentY - lastY
-    };
-  }, []);
-
-  const createParticles = useCallback((x, y, velocity) => {
-    if (!isMovingRef.current) return;
-
-    const speed = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-    
-    if (speed > 2) {
-      const particleCount = Math.min(Math.floor(speed * 0.2), 3);
-      
-      for (let i = 0; i < particleCount; i++) {
-        particlesRef.current.push(
-          new CleanParticle(x, y, velocity)
-        );
-      }
-    }
   }, []);
 
   const animate = useCallback(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!ctx || !canvas) return;
+    if (!canvas) return;
 
-    // LIMPIAR COMPLETAMENTE el canvas en cada frame
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    // Actualizar y dibujar partículas
-    particlesRef.current = particlesRef.current.filter(particle => {
-      const isAlive = particle.update();
-      if (isAlive) {
-        particle.draw(ctx);
-      }
-      return isAlive;
+    const { width, height } = canvas;
+
+    // Limpiar pantalla completamente
+    ctx.clearRect(0, 0, width, height);
+
+    // Suavizado de movimiento
+    smoothRef.current.x += (mouseRef.current.x - smoothRef.current.x) * 0.2;
+    smoothRef.current.y += (mouseRef.current.y - smoothRef.current.y) * 0.2;
+
+    // Agregar nuevo punto al trail
+    trailRef.current.push({
+      x: smoothRef.current.x,
+      y: smoothRef.current.y
     });
 
-    animationRef.current = requestAnimationFrame(animate);
+    // Mantener solo los últimos puntos
+    if (trailRef.current.length > maxTrailLength) {
+      trailRef.current.shift();
+    }
+
+    // Dibujar la línea trazada como UNA SOLA LÍNEA CONTINUA
+    if (trailRef.current.length > 1) {
+      ctx.beginPath();
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+
+      // Mover al primer punto
+      ctx.moveTo(trailRef.current[0].x, trailRef.current[0].y);
+
+      // Crear gradiente lineal para la línea en BLANCO
+      const gradient = ctx.createLinearGradient(
+        trailRef.current[0].x, trailRef.current[0].y,
+        trailRef.current[trailRef.current.length - 1].x, 
+        trailRef.current[trailRef.current.length - 1].y
+      );
+      
+      // Añadir stops de color BLANCO con opacidad variable
+      for (let i = 0; i < trailRef.current.length; i++) {
+        const progress = i / (trailRef.current.length - 1);
+        const alpha = 0.1 + (progress * 0.9); // Más opaco hacia el final
+        gradient.addColorStop(progress, `rgba(255, 255, 255, ${alpha})`);
+      }
+
+      ctx.strokeStyle = gradient;
+
+      // Dibujar línea continua a través de TODOS los puntos
+      for (let i = 1; i < trailRef.current.length; i++) {
+        ctx.lineTo(trailRef.current[i].x, trailRef.current[i].y);
+      }
+
+      // Trazar la línea completa de una vez
+      ctx.stroke();
+    }
+
+    animRef.current = requestAnimationFrame(animate);
   }, []);
 
-  const handleMouseMove = useCallback((e) => {
-    const currentX = e.clientX;
-    const currentY = e.clientY;
+  const handleMouse = useCallback((e) => {
+    mouseRef.current.x = e.clientX;
+    mouseRef.current.y = e.clientY;
+  }, []);
 
-    const velocity = calculateVelocity(
-      currentX, 
-      currentY, 
-      lastMouseRef.current.x, 
-      lastMouseRef.current.y
-    );
-
-    isMovingRef.current = true;
-    
-    setTimeout(() => {
-      isMovingRef.current = false;
-    }, 30);
-
-    createParticles(currentX, currentY, velocity);
-    lastMouseRef.current = { x: currentX, y: currentY };
-    mouseRef.current = { x: currentX, y: currentY };
-  }, [calculateVelocity, createParticles]);
+  const handleMouseLeave = useCallback(() => {
+    trailRef.current = [];
+  }, []);
 
   useEffect(() => {
     if (isMobile || !canvasRef.current) return;
 
     initCanvas();
-    animate();
 
-    lastMouseRef.current = { 
-      x: window.innerWidth / 2, 
-      y: window.innerHeight / 2 
+    smoothRef.current = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', initCanvas);
+    trailRef.current = [];
+
+    animRef.current = requestAnimationFrame(animate);
+
+    window.addEventListener("mousemove", handleMouse);
+    window.addEventListener("resize", initCanvas);
+    window.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', initCanvas);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      window.removeEventListener("mousemove", handleMouse);
+      window.removeEventListener("resize", initCanvas);
+      window.removeEventListener("mouseleave", handleMouseLeave);
+      cancelAnimationFrame(animRef.current);
     };
-  }, [isMobile, initCanvas, animate, handleMouseMove]);
+  }, [isMobile, initCanvas, animate, handleMouse, handleMouseLeave]);
 
-  if (isMobile) {
-    return null;
-  }
+  if (isMobile) return null;
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed top-0 left-0 pointer-events-none z-[9999]"
-      style={{ 
-        background: 'transparent'
-      }}
+      className="fixed top-0 left-0 pointer-events-none z-[99999]"
+      style={{ background: "transparent" }}
     />
   );
 };

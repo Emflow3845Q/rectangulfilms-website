@@ -4,7 +4,6 @@ import { LanguageProvider } from './context/LanguageContext';
 import Header from './layout/Header';
 import Home from './pages/HomePage';
 import Aboutpages from './pages/AboutPage';
-import Servicespages from './pages/ServicesPage';
 import Rentalspages from './pages/RentalsPage';
 import Motionpages from './pages/MotionPage';
 import Footer from './layout/Footer';
@@ -19,29 +18,29 @@ function App() {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    const handleContextMenu = (e) => e.preventDefault();
+  // useEffect(() => {
+  //   const handleContextMenu = (e) => e.preventDefault();
 
-    const handleKeyDown = (e) => {
-      if (
-        e.key === "F12" || // DevTools
-        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") || // Ctrl+Shift+I
-        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") || // Ctrl+Shift+J
-        (e.ctrlKey && e.key.toLowerCase() === "u") // Ctrl+U (ver código fuente)
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
+  //   const handleKeyDown = (e) => {
+  //     if (
+  //       e.key === "F12" || // DevTools
+  //       (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") || // Ctrl+Shift+I
+  //       (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "j") || // Ctrl+Shift+J
+  //       (e.ctrlKey && e.key.toLowerCase() === "u") // Ctrl+U (ver código fuente)
+  //     ) {
+  //       e.preventDefault();
+  //       e.stopPropagation();
+  //     }
+  //   };
 
-    document.addEventListener("contextmenu", handleContextMenu);
-    document.addEventListener("keydown", handleKeyDown);
+  //   document.addEventListener("contextmenu", handleContextMenu);
+  //   document.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      document.removeEventListener("contextmenu", handleContextMenu);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener("contextmenu", handleContextMenu);
+  //     document.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, []);
 
   return (
     <LanguageProvider>
@@ -66,19 +65,18 @@ function App() {
               {/* Header */}
               <Header />
 
-              {/* Main Routes */}
-              <main>
+              {/* Main Routes - Cada página maneja su propio fondo */}
+              <main className="relative">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/about" element={<Aboutpages />} />
                   <Route path="/motion" element={<Motionpages />} />
                   <Route path="/rentals" element={<Rentalspages />} />
-                  <Route path="/services" element={<Servicespages />} />
                   <Route path="/stills" element={<Stillpages />} />
                 </Routes>
               </main>
 
-              {/* Footer */}
+              {/* Footer con fondo negro sólido */}
               <Footer />
             </>
           )}
