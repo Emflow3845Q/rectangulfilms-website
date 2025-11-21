@@ -672,7 +672,7 @@ const StillPage = () => {
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-accent uppercase tracking-tight text-white-pure font-black">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl font-sans uppercase tracking-tight text-white-pure font-black">
           {t("still.title") || "Our Work"}
         </h2>
 

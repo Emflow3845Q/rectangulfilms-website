@@ -38,7 +38,7 @@ const RentalsPage = () => {
         >
           {/* Título RENTALS muy grande centrado - MEJORADO RESPONSIVE */}
           <motion.h1
-            className="w-full max-w-[1200px] mx-auto text-[3.5rem] xs:text-[4rem] sm:text-[5rem] md:text-[6.5rem] lg:text-[8rem] xl:text-[10.5rem] leading-[0.85] xs:leading-[0.8] font-accent uppercase tracking-[-0.01em] text-white font-black text-center mb-6 xs:mb-8 sm:mb-10 md:mb-12"
+            className="w-full max-w-[1200px] mx-auto text-[3.5rem] xs:text-[4rem] sm:text-[5rem] md:text-[6.5rem] lg:text-[8rem] xl:text-[10.5rem] leading-[0.85] xs:leading-[0.8] font-sans uppercase tracking-[-0.01em] text-white font-black text-center mb-6 xs:mb-8 sm:mb-10 md:mb-12"
             variants={fadeInUp}
             style={{ WebkitFontSmoothing: 'antialiased' }}
           >

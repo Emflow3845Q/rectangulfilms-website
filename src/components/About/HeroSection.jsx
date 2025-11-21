@@ -26,7 +26,7 @@ const HeroSection = () => {
         <div className="max-w-6xl mx-auto pointer-events-none">
           {/* Título principal */}
           <motion.h1
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-accent font-black uppercase tracking-tight text-white-pure mb-3 sm:mb-4 lg:mb-6 pointer-events-none"
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-sans font-black uppercase tracking-tight text-white-pure mb-3 sm:mb-4 lg:mb-6 pointer-events-none"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
