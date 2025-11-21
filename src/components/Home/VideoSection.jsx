@@ -65,7 +65,7 @@ const VideoSection = ({ isMobile, isTablet }) => {
           {[...Array(isMobile ? 6 : isTablet ? 8 : 10)].map((_, i) => (
             <span
               key={i}
-              className="font-accent text-white uppercase tracking-tighter font-black opacity-90"
+              className="font-sans text-white uppercase tracking-tighter font-black opacity-90"
               style={{
                 textShadow: '5px 5px 15px rgba(0,0,0,1)',
                 fontSize: isMobile 
