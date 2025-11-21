@@ -4,28 +4,28 @@ import { gsap } from "gsap";
 const RentalsLogosCarousel = () => {
     const carouselRef = useRef(null);
 
-    // Logos de rentals - ajusta los nombres según tus archivos
+    // Logos de rentals - URLs de Cloudinary
     const rentalsLogos = [
-        "/rentals-logos/logo1.png",
-        "/rentals-logos/logo2.png",
-        "/rentals-logos/logo3.png",
-        "/rentals-logos/logo4.png",
-        "/rentals-logos/logo5.png",
-        "/rentals-logos/logo6.png",
-        "/rentals-logos/logo7.png",
-        "/rentals-logos/logo8.png",
-        "/rentals-logos/logo9.png",
-        "/rentals-logos/logo10.png",
-        "/rentals-logos/logo11.png",
-        "/rentals-logos/logo12.png",
-        "/rentals-logos/logo13.png",
-        "/rentals-logos/logo14.png",
-        "/rentals-logos/logo15.png",
-        "/rentals-logos/logo16.png",
-        "/rentals-logos/logo17.png",
-        "/rentals-logos/logo18.png",
-        "/rentals-logos/logo19.png",
-        "/rentals-logos/logo20.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo1_kfqcbt.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo2_o5pyg4.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo3_oiun5m.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo4_agqjjj.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo5_vldj88.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo6_aqwlq6.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo7_veupxg.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo8_ocb27g.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo9_jd5a8o.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo10_h4pcjp.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo11_ipaq87.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo12_uhjicq.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo13_b4hzh7.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo14_kxdkht.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo15_sczf89.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo16_ojuosj.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo17_wsu1rt.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo18_sulnzh.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo19_dobe9e.png",
+        "https://res.cloudinary.com/dhoyps3vk/image/upload/zoom_p3wsfi.png"
     ];
 
     // Duplicar logos para loop infinito

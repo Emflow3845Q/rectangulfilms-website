@@ -1,63 +1,34 @@
 // src/assets/images/rentals.js
 
-// Importar todas las imágenes de rentals (1-27)
-import rentals1 from '/rentals/rentals1.jpg';
-import rentals2 from '/rentals/rentals2.jpg';
-import rentals3 from '/rentals/rentals3.jpg';
-import rentals4 from '/rentals/rentals4.jpg';
-import rentals5 from '/rentals/rentals5.jpg';
-import rentals6 from '/rentals/rentals6.jpg';
-import rentals7 from '/rentals/rentals7.jpg';
-import rentals8 from '/rentals/rentals8.jpg';
-import rentals9 from '/rentals/rentals9.jpg';
-import rentals10 from '/rentals/rentals10.jpg';
-import rentals11 from '/rentals/rentals11.jpg';
-import rentals12 from '/rentals/rentals12.jpg';
-import rentals13 from '/rentals/rentals13.jpg';
-import rentals14 from '/rentals/rentals14.jpg';
-import rentals15 from '/rentals/rentals15.jpg';
-import rentals16 from '/rentals/rentals16.jpg';
-import rentals17 from '/rentals/rentals17.jpg';
-import rentals18 from '/rentals/rentals18.jpg';
-import rentals19 from '/rentals/rentals19.jpg';
-import rentals20 from '/rentals/rentals20.jpg';
-import rentals21 from '/rentals/rentals21.jpg';
-import rentals22 from '/rentals/rentals22.jpg';
-import rentals23 from '/rentals/rentals23.jpg';
-import rentals24 from '/rentals/rentals24.jpg';
-import rentals25 from '/rentals/rentals25.jpg';
-import rentals26 from '/rentals/rentals26.jpg';
-import rentals27 from '/rentals/rentals27.jpg';
-
-// Exportar como objeto nombrado
+// URLs de Cloudinary para las imágenes de rentals
 export const rentalsImages = {
-  rentals1,
-  rentals2,
-  rentals3,
-  rentals4,
-  rentals5,
-  rentals6,
-  rentals7,
-  rentals8,
-  rentals9,
-  rentals10,
-  rentals11,
-  rentals12,
-  rentals13,
-  rentals14,
-  rentals15,
-  rentals16,
-  rentals17,
-  rentals18,
-  rentals19,
-  rentals20,
-  rentals21,
-  rentals22,
-  rentals23,
-  rentals24,
-  rentals25,
-  rentals26,
-  rentals27
+  rentals1: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762473/rentals1_quwmu1.jpg",
+  rentals2: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762472/rentals2_capktd.jpg",
+  rentals3: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762476/rentals3_mtvwvk.jpg",
+  rentals4: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762479/rentals4_qf1fnf.jpg",
+  rentals5: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762474/rentals5_xh2ckx.jpg",
+  rentals6: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762484/rentals6_qo2tkn.jpg",
+  rentals7: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762489/rentals7_oec0xq.jpg",
+  rentals8: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762501/rentals8_xkrcxz.jpg",
+  rentals9: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762478/rentals9_az1quf.jpg",
+  rentals10: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762481/rentals10_dcxhp2.jpg",
+  rentals11: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762487/rentals11_ynse9w.jpg",
+  rentals12: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762484/rentals12_qcjiwu.jpg",
+  rentals13: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762485/rentals13_nxp1hn.jpg",
+  rentals14: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762506/rentals14_w9i5ff.jpg",
+  rentals15: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762489/rentals15_mh9dtd.jpg",
+  rentals16: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762490/rentals16_tavscu.jpg",
+  rentals17: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762492/rentals17_ctq82b.jpg",
+  rentals18: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762492/rentals18_gw2u7r.jpg",
+  rentals19: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762504/rentals19_gkxoor.jpg",
+  rentals20: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762495/rentals20_jluurv.jpg",
+  rentals21: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762496/rentals21_cctiog.jpg",
+  rentals22: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762499/rentals22_avr6sn.jpg",
+  rentals23: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762501/rentals23_unynhh.jpg",
+  rentals24: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762510/rentals24_ys5wdw.jpg",
+  rentals25: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762504/rentals25_nfpd4n.jpg",
+  rentals26: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762504/rentals26_ccyyhc.jpg",
+  rentals27: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762507/rentals27_xnt4cv.jpg"
 };
 
 // Exportación por defecto

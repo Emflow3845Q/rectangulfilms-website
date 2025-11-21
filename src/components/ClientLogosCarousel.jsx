@@ -4,16 +4,16 @@ import { gsap } from "gsap";
 const ClientLogosCarousel = () => {
   const carouselRef = useRef(null);
 
-  // Logos de clientes
+  // Logos de clientes - URLs de Cloudinary
   const clientLogos = [
-    "/brands/logo1.png",
-    "/brands/logo2.png", 
-    "/brands/logo3.png",
-    "/brands/logo4.png",
-    "/brands/logo5.png",
-    "/brands/logo6.png",
-    "/brands/logo7.png",
-    "/brands/logo8.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo1_iiuzmj.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo2_rygji4.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo3_g1cdwp.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo4_chferx.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo5_z3c2jp.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo6_o4kusm.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo7_b0dyvb.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo9_ll8teo.png"
   ];
 
   // Duplicar logos para loop infinito

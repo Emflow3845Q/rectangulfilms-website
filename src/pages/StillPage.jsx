@@ -19,10 +19,16 @@ const StillPage = () => {
   const projectRefs = useRef([]);
   const imageRefs = useRef([]);
 
-  // Detectar si es móvil
+  // Detectar si es móvil - MEJORADO
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      
+      // Resetear estados cuando cambia a móvil
+      if (mobile) {
+        setIsHovering(false);
+      }
     };
 
     checkMobile();
@@ -263,6 +269,7 @@ const StillPage = () => {
     };
   }, [isHovering, isMobile]);
 
+  // ... (tu array de projects permanece igual)
     const projects = [
     {
       id: 1,
@@ -632,14 +639,20 @@ const StillPage = () => {
     }
   ];
 
-  // Medir ancho total para calcular drag constraints
+  // Medir ancho total para calcular drag constraints - MEJORADO
   useEffect(() => {
-    if (carouselRef.current) {
-      setWidth(
-        carouselRef.current.scrollWidth - carouselRef.current.offsetWidth
-      );
-    }
-  }, []);
+    const updateWidth = () => {
+      if (carouselRef.current) {
+        setWidth(
+          carouselRef.current.scrollWidth - carouselRef.current.offsetWidth
+        );
+      }
+    };
+
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, [projects]); // Dependencia añadida
 
   // Observer para detectar cuando la sección entra en vista
   useEffect(() => {
@@ -683,7 +696,7 @@ const StillPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Tamaños responsive para las tarjetas
+  // Tamaños responsive para las tarjetas - MEJORADO
   const getCardWidth = () => {
     if (typeof window === 'undefined') return '24vw';
     
@@ -714,11 +727,18 @@ const StillPage = () => {
         </button>
       </motion.div>
 
-      {/* CARRUSEL */}
+      {/* CARRUSEL - CORREGIDO PARA MÓVIL */}
       <motion.div
         ref={carouselRef}
-        className="pl-4 sm:pl-6 relative overflow-x-auto overflow-y-hidden"
-        style={{ overflow: "hidden" }}
+        className={`pl-4 sm:pl-6 relative ${
+          isMobile 
+            ? "overflow-x-auto overflow-y-hidden scrollbar-hide" 
+            : "overflow-hidden"
+        }`}
+        style={{ 
+          WebkitOverflowScrolling: 'touch', // Scroll suave en iOS
+          cursor: isMobile ? 'grab' : 'none'
+        }}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
         onMouseEnter={() => !isMobile && setIsHovering(true)}
@@ -749,12 +769,18 @@ const StillPage = () => {
           drag={!isMobile ? "x" : false}
           dragConstraints={{ right: 0, left: -width }}
           dragElastic={0.1}
-          className={`flex gap-3 sm:gap-4 ${!isMobile ? 'cursor-none' : 'cursor-grab'}`}
+          className={`flex gap-3 sm:gap-4 ${
+            !isMobile ? 'cursor-none' : 'cursor-grab active:cursor-grabbing'
+          }`}
           onDrag={(event, info) => {
             !isMobile && updateImageParallax();
           }}
           onDragEnd={(event, info) => {
             !isMobile && updateImageParallax();
+          }}
+          style={{
+            // En móvil, asegurar que el contenido sea lo suficientemente ancho
+            width: isMobile ? 'max-content' : 'auto'
           }}
         >
           {projects.map((project, index) => (
@@ -798,7 +824,6 @@ const StillPage = () => {
                       alt={project.title}
                       className="img w-full h-full object-cover"
                       style={{ 
-                        width: isMobile ? '100%' : '120%', 
                         transformOrigin: 'center center', 
                         willChange: 'transform' 
                       }}
@@ -829,7 +854,6 @@ const StillPage = () => {
                       style={{ 
                         transform: 'scale(1.2)',
                         transformOrigin: 'center center',
-                        width: '120%',
                         willChange: 'transform'
                       }}
                       draggable="false"
@@ -860,17 +884,6 @@ const StillPage = () => {
           ))}
         </motion.div>
       </motion.div>
-
-      {/* INDICADOR DE SCROLL PARA MÓVIL */}
-      {isMobile && (
-        <div className="flex justify-center mt-6 px-4">
-          <div className="bg-white/20 rounded-full px-4 py-2">
-            <span className="text-white text-xs font-gotham font-medium uppercase tracking-wider">
-              Desliza para ver más →
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* ESTILOS CSS PARA EL EFECTO */}
       <style jsx>{`
@@ -932,6 +945,16 @@ const StillPage = () => {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+
+        /* Scrollbar personalizada para móvil */
+        .scrollbar-hide {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none; /* Chrome, Safari and Opera */
         }
 
         /* Scrollbar personalizada para móvil */

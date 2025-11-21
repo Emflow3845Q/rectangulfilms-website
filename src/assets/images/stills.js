@@ -1,128 +1,66 @@
-import still1 from '/stills/still1.jpg';
-import still2 from '/stills/still2.jpg';
-import still3 from '/stills/still3.jpg';
-import still4 from '/stills/still4.jpg';
-import still5 from '/stills/still5.jpg';
-import still6 from '/stills/still6.jpg';
-import still7 from '/stills/still7.jpg';
-import still8 from '/stills/still8.jpg';
-import still9 from '/stills/still9.jpg';
-import still10 from '/stills/still10.jpg';
-import still11 from '/stills/still11.jpg';
-import still12 from '/stills/still12.jpg';
-import still13 from '/stills/still13.jpg';
-import still14 from '/stills/still14.jpg';
-import still15 from '/stills/still15.jpg';
-import still16 from '/stills/still16.jpg';
-import still17 from '/stills/still17.jpg';
-import still18 from '/stills/still18.jpg';
-import still19 from '/stills/still19.jpg';
-import still20 from '/stills/still20.jpg';
-import still21 from '/stills/still21.jpg';
-import still22 from '/stills/still22.jpg';
-import still23 from '/stills/still23.jpg';
-import still24 from '/stills/still24.jpg';
-import still25 from '/stills/still25.jpg';
-import still26 from '/stills/still26.jpg';
-import still27 from '/stills/still27.jpg';
-import still28 from '/stills/still28.jpg';
-import still29 from '/stills/still29.jpg';
-import still30 from '/stills/still30.jpg';
-import still31 from '/stills/still31.jpg';
-import still32 from '/stills/still32.jpg';
-import still33 from '/stills/still33.jpg';
-import still34 from '/stills/still34.jpg';
-import still35 from '/stills/still35.jpg';
-import still36 from '/stills/still36.jpg';
-import still37 from '/stills/still37.jpg';
-import still38 from '/stills/still38.jpg';
-import still39 from '/stills/still39.jpg';
-import still40 from '/stills/still40.jpg';
-import still41 from '/stills/still41.jpg';
-import still42 from '/stills/still42.jpg';
-import still43 from '/stills/still43.jpg';
-import still44 from '/stills/still44.jpg';
-import still45 from '/stills/still45.jpg';
-import still46 from '/stills/still46.jpg';
-import still47 from '/stills/still47.jpg';
-import still48 from '/stills/still48.jpg';
-import still49 from '/stills/still49.jpg';
-import still50 from '/stills/still50.jpg';
-import still51 from '/stills/still51.jpg';
-import still52 from '/stills/still52.jpg';
-import still53 from '/stills/still53.jpg';
-import still54 from '/stills/still54.jpg';
-import still55 from '/stills/still55.jpg';
-import still56 from '/stills/still56.jpg';
-import still57 from '/stills/still57.jpg';
-import still58 from '/stills/still58.jpg';
-import still59 from '/stills/still59.jpg';
-import still60 from '/stills/still60.jpg';
-import still61 from '/stills/still61.jpg';
-
-// Exportar como objeto nombrado
+// URLs de Cloudinary para las imágenes de stills
 export const stillImages = {
-  still1,
-  still2,
-  still3,
-  still4,
-  still5,
-  still6,
-  still7,
-  still8,
-  still9,
-  still10,
-  still11,
-  still12,
-  still13,
-  still14,
-  still15,
-  still16,
-  still17,
-  still18,
-  still19,
-  still20,
-  still21,
-  still22,
-  still23,
-  still24,
-  still25,
-  still26,
-  still27,
-  still28,
-  still29,
-  still30,
-  still31,
-  still32,
-  still33,
-  still34,
-  still35,
-  still36,
-  still37,
-  still38,
-  still39,
-  still40,
-  still41,
-  still42,
-  still43,
-  still44,
-  still45,
-  still46,
-  still47,
-  still48,
-  still49,
-  still50,
-  still51,
-  still52,
-  still53,
-  still54,
-  still55,
-  still56,
-  still57,
-  still58,
-  still59,
-  still60,
-  still61
+  still1: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762214/still1_sdvknl.jpg",
+  still2: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762219/still2_akduay.jpg",
+  still3: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762245/still3_angato.jpg",
+  still4: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762252/still4_qp3nnk.jpg",
+  still5: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762248/still5_sf35ck.jpg",
+  still6: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762239/still6_gewtnx.jpg",
+  still7: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762224/still7_ewt5r2.jpg",
+  still8: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762239/still8_kfhzsq.jpg",
+  still9: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762255/still9_xqm9ub.jpg",
+  still10: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762252/still10_kstxkj.jpg",
+  still11: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762248/still11_lw3wkp.jpg",
+  still12: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762253/still12_n3yusn.jpg",
+  still13: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762253/still13_rywyd5.jpg",
+  still14: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762252/still14_kstxkj.jpg",
+  still15: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762253/still15_zpd4d0.jpg",
+  still16: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762262/still16_zdozmq.jpg",
+  still17: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762257/still17_kl5ztt.jpg",
+  still18: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762260/still18_amf5dh.jpg",
+  still19: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762267/still19_iylo78.jpg",
+  still20: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762264/still20_gxs0hg.jpg",
+  still21: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762269/still21_n1sox2.jpg",
+  still22: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762261/still22_byuanz.jpg",
+  still23: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762269/still23_kjwmwr.jpg",
+  still24: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762276/still24_g4sfrm.jpg",
+  still25: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762284/still25_bbprq4.jpg",
+  still26: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762273/still26_vr4ubw.jpg",
+  still27: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762275/still27_ciakb9.jpg",
+  still28: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762289/still28_pswoe1.jpg",
+  still29: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762290/still29_hfbm9z.jpg",
+  still30: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762279/still30_vcxi6x.jpg",
+  still31: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762296/still31_ygufvh.jpg",
+  still32: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762291/still32_rg9n6t.jpg",
+  still33: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762288/still33_qybgmd.jpg",
+  still34: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762289/still34_jtbvwz.jpg",
+  still35: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762302/still35_yfzhbz.jpg",
+  still36: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762298/still36_qccwyu.jpg",
+  still37: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762295/still37_yqcxd0.jpg",
+  still38: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762292/still38_aztlji.jpg",
+  still39: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762297/still39_je4wmu.jpg",
+  still40: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762296/still40_aasej8.jpg",
+  still41: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762298/still41_hvbn71.jpg",
+  still42: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762298/still42_d3igws.jpg",
+  still43: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762302/still43_nrxhbu.jpg",
+  still44: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762311/still44_ssjloo.jpg",
+  still45: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762312/still45_dhvync.jpg",
+  still46: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762312/still46_ssmwzo.jpg",
+  still47: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762311/still47_fdgqxc.jpg",
+  still48: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762316/still48_jjh7sk.jpg",
+  still49: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762316/still49_fssogc.jpg",
+  still50: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762325/still50_coranz.jpg",
+  still51: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762328/still51_bsc22w.jpg",
+  still52: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762324/still52_idyd3n.jpg",
+  still53: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762334/still53_ifawu0.jpg",
+  still54: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762321/still54_oaal5m.jpg",
+  still55: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762335/still55_tummh1.jpg",
+  still56: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762338/still56_teczww.jpg",
+  still57: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762329/still57_rqrma7.jpg",
+  still58: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762341/still58_ejexsg.jpg",
+  still59: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762346/still59_gdrdp5.jpg",
+  still60: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762348/still60_ayeh6z.jpg",
+  still61: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762349/still61_wavmpj.jpg"
 };
 
 // Exportación por defecto

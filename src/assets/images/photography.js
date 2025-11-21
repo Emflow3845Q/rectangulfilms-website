@@ -1,105 +1,55 @@
 // src/assets/images/photography.js
 
-// Importar todas las imágenes de photography (1-49)
-import photography1 from '/photography/photography1.jpg';
-import photography2 from '/photography/photography2.jpg';
-import photography3 from '/photography/photography3.jpg';
-import photography4 from '/photography/photography4.jpg';
-import photography5 from '/photography/photography5.jpg';
-import photography6 from '/photography/photography6.jpg';
-import photography7 from '/photography/photography7.jpg';
-import photography8 from '/photography/photography8.jpg';
-import photography9 from '/photography/photography9.jpg';
-import photography10 from '/photography/photography10.jpg';
-import photography11 from '/photography/photography11.jpg';
-import photography12 from '/photography/photography12.jpg';
-import photography13 from '/photography/photography13.jpg';
-import photography14 from '/photography/photography14.jpg';
-import photography15 from '/photography/photography15.jpg';
-import photography16 from '/photography/photography16.jpg';
-import photography17 from '/photography/photography17.jpg';
-import photography18 from '/photography/photography18.jpg';
-import photography19 from '/photography/photography19.jpg';
-import photography20 from '/photography/photography20.jpg';
-import photography21 from '/photography/photography21.jpg';
-import photography22 from '/photography/photography22.jpg';
-import photography23 from '/photography/photography23.jpg';
-import photography24 from '/photography/photography24.jpg';
-import photography25 from '/photography/photography25.jpg';
-import photography26 from '/photography/photography26.jpg';
-import photography27 from '/photography/photography27.jpg';
-import photography28 from '/photography/photography28.jpg';
-import photography29 from '/photography/photography29.jpg';
-import photography30 from '/photography/photography30.jpg';
-import photography31 from '/photography/photography31.jpg';
-import photography32 from '/photography/photography32.jpg';
-import photography33 from '/photography/photography33.jpg';
-import photography34 from '/photography/photography34.jpg';
-import photography35 from '/photography/photography35.jpg';
-import photography36 from '/photography/photography36.jpg';
-import photography37 from '/photography/photography37.jpg';
-import photography38 from '/photography/photography38.jpg';
-import photography39 from '/photography/photography39.jpg';
-import photography40 from '/photography/photography40.jpg';
-import photography41 from '/photography/photography41.jpg';
-import photography42 from '/photography/photography42.jpg';
-import photography43 from '/photography/photography43.jpg';
-import photography44 from '/photography/photography44.jpg';
-import photography45 from '/photography/photography45.jpg';
-import photography46 from '/photography/photography46.jpg';
-import photography47 from '/photography/photography47.jpg';
-import photography48 from '/photography/photography48.jpg';
-
-// Exportar como objeto nombrado
+// URLs de Cloudinary para las imágenes de photography
 export const photographyImages = {
-  photography1,
-  photography2,
-  photography3,
-  photography4,
-  photography5,
-  photography6,
-  photography7,
-  photography8,
-  photography9,
-  photography10,
-  photography11,
-  photography12,
-  photography13,
-  photography14,
-  photography15,
-  photography16,
-  photography17,
-  photography18,
-  photography19,
-  photography20,
-  photography21,
-  photography22,
-  photography23,
-  photography24,
-  photography25,
-  photography26,
-  photography27,
-  photography28,
-  photography29,
-  photography30,
-  photography31,
-  photography32,
-  photography33,
-  photography34,
-  photography35,
-  photography36,
-  photography37,
-  photography38,
-  photography39,
-  photography40,
-  photography41,
-  photography42,
-  photography43,
-  photography44,
-  photography45,
-  photography46,
-  photography47,
-  photography48
+  photography1: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762531/photography1_uvwzba.jpg",
+  photography2: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762533/photography2_duoht5.jpg",
+  photography3: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762533/photography3_bbx5sk.jpg",
+  photography4: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762534/photography4_invfkw.jpg",
+  photography5: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762535/photography5_aciu4f.jpg",
+  photography6: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762536/photography6_gl7d8v.jpg",
+  photography7: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762536/photography7_k60voq.jpg",
+  photography8: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762538/photography8_voggyn.jpg",
+  photography9: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762538/photography9_buyq1h.jpg",
+  photography10: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762541/photography10_shemon.jpg",
+  photography11: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762539/photography11_nab17w.jpg",
+  photography12: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762541/photography12_drmfzp.jpg",
+  photography13: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762541/photography13_cywryx.jpg",
+  photography14: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762543/photography14_vxzcws.jpg",
+  photography15: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762542/photography15_zypm9y.jpg",
+  photography16: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762542/photography16_dsxsrc.jpg",
+  photography17: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762546/photography17_rct8v2.jpg",
+  photography18: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762548/photography18_wd150b.jpg",
+  photography19: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762547/photography19_fnupr6.jpg",
+  photography20: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762548/photography20_pjf9eq.jpg",
+  photography21: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762557/photography21_geosc6.jpg",
+  photography22: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762550/photography22_ntbwc9.jpg",
+  photography23: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762556/photography23_wjnv39.jpg",
+  photography24: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762562/photography24_f44ugi.jpg",
+  photography25: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762552/photography25_eqyj4p.jpg",
+  photography26: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762555/photography26_u8yig7.jpg",
+  photography27: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762556/photography27_yxwv7r.jpg",
+  photography28: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762559/photography28_pqyc0f.jpg",
+  photography29: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762560/photography29_eeg4ei.jpg",
+  photography30: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762560/photography30_t8ydvd.jpg",
+  photography31: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762568/photography31_tw6uwu.jpg",
+  photography32: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762593/photography32_gp6jlo.jpg",
+  photography33: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762568/photography33_vgsbgz.jpg",
+  photography34: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762569/photography34_rstse2.jpg",
+  photography35: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762568/photography35_n4sytz.jpg",
+  photography36: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762589/photography36_e5aczy.jpg",
+  photography37: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762581/photography37_gepx7c.jpg",
+  photography38: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762583/photography38_bgxpli.jpg",
+  photography39: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762576/photography39_iv7d1n.jpg",
+  photography40: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762579/photography40_g6qzsf.jpg",
+  photography41: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762582/photography41_lbmqe4.jpg",
+  photography42: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762585/photography42_n76yby.jpg",
+  photography43: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762592/photography43_gog6wc.jpg",
+  photography44: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762588/photography44_o34s1w.jpg",
+  photography45: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762588/photography45_q42kix.jpg",
+  photography46: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762589/photography46_ho5b3c.jpg",
+  photography47: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762591/photography47_q77lrb.jpg",
+  photography48: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762593/photography48_zb51aw.jpg"
 };
 
 // Exportación por defecto
