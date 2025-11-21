@@ -13,14 +13,27 @@ const StillPage = () => {
   const [isHovering, setIsHovering] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [dragProgress, setDragProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Referencias para GSAP
   const projectRefs = useRef([]);
   const imageRefs = useRef([]);
 
+  // Detectar si es móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Función para actualizar el parallax de las imágenes basado en el drag
   const updateImageParallax = () => {
-    if (!carouselRef.current) return;
+    if (!carouselRef.current || isMobile) return;
 
     const carousel = carouselRef.current;
     const scrollLeft = -carousel.scrollLeft || 0;
@@ -42,8 +55,8 @@ const StillPage = () => {
       const containerCenter = containerRect.left + containerRect.width / 2;
       const distanceFromCenter = elementCenter - containerCenter;
       
-      // Calcular intensidad del efecto parallax (ajusta este valor según lo que necesites)
-      const parallaxIntensity = 0.3;
+      // Calcular intensidad del efecto parallax (reducido en móvil)
+      const parallaxIntensity = isMobile ? 0.1 : 0.3;
       const parallaxX = distanceFromCenter * parallaxIntensity;
       
       // Aplicar transformación
@@ -57,7 +70,7 @@ const StillPage = () => {
 
   // Efecto para actualizar parallax cuando se mueve el drag
   useEffect(() => {
-    if (carouselRef.current && isHovering) {
+    if (carouselRef.current && isHovering && !isMobile) {
       const carousel = carouselRef.current;
       const handleScroll = () => {
         updateImageParallax();
@@ -66,10 +79,12 @@ const StillPage = () => {
       carousel.addEventListener('scroll', handleScroll);
       return () => carousel.removeEventListener('scroll', handleScroll);
     }
-  }, [isHovering]);
+  }, [isHovering, isMobile]);
 
   // Función para resetear a estado inicial
   const resetToInitialState = (index) => {
+    if (isMobile) return;
+    
     const projectElement = projectRefs.current[index];
     if (!projectElement) return;
 
@@ -96,6 +111,8 @@ const StillPage = () => {
 
   // Función de animación al hacer hover
   const handleProjectHover = (index) => {
+    if (isMobile) return;
+
     const projectElement = projectRefs.current[index];
     if (!projectElement) return;
 
@@ -122,13 +139,14 @@ const StillPage = () => {
 
     if (hoverImage) {
       gsap.killTweensOf(hoverImage);
-      // No animar escala: mantener la imagen hover en su tamaño por defecto
       gsap.set(hoverImage, { scale: 1.2 });
     }
   };
 
   // Inicializar event listeners
   const initializeHoverEffects = () => {
+    if (isMobile) return;
+    
     projectRefs.current.forEach((projectEl, index) => {
       if (projectEl) {
         projectEl.addEventListener("mouseleave", () => {
@@ -211,7 +229,7 @@ const StillPage = () => {
 
   // Manejar el movimiento del mouse
   const handleMouseMove = (e) => {
-    if (carouselRef.current) {
+    if (carouselRef.current && !isMobile) {
       const rect = carouselRef.current.getBoundingClientRect();
       setCursorPosition({
         x: e.clientX,
@@ -222,7 +240,7 @@ const StillPage = () => {
 
   // Deshabilitar el cursor personalizado cuando estamos sobre el carrusel
   useEffect(() => {
-    if (isHovering) {
+    if (isHovering && !isMobile) {
       const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
       if (customCursor) {
         customCursor.style.display = 'none';
@@ -243,9 +261,9 @@ const StillPage = () => {
         customCursor.style.display = 'block';
       }
     };
-  }, [isHovering]);
+  }, [isHovering, isMobile]);
 
-  const projects = [
+    const projects = [
     {
       id: 1,
       title: t("stillProjects.project1.title"),
@@ -643,17 +661,20 @@ const StillPage = () => {
 
   // Inicializar efectos hover cuando el componente está ready
   useEffect(() => {
-    if (isInView && window.innerWidth > 767) {
+    if (isInView && !isMobile) {
       setTimeout(() => {
         initializeHoverEffects();
       }, 100);
     }
-  }, [isInView]);
+  }, [isInView, isMobile]);
 
   // Manejar resize
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 767) {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      
+      if (!mobile) {
         initializeHoverEffects();
       }
     };
@@ -662,21 +683,33 @@ const StillPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Tamaños responsive para las tarjetas
+  const getCardWidth = () => {
+    if (typeof window === 'undefined') return '24vw';
+    
+    const width = window.innerWidth;
+    if (width < 640) return '85vw'; // Mobile
+    if (width < 768) return '70vw'; // Tablet pequeña
+    if (width < 1024) return '45vw'; // Tablet
+    if (width < 1280) return '32vw'; // Laptop pequeña
+    return '24vw'; // Desktop
+  };
+
   return (
-    <section className="w-full bg-black-pure text-white-pure py-20 overflow-hidden relative">
+    <section className="w-full bg-black-pure text-white-pure py-10 md:py-20 overflow-hidden relative">
 
       {/* HEADER */}
       <motion.div 
-        className="flex justify-between items-center mb-10 px-6 max-w-[1800px] mx-auto"
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 md:mb-10 px-4 sm:px-6 max-w-[1800px] mx-auto"
         initial={{ opacity: 0, y: 30 }}
         animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-sans uppercase tracking-tight text-white-pure font-black">
+        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans uppercase tracking-tight text-white-pure font-black mb-4 sm:mb-0">
           {t("still.title") || "Our Work"}
         </h2>
 
-        <button className="text-xs uppercase tracking-[0.3em] border-b border-white-pure pb-1 text-white-pure hover:text-red-primary hover:border-red-primary transition-colors duration-300 font-gotham font-medium">
+        <button className="text-xs uppercase tracking-[0.3em] border-b border-white-pure pb-1 text-white-pure hover:text-red-primary hover:border-red-primary transition-colors duration-300 font-gotham font-medium self-start sm:self-auto">
           ALL PROJECTS
         </button>
       </motion.div>
@@ -684,56 +717,63 @@ const StillPage = () => {
       {/* CARRUSEL */}
       <motion.div
         ref={carouselRef}
-        className="pl-6 relative overflow-x-auto overflow-y-hidden"
+        className="pl-4 sm:pl-6 relative overflow-x-auto overflow-y-hidden"
         style={{ overflow: "hidden" }}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
+        onMouseEnter={() => !isMobile && setIsHovering(true)}
+        onMouseLeave={() => !isMobile && setIsHovering(false)}
         onMouseMove={handleMouseMove}
       >
-        {/* CURSOR PERSONALIZADO DRAG */}
-        <motion.div
-          className="fixed pointer-events-none z-[999999] flex items-center justify-center"
-          style={{
-            left: cursorPosition.x - 40,
-            top: cursorPosition.y - 40,
-          }}
-          variants={dragCursorVariants}
-          initial="hidden"
-          animate={isHovering ? "visible" : "hidden"}
-        >
-          <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-white/80 backdrop-blur-md bg-red-primary/20 shadow-lg">
-            <span className="text-white text-xs font-gotham font-bold uppercase tracking-wider drop-shadow-sm">
-              DRAG
-            </span>
-          </div>
-        </motion.div>
+        {/* CURSOR PERSONALIZADO DRAG - Solo en desktop */}
+        {!isMobile && (
+          <motion.div
+            className="fixed pointer-events-none z-[999999] flex items-center justify-center"
+            style={{
+              left: cursorPosition.x - 40,
+              top: cursorPosition.y - 40,
+            }}
+            variants={dragCursorVariants}
+            initial="hidden"
+            animate={isHovering ? "visible" : "hidden"}
+          >
+            <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-white/80 backdrop-blur-md bg-red-primary/20 shadow-lg">
+              <span className="text-white text-xs font-gotham font-bold uppercase tracking-wider drop-shadow-sm">
+                DRAG
+              </span>
+            </div>
+          </motion.div>
+        )}
 
         <motion.div
-          drag="x"
+          drag={!isMobile ? "x" : false}
           dragConstraints={{ right: 0, left: -width }}
           dragElastic={0.1}
-          className="flex gap-2 cursor-none"
+          className={`flex gap-3 sm:gap-4 ${!isMobile ? 'cursor-none' : 'cursor-grab'}`}
           onDrag={(event, info) => {
-            updateImageParallax();
+            !isMobile && updateImageParallax();
           }}
           onDragEnd={(event, info) => {
-            updateImageParallax();
+            !isMobile && updateImageParallax();
           }}
         >
           {projects.map((project, index) => (
             <motion.div
               key={project.id}
               ref={el => projectRefs.current[index] = el}
-              className="min-w-[24vw] max-w-[24vw] flex-shrink-0 group project-thumbnail"
+              className="flex-shrink-0 group project-thumbnail"
+              style={{
+                minWidth: getCardWidth(),
+                maxWidth: getCardWidth()
+              }}
               custom={index}
               variants={cardVariants}
+              whileTap={isMobile ? { scale: 0.98 } : {}}
             >
               {/* CONTENEDOR PRINCIPAL DE LA IMAGEN */}
               <div className="project-thumbnail__img relative overflow-hidden">
                 
-                {/* IMAGEN BASE - siempre visible (posición absoluta para evitar cambios de layout) */}
+                {/* IMAGEN BASE - siempre visible */}
                 <motion.div
                   className="w-full h-full absolute inset-0"
                   variants={curtainVariants}
@@ -741,7 +781,7 @@ const StillPage = () => {
                   animate={isInView ? "visible" : "hidden"}
                   transition={{
                     duration: 0.8,
-                    delay: index * 0.1,
+                    delay: index * 0.05,
                     ease: [0.25, 0.1, 0.25, 1]
                   }}
                 >
@@ -749,7 +789,7 @@ const StillPage = () => {
                     initial="hidden"
                     animate={isInView ? "visible" : "hidden"}
                     variants={contentVariants}
-                    transition={{ delay: index * 0.1 + 0.3 }}
+                    transition={{ delay: index * 0.05 + 0.3 }}
                     className="w-full h-full overflow-hidden absolute inset-0"
                   >
                     <img
@@ -757,39 +797,46 @@ const StillPage = () => {
                       src={project.image}
                       alt={project.title}
                       className="img w-full h-full object-cover"
-                      style={{ width: '120%', transformOrigin: 'center center', willChange: 'transform' }} // Imagen más ancha que el contenedor
+                      style={{ 
+                        width: isMobile ? '100%' : '120%', 
+                        transformOrigin: 'center center', 
+                        willChange: 'transform' 
+                      }}
                       draggable="false"
+                      loading="lazy"
                     />
                   </motion.div>
                 </motion.div>
 
-                {/* WRAPPER CON CLIP-PATH PARA EL EFECTO HOVER */}
-                <div 
-                  className="project-thumbnail__img-wrapper js-project-thumbnail-img-wrapper absolute inset-0 overflow-hidden"
-                  style={{
-                    "--first-top": "0%",
-                    "--second-top": "33.3333%", 
-                    "--third-top": "66.6666%",
-                    "--first-bottom": "33.3333%",
-                    "--second-bottom": "66.6666%", 
-                    "--third-bottom": "100%"
-                  }}
-                >
-                  {/* IMAGEN HOVER - escala inicial 1.2 y más ancha */}
-                  <img
-                    ref={el => imageRefs.current[index + 100] = el} // Referencia separada para hover
-                    src={project.image}
-                    alt={project.title}
-                    className="img project-thumbnail__img-hover js-project-thumbnail-image-hover w-full h-full object-cover"
-                    style={{ 
-                      transform: 'scale(1.2)',
-                      transformOrigin: 'center center',
-                      width: '120%',
-                      willChange: 'transform'
+                {/* WRAPPER CON CLIP-PATH PARA EL EFECTO HOVER - Solo en desktop */}
+                {!isMobile && (
+                  <div 
+                    className="project-thumbnail__img-wrapper js-project-thumbnail-img-wrapper absolute inset-0 overflow-hidden"
+                    style={{
+                      "--first-top": "0%",
+                      "--second-top": "33.3333%", 
+                      "--third-top": "66.6666%",
+                      "--first-bottom": "33.3333%",
+                      "--second-bottom": "66.6666%", 
+                      "--third-bottom": "100%"
                     }}
-                    draggable="false"
-                  />
-                </div>
+                  >
+                    <img
+                      ref={el => imageRefs.current[index + 100] = el}
+                      src={project.image}
+                      alt={project.title}
+                      className="img project-thumbnail__img-hover js-project-thumbnail-image-hover w-full h-full object-cover"
+                      style={{ 
+                        transform: 'scale(1.2)',
+                        transformOrigin: 'center center',
+                        width: '120%',
+                        willChange: 'transform'
+                      }}
+                      draggable="false"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
 
               </div>
 
@@ -798,13 +845,14 @@ const StillPage = () => {
                 initial="hidden"
                 animate={isInView ? "visible" : "hidden"}
                 variants={contentVariants}
-                transition={{ delay: index * 0.1 + 0.4 }}
+                transition={{ delay: index * 0.05 + 0.4 }}
+                className="mt-3 sm:mt-4"
               >
-                <h3 className="mt-4 text-lg font-gotham font-medium text-white-pure">
+                <h3 className="text-base sm:text-lg font-gotham font-medium text-white-pure line-clamp-2">
                   {project.title}
                 </h3>
 
-                <p className="text-xs uppercase tracking-[0.2em] text-red-primary font-gotham font-light">
+                <p className="text-xs uppercase tracking-[0.2em] text-red-primary font-gotham font-light mt-1">
                   {project.category}
                 </p>
               </motion.div>
@@ -812,6 +860,17 @@ const StillPage = () => {
           ))}
         </motion.div>
       </motion.div>
+
+      {/* INDICADOR DE SCROLL PARA MÓVIL */}
+      {isMobile && (
+        <div className="flex justify-center mt-6 px-4">
+          <div className="bg-white/20 rounded-full px-4 py-2">
+            <span className="text-white text-xs font-gotham font-medium uppercase tracking-wider">
+              Desliza para ver más →
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* ESTILOS CSS PARA EL EFECTO */}
       <style jsx>{`
@@ -865,6 +924,21 @@ const StillPage = () => {
         /* El wrapper con clip-path se superpone */
         .project-thumbnail__img-wrapper {
           z-index: 2;
+        }
+
+        /* Utilidades para texto */
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        /* Scrollbar personalizada para móvil */
+        @media (max-width: 768px) {
+          .project-thumbnail__img {
+            border-radius: 8px;
+          }
         }
       `}</style>
 

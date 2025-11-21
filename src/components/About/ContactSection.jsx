@@ -7,16 +7,16 @@ const ContactSection = () => {
   const { t } = useLanguage();
 
   return (
-    <div className="section relative">
+    <div className="section relative w-full">
       {/* FONDO CON EL EFECTO DE GRADIENTE Y RUIDO */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 w-full">
         <NoiseGradientBackground />
       </div>
       
       {/* CONTENIDO SOBRE EL FONDO */}
-      <div className="min-h-[50vh] sm:min-h-[70vh] text-white-pure flex items-center relative z-10">
+      <div className="min-h-[50vh] sm:min-h-[70vh] text-white-pure flex items-center relative z-10 w-full">
         <div className="px-4 sm:px-6 lg:px-8 xl:px-20 w-full">
-          <div className="max-w-6xl mx-auto">
+          <div className="w-full"> {/* ELIMINADO: max-w-6xl mx-auto */}
             <motion.div 
               className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6"
               initial={{ opacity: 0, y: 40 }}
