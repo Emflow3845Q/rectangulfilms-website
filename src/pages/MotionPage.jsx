@@ -17,111 +17,255 @@ const MotionPage = () => {
   const projects = [
     {
       id: 1,
-      client: t("motionProjects.billionsFashion.client"),
-      title: t("motionProjects.billionsFashion.title"),
-      category: t("motionProjects.billionsFashion.category"),
-      thumbnail: "/motion/work1.webp",
-      video: "/videos/DemoRectangulo2025.mp4",
+      client: "Billions",
+      title: "Anillo de fundador Billions",
+      category: "Producto / Comercial",
+      thumbnail: "/motion/anillo-fundador.webp",
+      video: "/videos/AnilloFundadorBillions.mp4",
     },
     {
       id: 2,
-      client: t("motionProjects.hpFinance.client"),
-      title: t("motionProjects.hpFinance.title"),
-      category: t("motionProjects.hpFinance.category"),
-      thumbnail: "/motion/work2.webp",
-      video: "/videos/MotionGraphics.mp4",
+      client: "Billions",
+      title: "Billions - Ropa mov At",
+      category: "Moda / Comercial",
+      thumbnail: "/motion/billions-ropa.webp",
+      video: "/videos/BillionsRopaMovAt.mp4",
     },
     {
       id: 3,
-      client: t("motionProjects.ohLaLashes.client"),
-      title: t("motionProjects.ohLaLashes.title"),
-      category: t("motionProjects.ohLaLashes.category"),
-      thumbnail: "/motion/work3.webp",
-      video: "/videos/CamiloRegresa.mp4",
+      client: "Bomberos Guadalajara",
+      title: "Bomberos Guadalajara",
+      category: "Documental / Corporativo",
+      thumbnail: "/motion/bomberos-guadalajara.webp",
+      video: "/videos/BomberosGuadalajara.mp4",
     },
     {
       id: 4,
-      client: t("motionProjects.gnpEncore.client"),
-      title: t("motionProjects.gnpEncore.title"),
-      category: t("motionProjects.gnpEncore.category"),
-      thumbnail: "/motion/work4.webp",
-      video: "/videos/DemoRectangulo2025.mp4",
+      client: "Oh la lashes",
+      title: "Camilo Regresa Oh la lashes",
+      category: "Belleza / Comercial",
+      thumbnail: "/motion/camilo-regresa.webp",
+      video: "/videos/CamiloRegresaOhLaLashes.mp4",
     },
     {
       id: 5,
-      client: t("motionProjects.grupoAeropuertario.client"),
-      title: t("motionProjects.grupoAeropuertario.title"),
-      category: t("motionProjects.grupoAeropuertario.category"),
-      thumbnail: "/motion/work5.webp",
-      video: "/videos/MotionGraphics.mp4",
+      client: "Sesión Acústica",
+      title: "Caminando Solo",
+      category: "Música / Acústico",
+      thumbnail: "/motion/caminando-solo.webp",
+      video: "/videos/CaminandoSoloSesionAcustica.mp4",
     },
     {
       id: 6,
-      client: t("motionProjects.dac.client"),
-      title: t("motionProjects.dac.title"),
-      category: t("motionProjects.dac.category"),
-      thumbnail: "/motion/wrok6.webp",
-      video: "/videos/CamiloRegresa.mp4",
+      client: "Casaldeas",
+      title: "Casaldeas",
+      category: "Comercial / Inmobiliario",
+      thumbnail: "/motion/casa-ideas.webp",
+      video: "/videos/CasaIdeas.mp4",
     },
     {
       id: 7,
-      client: t("motionProjects.drCamilo.client"),
-      title: t("motionProjects.drCamilo.title"),
-      category: t("motionProjects.drCamilo.category"),
-      thumbnail: "/motion/work7.webp",
-      video: "/videos/DemoRectangulo2025.mp4",
+      client: "DAC",
+      title: "Derma Aesthetics Congress",
+      category: "Médico / Evento",
+      thumbnail: "/motion/dac.webp",
+      video: "/videos/DACDermaAestheticsCongress.mp4",
     },
     {
       id: 8,
-      client: t("motionProjects.mickFlores.client"),
-      title: t("motionProjects.mickFlores.title"),
-      category: t("motionProjects.mickFlores.category"),
-      thumbnail: "/motion/work8.webp",
-      video: "/videos/MotionGraphics.mp4",
+      client: "DAC",
+      title: "DAC 2025 - Rocap",
+      category: "Médico / Evento",
+      thumbnail: "/motion/dac-2025.webp",
+      video: "/videos/DAC2025Rocap.mp4",
     },
     {
       id: 9,
-      client: t("motionProjects.casaIdea.client"),
-      title: t("motionProjects.casaIdea.title"),
-      category: t("motionProjects.casaIdea.category"),
-      thumbnail: "/motion/work9.webp",
-      video: "/videos/CamiloRegresa.mp4",
+      client: "Domo",
+      title: "Domo Reel Rectangulo 2025",
+      category: "Reel / Corporativo",
+      thumbnail: "/motion/domo-reel.webp",
+      video: "/videos/DomoReelRectangulo2025.mp4",
     },
     {
       id: 10,
-      client: t("motionProjects.laPerla.client"),
-      title: t("motionProjects.laPerla.title"),
-      category: t("motionProjects.laPerla.category"),
-      thumbnail: "/motion/work10.webp",
-      video: "/videos/DemoRectangulo2025.mp4",
+      client: "DAC",
+      title: "Derma Aesthetics 2024",
+      category: "Médico / Evento",
+      thumbnail: "/motion/derma-2024.webp",
+      video: "/videos/DermaAesthetics2024.mp4",
     },
     {
       id: 11,
-      client: t("motionProjects.billionsTrade.client"),
-      title: t("motionProjects.billionsTrade.title"),
-      category: t("motionProjects.billionsTrade.category"),
-      thumbnail: "/motion/work11.webp",
-      video: "/videos/MotionGraphics.mp4",
+      client: "Sesión Acústica",
+      title: "Dolor",
+      category: "Música / Acústico",
+      thumbnail: "/motion/dolor.webp",
+      video: "/videos/DolorSesionAcustica.mp4",
     },
     {
       id: 12,
-      client: t("motionProjects.ramsesSoriano.client"),
-      title: t("motionProjects.ramsesSoriano.title"),
-      category: t("motionProjects.ramsesSoriano.category"),
-      thumbnail: "/motion/work12.webp",
-      video: "/videos/CamiloRegresa.mp4",
+      client: "Don Ricardo",
+      title: "El afilador",
+      category: "Documental / Cortometraje",
+      thumbnail: "/motion/don-ricardo.webp",
+      video: "/videos/DonRicardoElAfilador.mp4",
     },
     {
       id: 13,
-      client: t("motionProjects.elAfilador.client"),
-      title: t("motionProjects.elAfilador.title"),
-      category: t("motionProjects.elAfilador.category"),
-      thumbnail: "/motion/work13.webp",
-      video: "/videos/DemoRectangulo2025.mp4",
+      client: "GNP",
+      title: "Evento GNP Encore",
+      category: "Corporativo / Evento",
+      thumbnail: "/motion/gnp-encore.webp",
+      video: "/videos/EventoGNPEncore.mp4",
     },
+    {
+      id: 14,
+      client: "Sesión Acústica",
+      title: "Fiel",
+      category: "Música / Acústico",
+      thumbnail: "/motion/fiel.webp",
+      video: "/videos/FielSesionAcustica.mp4",
+    },
+    {
+      id: 15,
+      client: "BS Practica",
+      title: "Fosa Temporal",
+      category: "Práctica / Creativo",
+      thumbnail: "/motion/fosa-temporal.webp",
+      video: "/videos/FosaTemporalBSPractica.mp4",
+    },
+    {
+      id: 16,
+      client: "Grupo Aeropuertario",
+      title: "Grupo Aeropuertario",
+      category: "Corporativo",
+      thumbnail: "/motion/grupo-aeropuertario.webp",
+      video: "/videos/GrupoAeropuertario.mp4",
+    },
+    {
+      id: 17,
+      client: "HP",
+      title: "HP Finance Day",
+      category: "Corporativo / Finanzas",
+      thumbnail: "/motion/hp-finance.webp",
+      video: "/videos/HPFinanceDayFinal2025.mp4",
+    },
+    {
+      id: 18,
+      client: "La Porla",
+      title: "La Porla Timelapse",
+      category: "Timelapse / Creativo",
+      thumbnail: "/motion/la-porla.webp",
+      video: "/videos/LaPorlaTimelapse.mp4",
+    },
+    {
+      id: 19,
+      client: "Sesión Acústica",
+      title: "Mi mejor Canción",
+      category: "Música / Acústico",
+      thumbnail: "/motion/mi-mejor-cancion.webp",
+      video: "/videos/MiMejorCancionSesionAcustica.mp4",
+    },
+    {
+      id: 20,
+      client: "Symetri Academy",
+      title: "Motion Graphics",
+      category: "Educativo / Motion",
+      thumbnail: "/motion/motion-graphics.webp",
+      video: "/videos/MotionGraphicsSymetriAcademy.mp4",
+    },
+    {
+      id: 21,
+      client: "Oh la lashes",
+      title: "Oh la lashes - Tarjetas",
+      category: "Belleza / Producto",
+      thumbnail: "/motion/oh-la-lashes-tarjetas.webp",
+      video: "/videos/OhLaLashesTarjetas.mp4",
+    },
+    {
+      id: 22,
+      client: "Foro Off Screen",
+      title: "Promocional foro Off Screen",
+      category: "Promocional / Evento",
+      thumbnail: "/motion/promocional-foro.webp",
+      video: "/videos/PromocionalForoOffScreen.mp4",
+    },
+    {
+      id: 23,
+      client: "IBTM",
+      title: "RECAP CDMX IBTM",
+      category: "Evento / Recap",
+      thumbnail: "/motion/recap-cdmx.webp",
+      video: "/videos/RECAPCDMXIBTMENCORE.mp4",
+    },
+    {
+      id: 24,
+      client: "AMCO",
+      title: "Recap AMCO Jov",
+      category: "Corporativo / Recap",
+      thumbnail: "/motion/recap-amco.webp",
+      video: "/videos/RecapEncoreAMCOJov.mp4",
+    },
+    {
+      id: 25,
+      client: "Rocroa",
+      title: "Rocroa STEAM 2024",
+      category: "Educativo / STEAM",
+      thumbnail: "/motion/rocroa-steam.webp",
+      video: "/videos/RocroaSTEAM2024.mp4",
+    },
+    {
+      id: 26,
+      client: "Rolex",
+      title: "Rolex",
+      category: "Lujo / Comercial",
+      thumbnail: "/motion/rolex.webp",
+      video: "/videos/Rolex.mp4",
+    },
+    {
+      id: 27,
+      client: "Rosk",
+      title: "Rosk",
+      category: "Comercial / Branding",
+      thumbnail: "/motion/rosk.webp",
+      video: "/videos/Rosk.mp4",
+    },
+    {
+      id: 28,
+      client: "Rossana & Camilo",
+      title: "Rossana X Camilo",
+      category: "Colaboración / Creativo",
+      thumbnail: "/motion/rossana-camilo.webp",
+      video: "/videos/RossanaXCamilo.mp4",
+    },
+    {
+      id: 29,
+      client: "Fornada T",
+      title: "Showreel - Fornada T",
+      category: "Showreel / Corporativo",
+      thumbnail: "/motion/showreel-fornada.webp",
+      video: "/videos/ShowreelFornadaT.mp4",
+    },
+    {
+      id: 30,
+      client: "Sesión Acústica",
+      title: "Solo tu amor - Sesión Acústica",
+      category: "Música / Acústico",
+      thumbnail: "/motion/solo-tu-amor-acustica.webp",
+      video: "/videos/SoloTuAmorSesionAcustica.mp4",
+    },
+    {
+      id: 31,
+      client: "Solo tu amor",
+      title: "Solo tu amor",
+      category: "Música / Video",
+      thumbnail: "/motion/solo-tu-amor.webp",
+      video: "/videos/SoloTuAmor.mp4",
+    }
   ];
 
-  // Detectar si es móvil
+  // Resto del código permanece igual...
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
@@ -132,7 +276,6 @@ const MotionPage = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Track mouse position solo en desktop
   useEffect(() => {
     if (isMobile) return;
 
@@ -144,7 +287,6 @@ const MotionPage = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [isMobile]);
 
-  // Efecto para manejar la transición de foto a video
   useEffect(() => {
     if (activeProject) {
       setShowVideo(false);
@@ -157,12 +299,10 @@ const MotionPage = () => {
     }
   }, [activeProject]);
 
-  // Función para manejar hover en desktop
   const handleProjectHover = (project) => {
     setActiveProject(project);
   };
 
-  // Función para manejar tap en móvil
   const handleProjectTap = (project) => {
     if (isMobile) {
       if (activeProject && activeProject.id === project.id) {
@@ -173,7 +313,6 @@ const MotionPage = () => {
     }
   };
 
-  // Función para cerrar video en móvil
   const handleCloseVideo = () => {
     setActiveProject(null);
   };

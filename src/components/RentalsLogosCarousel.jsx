@@ -6,26 +6,26 @@ const RentalsLogosCarousel = () => {
 
     // Logos de rentals - ajusta los nombres según tus archivos
     const rentalsLogos = [
-        "/rentals/logo1.png",
-        "/rentals/logo2.png",
-        "/rentals/logo3.png",
-        "/rentals/logo4.png",
-        "/rentals/logo5.png",
-        "/rentals/logo6.png",
-        "/rentals/logo7.png",
-        "/rentals/logo8.png",
-        "/rentals/logo9.png",
-        "/rentals/logo10.png",
-        "/rentals/logo11.png",
-        "/rentals/logo12.png",
-        "/rentals/logo13.png",
-        "/rentals/logo14.png",
-        "/rentals/logo15.png",
-        "/rentals/logo16.png",
-        "/rentals/logo17.png",
-        "/rentals/logo18.png",
-        "/rentals/logo19.png",
-        "/rentals/logo20.png",
+        "/rentals-logos/logo1.png",
+        "/rentals-logos/logo2.png",
+        "/rentals-logos/logo3.png",
+        "/rentals-logos/logo4.png",
+        "/rentals-logos/logo5.png",
+        "/rentals-logos/logo6.png",
+        "/rentals-logos/logo7.png",
+        "/rentals-logos/logo8.png",
+        "/rentals-logos/logo9.png",
+        "/rentals-logos/logo10.png",
+        "/rentals-logos/logo11.png",
+        "/rentals-logos/logo12.png",
+        "/rentals-logos/logo13.png",
+        "/rentals-logos/logo14.png",
+        "/rentals-logos/logo15.png",
+        "/rentals-logos/logo16.png",
+        "/rentals-logos/logo17.png",
+        "/rentals-logos/logo18.png",
+        "/rentals-logos/logo19.png",
+        "/rentals-logos/logo20.png",
     ];
 
     // Duplicar logos para loop infinito
@@ -47,17 +47,17 @@ const RentalsLogosCarousel = () => {
     }, []);
 
     return (
-        <div className="bg-black py-8 overflow-hidden border-t border-b border-gray-dark/30">
+        <div className="bg-black py-4 overflow-hidden border-t border-b border-gray-dark/30">
             <div className="relative">
                 <div
                     ref={carouselRef}
-                    className="flex items-center space-x-16"
+                    className="flex items-center space-x-12"
                     style={{ width: "max-content" }}
                 >
                     {duplicatedLogos.map((logo, index) => (
                         <div
                             key={index}
-                            className="flex-shrink-0 w-32 h-12 flex items-center justify-center"
+                            className="flex-shrink-0 w-40 h-16 flex items-center justify-center"
                         >
                             <img
                                 src={logo}

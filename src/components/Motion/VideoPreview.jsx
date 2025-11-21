@@ -74,7 +74,7 @@ const VideoPreview = ({
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black-pure to-transparent p-4">
             <div className="flex justify-between items-end">
               <div>
-                <h3 className="text-white-pure font-accent text-sm uppercase mb-1 font-bold">
+                <h3 className="text-white-pure font-accent font-bold text-sm uppercase mb-1">
                   {activeProject.title}
                 </h3>
                 <p className="text-red-primary text-xs uppercase tracking-widest font-gotham font-medium">

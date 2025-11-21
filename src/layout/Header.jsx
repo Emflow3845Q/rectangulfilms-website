@@ -2,58 +2,172 @@ import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+// Importar las imágenes de stills, rentals y videos
+import { stillImages as stills } from '../assets/images/stills';
+import { rentalsImages as rentals } from '../assets/images/rentals'; // NUEVA IMPORTACIÓN
+import { videos } from "../assets/videos";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [currentMedia, setCurrentMedia] = useState('');
+  const [currentMediaType, setCurrentMediaType] = useState(''); // 'video' o 'image'
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [nextImageIndex, setNextImageIndex] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [randomImageOrder, setRandomImageOrder] = useState([]);
+  const [randomRentalsOrder, setRandomRentalsOrder] = useState([]); // NUEVO ESTADO
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
-  const [currentVideo, setCurrentVideo] = useState('');
-  const { currentLanguage, toggleLanguage, t } = useLanguage();
 
   const menuRef = useRef(null);
   const menuItemsRef = useRef([]);
   const logoRef = useRef(null);
   const hamburgerButtonRef = useRef(null);
-  const videoContainerRef = useRef(null);
+  const mediaContainerRef = useRef(null);
   const videoRef = useRef(null);
   const headerRef = useRef(null);
+  const currentImageRef = useRef(null);
+  const nextImageRef = useRef(null);
   const tl = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const imageIntervalRef = useRef(null);
 
-  // Menú items usando las traducciones con VIDEOS asociados
+  const { currentLanguage, toggleLanguage, t } = useLanguage();
+
+  // Crear array de imágenes de stills para el carrusel
+  const stillsImagesArray = Array.from({ length: 61 }, (_, index) => ({
+    id: index + 1,
+    image: stills[`still${index + 1}`],
+    alt: `Still production ${index + 1}`
+  }));
+
+  // Crear array de imágenes de rentals para el carrusel
+  const rentalsImagesArray = Array.from({ length: 27 }, (_, index) => ({
+    id: index + 1,
+    image: rentals[`rentals${index + 1}`],
+    alt: `Rentals ${index + 1}`
+  }));
+
+  // Función para mezclar array aleatoriamente (Fisher-Yates shuffle)
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Inicializar órdenes aleatorios cuando se monta el componente
+  useEffect(() => {
+    setRandomImageOrder(shuffleArray(stillsImagesArray));
+    setRandomRentalsOrder(shuffleArray(rentalsImagesArray)); // INICIALIZAR RENTALS
+  }, []);
+
+  // Menú items actualizado con rentals usando imágenes
   const menuItems = [
     {
       id: 'motion',
       label: t('header.menu.motion'),
       path: '/motion',
       type: 'page',
-      video: '/videos/CamiloRegresa.mp4'
+      media: videos.dacDermaaestheticsCongress, // Demo Reel 2025
+      mediaType: 'video'
     },
     {
       id: 'still',
       label: t('header.menu.still'),
       path: '/stills',
       type: 'page',
-      video: '/videos/DemoRectangulo2025.mp4'
+      media: randomImageOrder, // Array de imágenes en orden aleatorio
+      mediaType: 'image'
     },
     {
       id: 'about',
       label: t('header.menu.about'),
       path: '/about',
       type: 'page',
-      video: '/videos/MotionGraphics.mp4'
+      media: videos.motionGraphicsSymetriAcademy, // Motion Graphics
+      mediaType: 'video'
     },
     {
       id: 'rentals',
       label: t('header.menu.rentals'),
       path: '/rentals',
       type: 'page',
-      video: '/videos/CamiloRegresa.mp4'
+      media: randomRentalsOrder, // NUEVO: Array de imágenes de rentals en orden aleatorio
+      mediaType: 'image' // CAMBIADO: Ahora es imagen en lugar de video
     },
   ];
+
+  // Función para manejar la transición entre imágenes CON CROSSFADE
+  const transitionToNextImage = () => {
+    if (!currentMedia || currentMedia.length === 0 || isTransitioning) return;
+
+    setIsTransitioning(true);
+
+    const newNextIndex = (currentImageIndex + 1) % currentMedia.length;
+
+    // Configurar la siguiente imagen
+    setNextImageIndex(newNextIndex);
+
+    // Pre-cargar la siguiente imagen
+    const nextImage = new Image();
+    nextImage.src = currentMedia[newNextIndex].image;
+    
+    nextImage.onload = () => {
+      // Cuando la imagen está cargada, iniciar la transición CROSSFADE
+      gsap.timeline({
+        onComplete: () => {
+          // Cuando la transición termina, hacer que la siguiente imagen sea la actual
+          setCurrentImageIndex(newNextIndex);
+          setIsTransitioning(false);
+        }
+      })
+      // La imagen actual se desvanece (opacidad 1 → 0)
+      .to(currentImageRef.current, {
+        opacity: 0,
+        duration: 1.5,
+        ease: "power2.inOut"
+      }, 0)
+      // La siguiente imagen aparece (opacidad 0 → 1) AL MISMO TIEMPO
+      .fromTo(nextImageRef.current,
+        {
+          opacity: 0
+        },
+        {
+          opacity: 1,
+          duration: 1.5,
+          ease: "power2.inOut"
+        },
+        0
+      );
+    };
+  };
+
+  // Efecto para el carrusel automático de imágenes
+  useEffect(() => {
+    if (currentMediaType === 'image' && currentMedia && currentMedia.length > 0 && isMenuOpen) {
+      // Limpiar intervalo anterior
+      if (imageIntervalRef.current) {
+        clearInterval(imageIntervalRef.current);
+      }
+
+      // Configurar nuevo intervalo para cambiar imágenes cada 3 segundos
+      imageIntervalRef.current = setInterval(() => {
+        transitionToNextImage();
+      }, 3000);
+
+      return () => {
+        if (imageIntervalRef.current) {
+          clearInterval(imageIntervalRef.current);
+        }
+      };
+    }
+  }, [currentMediaType, currentMedia, isMenuOpen, currentImageIndex, isTransitioning]);
 
   // Efecto para detectar scroll y mostrar/ocultar header
   useEffect(() => {
@@ -91,15 +205,15 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Precargar videos del menú
+  // Precargar videos del menú usando los videos importados
   useEffect(() => {
     menuItems.forEach(item => {
-      if (item.video) {
+      if (item.mediaType === 'video' && item.media) {
         const video = document.createElement('video');
-        video.src = item.video;
+        video.src = item.media;
         video.preload = 'metadata';
         video.onerror = () => {
-          console.warn(`⚠️ No se pudo cargar el video: ${item.video}`);
+          console.warn(`⚠️ No se pudo cargar el video: ${item.media}`);
         };
       }
     });
@@ -125,7 +239,15 @@ const Header = () => {
       onReverseComplete: () => {
         setIsMenuOpen(false);
         document.body.style.overflow = 'unset';
-        setCurrentVideo('');
+        setCurrentMedia('');
+        setCurrentMediaType('');
+        setCurrentImageIndex(0);
+        setNextImageIndex(1);
+        setIsTransitioning(false);
+        // Limpiar intervalo de imágenes
+        if (imageIntervalRef.current) {
+          clearInterval(imageIntervalRef.current);
+        }
         // Pausar video cuando se cierra el menú
         if (videoRef.current) {
           videoRef.current.pause();
@@ -134,8 +256,9 @@ const Header = () => {
         setIsVisible(true);
       },
       onStart: () => {
-        if (menuItems[0]?.video && window.innerWidth > 768) {
-          setCurrentVideo(menuItems[0].video);
+        if (menuItems[0]?.media && window.innerWidth > 768) {
+          setCurrentMedia(menuItems[0].media);
+          setCurrentMediaType(menuItems[0].mediaType);
         }
         setIsVisible(false);
       }
@@ -186,7 +309,7 @@ const Header = () => {
             },
             "-=0.4"
           )
-          .fromTo(videoContainerRef.current,
+          .fromTo(mediaContainerRef.current,
             {
               x: 50,
               opacity: 0
@@ -214,7 +337,15 @@ const Header = () => {
       } else {
         setIsMenuOpen(false);
         document.body.style.overflow = 'unset';
-        setCurrentVideo('');
+        setCurrentMedia('');
+        setCurrentMediaType('');
+        setCurrentImageIndex(0);
+        setNextImageIndex(1);
+        setIsTransitioning(false);
+        // Limpiar intervalo de imágenes
+        if (imageIntervalRef.current) {
+          clearInterval(imageIntervalRef.current);
+        }
         // Pausar video cuando se cierra el menú
         if (videoRef.current) {
           videoRef.current.pause();
@@ -242,8 +373,8 @@ const Header = () => {
   };
 
   const handleMenuItemHover = (item) => {
-    if (window.innerWidth > 768 && item.video) {
-      gsap.to(videoContainerRef.current, {
+    if (window.innerWidth > 768 && item.media) {
+      gsap.to(mediaContainerRef.current, {
         y: -30,
         opacity: 0,
         duration: 0.3,
@@ -255,9 +386,14 @@ const Header = () => {
             videoRef.current.currentTime = 0;
           }
           
-          setCurrentVideo(item.video);
-          gsap.set(videoContainerRef.current, { y: 30 });
-          gsap.to(videoContainerRef.current, {
+          setCurrentMedia(item.media);
+          setCurrentMediaType(item.mediaType);
+          setCurrentImageIndex(0); // Reiniciar índice de imagen
+          setNextImageIndex(1);
+          setIsTransitioning(false);
+          
+          gsap.set(mediaContainerRef.current, { y: 30 });
+          gsap.to(mediaContainerRef.current, {
             y: 0,
             opacity: 1,
             duration: 0.4,
@@ -270,7 +406,7 @@ const Header = () => {
 
   // Efecto para manejar la reproducción del video cuando cambia
   useEffect(() => {
-    if (videoRef.current && currentVideo) {
+    if (videoRef.current && currentMediaType === 'video' && currentMedia) {
       const playVideo = async () => {
         try {
           videoRef.current.currentTime = 0;
@@ -282,7 +418,7 @@ const Header = () => {
 
       playVideo();
     }
-  }, [currentVideo]);
+  }, [currentMedia, currentMediaType]);
 
   const handleVideoError = (e) => {
     console.error('❌ Error cargando video del menú:', e.target.src);
@@ -298,6 +434,64 @@ const Header = () => {
     // Video cargado correctamente
     if (videoRef.current) {
       videoRef.current.style.display = 'block';
+    }
+  };
+
+  // Función para renderizar el contenido multimedia según el tipo
+  const renderMediaContent = () => {
+    if (currentMediaType === 'video') {
+      return (
+        <video
+          ref={videoRef}
+          key={currentMedia}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover"
+          onError={handleVideoError}
+          onLoadedData={handleVideoLoaded}
+        >
+          <source src={currentMedia} type="video/mp4" />
+          Tu navegador no soporta el elemento de video.
+        </video>
+      );
+    } else if (currentMediaType === 'image' && Array.isArray(currentMedia) && currentMedia.length > 0) {
+      const currentImage = currentMedia[currentImageIndex];
+      const nextImage = currentMedia[nextImageIndex];
+      
+      return (
+        <div className="relative w-full h-full">
+          {/* Imagen actual - se desvanece */}
+          <img
+            ref={currentImageRef}
+            key={`current-${currentImage.id}`}
+            src={currentImage.image}
+            alt={currentImage.alt}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ opacity: 1 }}
+          />
+          
+          {/* Siguiente imagen - aparece */}
+          <img
+            ref={nextImageRef}
+            key={`next-${nextImage.id}`}
+            src={nextImage.image}
+            alt={nextImage.alt}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ opacity: 0 }}
+          />
+          
+          {/* Overlay sutil */}
+          <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+          <span className="text-white/50 text-xl font-gotham font-bold">Selecciona una opción</span>
+        </div>
+      );
     }
   };
 
@@ -319,9 +513,8 @@ const Header = () => {
               <Link to="/" className="flex items-center">
                 <img
                   src="/logo.png"
-                  alt="CSA STUDIO"
+                  alt="Rectángulo Films"
                   className="h-7 sm:h-8 lg:h-10 w-auto cursor-pointer"
-                  // Se removió: hover:scale-110 transition-transform duration-300
                 />
               </Link>
             </div>
@@ -331,7 +524,8 @@ const Header = () => {
               {/* Selector de idioma - GOTHAM BOLD */}
               <button
                 onClick={toggleLanguage}
-                className="text-white text-sm uppercase tracking-widest hover:text-red-600 transition-colors duration-300 px-2 py-1 font-gotham font-bold"
+                className="text-white text-sm uppercase tracking-tighter hover:text-red-600 transition-colors duration-300 px-2 py-1 font-gotham font-bold"
+                style={{ letterSpacing: '-0.05em' }}
               >
                 {currentLanguage === 'en' ? 'ES' : 'EN'}
               </button>
@@ -354,11 +548,17 @@ const Header = () => {
                   <div className="relative h-6 overflow-hidden">
                     <div className="flex flex-col transition-all duration-300 group-hover:-translate-y-6">
                       {/* "CLOSE" normal - sube con animación */}
-                      <span className="text-white text-xs uppercase tracking-widest font-accent font-normal h-6 flex items-center justify-center">
+                      <span 
+                        className="text-white text-xs uppercase tracking-tighter font-gotham font-bold h-6 flex items-center justify-center"
+                        style={{ letterSpacing: '-0.05em' }}
+                      >
                         CLOSE
                       </span>
                       {/* "CLOSE" rojo que aparece desde abajo */}
-                      <span className="text-red-600 text-xs uppercase tracking-widest font-accent font-normal h-6 flex items-center justify-center">
+                      <span 
+                        className="text-red-600 text-xs uppercase tracking-tighter font-gotham font-bold h-6 flex items-center justify-center"
+                        style={{ letterSpacing: '-0.05em' }}
+                      >
                         CLOSE
                       </span>
                     </div>
@@ -390,11 +590,17 @@ const Header = () => {
           <div className="relative h-6 overflow-hidden">
             <div className="flex flex-col transition-all duration-300 group-hover:-translate-y-6">
               {/* "CLOSE" normal - sube con animación */}
-              <span className="text-white text-sm sm:text-base uppercase tracking-widest font-accent font-normal h-6 flex items-center justify-center">
+              <span 
+                className="text-white text-sm sm:text-base uppercase tracking-tighter font-gotham font-bold h-6 flex items-center justify-center"
+                style={{ letterSpacing: '-0.05em' }}
+              >
                 CLOSE
               </span>
               {/* "CLOSE" rojo que aparece desde abajo */}
-              <span className="text-red-600 text-sm sm:text-base uppercase tracking-widest font-accent font-normal h-6 flex items-center justify-center">
+              <span 
+                className="text-red-600 text-sm sm:text-base uppercase tracking-tighter font-gotham font-bold h-6 flex items-center justify-center"
+                style={{ letterSpacing: '-0.05em' }}
+              >
                 CLOSE
               </span>
             </div>
@@ -402,11 +608,11 @@ const Header = () => {
         </button>
 
         <div className={`h-full ${window.innerWidth <= 768 ? '' : 'flex flex-col md:flex-row'}`}>
-          {/* VERSIÓN MÓVIL - OPCIONES MÁS ALARGADAS Y MENOS ESPACIO */}
+          {/* VERSIÓN MÓVIL - LETRAS MUY PEGADAS */}
           {window.innerWidth <= 768 ? (
             <div className="w-full h-full flex items-center justify-center">
               <div className="w-full max-w-md px-6">
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col">
                   {menuItems.map((item, index) => (
                     <div
                       key={item.id}
@@ -417,13 +623,14 @@ const Header = () => {
                         }
                       }}
                       onClick={() => handleMenuItemClick(item)}
-                      className="text-white text-5xl font-accent uppercase tracking-wide text-center py-6 transition-all duration-300 active:bg-white/10 active:scale-95 group cursor-pointer font-black"
+                      className="text-white text-4xl font-gotham font-bold uppercase tracking-tighter text-center py-1 transition-all duration-300 active:bg-white/10 active:scale-95 group cursor-pointer"
+                      style={{ letterSpacing: '-0.08em' }}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="group-hover:text-red-600 transition-colors duration-300 text-6xl">
+                        <span className="group-hover:text-red-600 transition-colors duration-300">
                           {item.label}
                         </span>
-                        <span className="text-red-600 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2 text-4xl">
+                        <span className="text-red-600 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-2 text-3xl">
                           →
                         </span>
                       </div>
@@ -433,11 +640,11 @@ const Header = () => {
               </div>
             </div>
           ) : (
-            // VERSIÓN DESKTOP - OPCIONES MÁS ALARGADAS Y MENOS ESPACIO
+            // VERSIÓN DESKTOP - LETRAS MUY PEGADAS
             <>
               <div className="w-full md:w-1/2 relative z-10 flex items-center justify-center">
                 <div className="w-full max-w-2xl px-8">
-                  <div className="flex flex-col gap-8">
+                  <div className="flex flex-col">
                     {menuItems.map((item, index) => (
                       <div
                         key={item.id}
@@ -449,7 +656,8 @@ const Header = () => {
                         }}
                         onClick={() => handleMenuItemClick(item)}
                         onMouseEnter={() => handleMenuItemHover(item)}
-                        className="text-white text-6xl xl:text-7xl font-accent uppercase tracking-wider text-left py-4 hover:text-red-600 transition-all duration-500 hover:translate-x-6 group block cursor-pointer font-black"
+                        className="text-white text-5xl xl:text-6xl font-gotham font-bold uppercase tracking-tighter text-left py-1 hover:text-red-600 transition-all duration-500 hover:translate-x-6 group block cursor-pointer"
+                        style={{ letterSpacing: '-0.08em' }}
                       >
                         {item.label}
                       </div>
@@ -459,32 +667,10 @@ const Header = () => {
               </div>
 
               <div
-                ref={videoContainerRef}
+                ref={mediaContainerRef}
                 className="hidden md:block w-1/2 relative overflow-hidden"
               >
-                {currentVideo ? (
-                  <div className="absolute inset-0 w-full h-full">
-                    <video
-                      ref={videoRef}
-                      key={currentVideo} // Forzar re-render cuando cambia el video
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      className="w-full h-full object-cover"
-                      onError={handleVideoError}
-                      onLoadedData={handleVideoLoaded}
-                    >
-                      <source src={currentVideo} type="video/mp4" />
-                      Tu navegador no soporta el elemento de video.
-                    </video>
-                    <div className="absolute inset-0 bg-black/20 pointer-events-none"></div>
-                  </div>
-                ) : (
-                  <div className="absolute inset-0 w-full h-full flex items-center justify-center">
-                    <span className="text-white/50 text-xl font-gotham font-bold">Selecciona una opción</span>
-                  </div>
-                )}
+                {renderMediaContent()}
               </div>
             </>
           )}

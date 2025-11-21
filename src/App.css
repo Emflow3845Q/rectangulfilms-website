@@ -41,11 +41,3 @@
   color: #888;
 }
 
-/* En tu archivo global CSS */
-canvas {
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
-}
-
-

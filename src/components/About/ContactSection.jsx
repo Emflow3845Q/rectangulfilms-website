@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "../../context/LanguageContext";
-import NoiseGradientBackground from "../../components/Background/NoiseGradientBackground";
+import NoiseGradientBackground from "../Background/NoiseGradientBackground";
 
 const ContactSection = () => {
   const { t } = useLanguage();

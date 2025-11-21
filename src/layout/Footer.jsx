@@ -13,19 +13,19 @@ const Footer = () => {
       {isRentalsPage ? <RentalsLogosCarousel /> : <ClientLogosCarousel />}
 
       {/* Contenido principal */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-stretch px-6 md:px-10 py-10 gap-10">
-        {/* Logo principal - Centrado verticalmente en toda la altura de la sección */}
-        <div className="flex-shrink-0 w-full md:w-auto flex justify-center items-center md:min-h-[200px]">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start px-6 md:px-10 py-10 gap-8 md:gap-12">
+        {/* Logo principal - bajado un poco */}
+        <div className="flex-shrink-0 w-full md:w-auto flex justify-center md:justify-start mt-2 md:mt-1">
           <img
-            src="/logo.png"
+            src="/logo1.png"
             alt="Rectángulo Films"
             className="w-52"
           />
         </div>
 
-        {/* Menú - CON HOVER ROJO */}
-        <div className="flex gap-20 text-sm uppercase tracking-wide justify-center md:justify-start items-center">
-          <ul className="space-y-2">
+        {/* Menú - Columna separada - bajado un poco */}
+        <div className="text-xs uppercase tracking-wide mt-2 md:mt-1">
+          <ul className="space-y-1">
             <li>
               <a href="/motion" className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
                 MOTION
@@ -47,8 +47,11 @@ const Footer = () => {
               </a>
             </li>
           </ul>
+        </div>
 
-          <ul className="space-y-2">
+        {/* Redes sociales - Columna separada - bajado un poco */}
+        <div className="text-xs uppercase tracking-wide mt-2 md:mt-1">
+          <ul className="space-y-1">
             <li>
               <a href="https://www.linkedin.com/company/rectangulofilms/posts/?feedView=all" 
                  className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold"
@@ -84,37 +87,46 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Descripción */}
-        <div className="max-w-md text-xs leading-relaxed text-gray-300 flex items-center">
-          <p className="font-gotham font-light">
-            Rectángulo es una productora audiovisual creativa ubicada en Guadalajara México, con un crew multidisciplinario, especializado en áreas como <strong className="font-gotham font-bold">producción</strong>, <strong className="font-gotham font-bold">dirección</strong>, <strong className="font-gotham font-bold">cinefotografía</strong>, <strong className="font-gotham font-bold">diseño sonoro</strong>, <strong className="font-gotham font-bold">dirección de arte</strong> y entre otras. Nuestra meta es realizar producciones de alta calidad con pensamiento juicioso, logrando el resultado esperado por cada uno de nuestros clientes. ¿Cómo lo logramos? Estableciendo estándares de calidad, aplicando nuestras metodologías, talento y creatividad.
-          </p>
+        {/* Descripción con contacto debajo - se mantiene en su posición */}
+        <div className="max-w-md w-full">
+          <div className="text-xs leading-relaxed text-gray-300 mb-3 text-justify w-full">
+            <p className="font-gotham font-light w-full" style={{ textAlignLast: 'justify' }}>
+              Rectángulo es una productora audiovisual creativa ubicada en Guadalajara México, con un crew multidisciplinario, especializado en áreas como <strong className="font-gotham font-bold">producción</strong>, <strong className="font-gotham font-bold">dirección</strong>, <strong className="font-gotham font-bold">cinefotografía</strong>, <strong className="font-gotham font-bold">diseño sonoro</strong>, <strong className="font-gotham font-bold">dirección de arte</strong> y entre otras. Nuestra meta es realizar producciones de alta calidad con pensamiento juicioso, logrando el resultado esperado por cada uno de nuestros clientes. ¿Cómo lo logramos? Estableciendo estándares de calidad, aplicando nuestras metodologías, talento y creatividad.
+            </p>
+          </div>
+          
+          {/* Contacto - correo a la izquierda y número a la derecha */}
+          <div className="text-xs text-gray-400">
+            <div className="flex flex-row justify-between w-full">
+              <a 
+                href="mailto:contacto@hotmail.com"
+                className="hover:text-red-primary transition-colors duration-300 font-gotham font-light"
+              >
+                contacto@hotmail.com
+              </a>
+              <a 
+                href="https://wa.me/523323881333"
+                className="hover:text-red-primary transition-colors duration-300 font-gotham font-light"
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                +52 3323 88 1333
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Contacto */}
-      <div className="text-center text-xs text-gray-400 pb-4">
-        <p className="font-gotham font-light">
-          <a 
-            href="mailto:contacto@hotmail.com"
-            className="hover:text-red-primary transition-colors duration-300"
-          >
-            contacto@hotmail.com
-          </a>
-          <br />
-          <a 
-            href="https://wa.me/523323881333"
-            className="hover:text-red-primary transition-colors duration-300"
-            target="_blank" 
-            rel="noopener noreferrer"
-          >
-            +52 3323 88 1333
-          </a>
-        </p>
+      {/* Línea roja inferior con derechos reservados */}
+      <div className="bg-red-primary py-[2px]">
+        <div className="max-w-7xl mx-auto px-6 md:px-10">
+          <div className="text-center">
+            <span className="text-white text-[9px] font-gotham font-bold tracking-tight">
+              © {new Date().getFullYear()} RECTÁNGULO FILMS. TODOS LOS DERECHOS RESERVADOS.
+            </span>
+          </div>
+        </div>
       </div>
-
-      {/* Línea roja inferior */}
-      <div className="h-[6px] bg-red-primary"></div>
     </footer>
   );
 };

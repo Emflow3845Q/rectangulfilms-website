@@ -227,7 +227,6 @@
       }
     }
   },
-
   "es": {
     "header": {
       "menu": {
@@ -330,129 +329,160 @@
       }
     },
     "motionProjects": {
-      "billionsFashion": {
-        "client": "Billions Fashion",
-        "title": "Billions Fashion",
+      "anilloFundador": {
+        "client": "Billions",
+        "title": "Anillo de fundador Billions",
+        "category": "Producto / Comercial"
+      },
+      "billionsRopa": {
+        "client": "Billions",
+        "title": "Billions - Ropa mov At",
         "category": "Moda / Comercial"
       },
-      "hpFinance": {
-        "client": "HP Finance",
-        "title": "HP Finance",
-        "category": "Video Corporativo"
+      "bomberosGuadalajara": {
+        "client": "Bomberos Guadalajara",
+        "title": "Bomberos Guadalajara",
+        "category": "Documental / Corporativo"
       },
-      "ohLaLashes": {
-        "client": "Oh La Lashes",
-        "title": "Oh La Lashes",
-        "category": "Belleza / Producto"
+      "camiloRegresa": {
+        "client": "Oh la lashes",
+        "title": "Camilo Regresa Oh la lashes",
+        "category": "Belleza / Comercial"
       },
-      "gnpEncore": {
-        "client": "Evento GNP Encore",
-        "title": "GNP Encore",
-        "category": "Cobertura de Evento"
+      "caminandoSolo": {
+        "client": "Sesión Acústica",
+        "title": "Caminando Solo",
+        "category": "Música / Acústico"
       },
-      "grupoAeropuertario": {
-        "client": "Grupo Aeroportuario",
-        "title": "Reel Corporativo",
-        "category": "Corporativo"
+      "casaIdeas": {
+        "client": "Casaldeas",
+        "title": "Casaldeas",
+        "category": "Comercial / Inmobiliario"
       },
       "dac": {
-        "client": "Derma Aesthetics Congress",
-        "title": "DAC 2025",
+        "client": "DAC",
+        "title": "Derma Aesthetics Congress",
         "category": "Médico / Evento"
       },
       "dac2025": {
-        "client": "Derma Aesthetics Congress",
-        "title": "DAC 2025",
+        "client": "DAC",
+        "title": "DAC 2025 - Rocap",
         "category": "Médico / Evento"
       },
-      "drCamilo": {
-        "client": "Dr. Camilo",
-        "title": "Campaña Estética",
-        "category": "Salud / Campaña"
+      "domoReel": {
+        "client": "Domo",
+        "title": "Domo Reel Rectangulo 2025",
+        "category": "Reel / Corporativo"
       },
-      "mickFlores": {
-        "client": "Mick Flores & Red Sauce",
-        "title": "Video Musical",
-        "category": "Video Musical"
+      "derma2024": {
+        "client": "DAC",
+        "title": "Derma Aesthetics 2024",
+        "category": "Médico / Evento"
       },
-      "casaIdea": {
-        "client": "Casa Idea",
-        "title": "Casa Idea",
-        "category": "Comercial"
+      "dolor": {
+        "client": "Sesión Acústica",
+        "title": "Dolor",
+        "category": "Música / Acústico"
       },
-      "laPerla": {
-        "client": "La Perla",
-        "title": "Campaña La Perla",
-        "category": "Comercial / Moda"
-      },
-      "billionsTrade": {
-        "client": "Billions Trade Club",
-        "title": "Billions Trade Club",
-        "category": "Corporativo"
-      },
-      "ramsesSoriano": {
-        "client": "Ramses Soriano",
-        "title": "Retrato Cinematográfico",
-        "category": "Cine Creativo"
-      },
-      "elAfilador": {
-        "client": "El Afilador",
-        "title": "El Afilador",
-        "category": "Cortometraje"
-      }
-    },
-    "stillProjects": {
-      "billionsFashion": {
-        "title": "Billions Fashion",
-        "category": "Moda / Comercial"
-      },
-      "hpFinance": {
-        "title": "HP Finance",
-        "category": "Corporativo"
-      },
-      "ohLaLashes": {
-        "title": "Oh La Lashes",
-        "category": "Belleza / Producto"
+      "donRicardo": {
+        "client": "Don Ricardo",
+        "title": "El afilador",
+        "category": "Documental / Cortometraje"
       },
       "gnpEncore": {
-        "title": "GNP Encore",
-        "category": "Cobertura de Evento"
+        "client": "GNP",
+        "title": "Evento GNP Encore",
+        "category": "Corporativo / Evento"
+      },
+      "fiel": {
+        "client": "Sesión Acústica",
+        "title": "Fiel",
+        "category": "Música / Acústico"
+      },
+      "fosaTemporal": {
+        "client": "BS Practica",
+        "title": "Fosa Temporal",
+        "category": "Práctica / Creativo"
       },
       "grupoAeropuertario": {
-        "title": "Fotografía Corporativa",
+        "client": "Grupo Aeropuertario",
+        "title": "Grupo Aeropuertario",
         "category": "Corporativo"
       },
-      "dac": {
-        "title": "DAC 2025",
-        "category": "Médico / Evento"
+      "hpFinance": {
+        "client": "HP",
+        "title": "HP Finance Day",
+        "category": "Corporativo / Finanzas"
       },
-      "drCamilo": {
-        "title": "Campaña Estética",
-        "category": "Salud / Campaña"
+      "laPorla": {
+        "client": "La Porla",
+        "title": "La Porla Timelapse",
+        "category": "Timelapse / Creativo"
       },
-      "mickFlores": {
-        "title": "Fotografía Musical",
-        "category": "Música"
+      "miMejorCancion": {
+        "client": "Sesión Acústica",
+        "title": "Mi mejor Canción",
+        "category": "Música / Acústico"
       },
-      "casaIdea": {
-        "title": "Casa Idea",
-        "category": "Comercial"
+      "motionGraphics": {
+        "client": "Symetri Academy",
+        "title": "Motion Graphics",
+        "category": "Educativo / Motion"
       },
-      "laPerla": {
-        "title": "Campaña La Perla",
-        "category": "Moda"
+      "ohLaLashesTarjetas": {
+        "client": "Oh la lashes",
+        "title": "Oh la lashes - Tarjetas",
+        "category": "Belleza / Producto"
       },
-      "billionsTrade": {
-        "title": "Billions Trade Club",
-        "category": "Corporativo"
+      "promocionalForo": {
+        "client": "Foro Off Screen",
+        "title": "Promocional foro Off Screen",
+        "category": "Promocional / Evento"
       },
-      "ramsesSoriano": {
-        "title": "Fotografía de Retrato",
-        "category": "Creativo"
+      "recapCdmx": {
+        "client": "IBTM",
+        "title": "RECAP CDMX IBTM",
+        "category": "Evento / Recap"
       },
-      "elAfilador": {
-        "title": "El Afilador",
-        "category": "Cine Creativo"
+      "recapAmco": {
+        "client": "AMCO",
+        "title": "Recap AMCO Jov",
+        "category": "Corporativo / Recap"
+      },
+      "rocroaSteam": {
+        "client": "Rocroa",
+        "title": "Rocroa STEAM 2024",
+        "category": "Educativo / STEAM"
+      },
+      "rolex": {
+        "client": "Rolex",
+        "title": "Rolex",
+        "category": "Lujo / Comercial"
+      },
+      "rosk": {
+        "client": "Rosk",
+        "title": "Rosk",
+        "category": "Comercial / Branding"
+      },
+      "rossanaCamilo": {
+        "client": "Rossana & Camilo",
+        "title": "Rossana X Camilo",
+        "category": "Colaboración / Creativo"
+      },
+      "showreelFornada": {
+        "client": "Fornada T",
+        "title": "Showreel - Fornada T",
+        "category": "Showreel / Corporativo"
+      },
+      "soloTuAmorAcustica": {
+        "client": "Sesión Acústica",
+        "title": "Solo tu amor - Sesión Acústica",
+        "category": "Música / Acústico"
+      },
+      "soloTuAmor": {
+        "client": "Solo tu amor",
+        "title": "Solo tu amor",
+        "category": "Música / Video"
       }
     }
   }

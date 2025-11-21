@@ -22,9 +22,13 @@ const HeroSection = ({
     const text1 = document.createElement('span');
     const text2 = document.createElement('span');
     
-    // Configurar estilos de los textos
+    // Configurar estilos de los textos - CON LAS FUENTES LOCALES
     [text1, text2].forEach(text => {
-      text.className = 'text-white font-gotham font-bold uppercase whitespace-nowrap';
+      text.style.color = 'white';
+      text.style.fontFamily = 'GOTHAM';
+      text.style.fontWeight = '700';
+      text.style.textTransform = 'uppercase';
+      text.style.whiteSpace = 'nowrap';
       text.style.lineHeight = 'inherit';
       text.style.opacity = '0';
       text.style.willChange = 'transform';
@@ -132,7 +136,9 @@ const HeroSection = ({
       tempSpan.style.position = 'absolute';
       tempSpan.style.whiteSpace = 'nowrap';
       tempSpan.textContent = longestText;
-      tempSpan.className = 'font-gotham font-bold uppercase';
+      tempSpan.style.fontFamily = 'GOTHAM';
+      tempSpan.style.fontWeight = '700';
+      tempSpan.style.textTransform = 'uppercase';
       container.appendChild(tempSpan);
       
       const width = tempSpan.offsetWidth;
@@ -205,15 +211,17 @@ const HeroSection = ({
             ref={sloganRef}
             className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl text-white uppercase tracking-tight opacity-0 leading-tight sm:leading-normal flex flex-col xs:flex-row items-start xs:items-center justify-start flex-nowrap gap-1 xs:gap-2 sm:gap-3 md:gap-4 w-full"
           >
-            <span className="block flex-shrink-0 font-accent font-normal whitespace-nowrap">
+            {/* "we are" con BBH_Sans_Bartle - NORMAL */}
+            <span 
+              className="block flex-shrink-0 whitespace-nowrap font-accent font-normal"
+            >
               we are
             </span>
             
-            {/* CONTENEDOR PARA TEXTO DINÁMICO CON ALTURA FIJA */}
+            {/* CONTENEDOR PARA TEXTO DINÁMICO CON GOTHAM BOLD */}
             <span
               ref={textContainerRef}
-              className="inline-block relative flex-shrink-0 pointer-events-none min-w-0"
-              style={{ lineHeight: '1' }}
+              className="inline-block relative flex-shrink-0 pointer-events-none min-w-0 font-gotham font-bold"
             />
           </h1>
 

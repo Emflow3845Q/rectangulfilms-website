@@ -6,8 +6,9 @@ const NoiseGradientBackgroundV2 = () => {
   const containerRef = useRef(null);
   const animationIdRef = useRef(null);
   const mousePos = useRef({ x: 0.5, y: 0.5 });
-  const targetDistortion = useRef(0);
-  const currentDistortion = useRef(0);
+  const targetDistortion = useRef(1.0);
+  const currentDistortion = useRef(1.0);
+  const mouseActive = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -46,11 +47,11 @@ const NoiseGradientBackgroundV2 = () => {
       uniform vec2 iResolution;
       uniform float uDistortion;
       uniform vec2 uMouse;
+      uniform bool uMouseActive;
       varying vec2 vUv;
 
-      #define layers 5
-      #define speed 0.35
-      #define scale 1.2
+      #define speed 0.3
+      #define scale 2.0
 
       vec3 hash(vec3 p) {
         p = vec3(dot(p, vec3(127.1, 311.7, 74.7)),
@@ -79,102 +80,118 @@ const NoiseGradientBackgroundV2 = () => {
                 dot(hash(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)), u.x), u.y), u.z);
       }
 
-      float hash21(vec2 p) {
-        return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-      }
-
-      void main() {
-        // Coordenadas invertidas (MISMO que el original)
-        vec2 uv = (vUv * iResolution.xy - iResolution.xy * 0.5) / iResolution.y;
-        uv.x = -uv.x;
+      // MOVIMIENTO EXPANSIVO QUE CUBRE TODA LA PANTALLA
+      vec3 generateBackground(vec2 uv, float time) {
+        vec2 p = uv;
         
-        float t = iTime * speed;
-        uv *= scale;
+        // MOVIMIENTO PRINCIPAL: ONDAS GRANDES QUE CUBREN TODA LA PANTALLA
+        float bigWaveX = sin(p.x * 1.5 + time * 0.8) * cos(p.y * 1.2 - time * 0.6) * 0.8;
+        float bigWaveY = cos(p.x * 1.2 - time * 0.7) * sin(p.y * 1.5 + time * 0.9) * 0.8;
         
-        // Calcular distancia al mouse (en coordenadas de pantalla)
-        vec2 screenUV = gl_FragCoord.xy / iResolution.xy;
-        float mouseDist = distance(screenUV, uMouse);
+        // ONDAS SECUNDARIAS MÁS GRANDES
+        float largeWave1 = sin(length(p) * 2.0 - time * 1.2) * 0.6;
+        float largeWave2 = cos(length(p) * 1.8 + time * 0.9) * 0.4;
         
-        // Intensidad de distorsión basada en la distancia al mouse
-        float distortionIntensity = uDistortion * (1.0 - smoothstep(0.0, 0.2, mouseDist));
+        // MOVIMIENTO ROTATORIO GRANDE
+        float globalRotation = time * 0.2;
+        p = mat2(cos(globalRotation), -sin(globalRotation), 
+                sin(globalRotation), cos(globalRotation)) * p;
         
-        // EFECTOS DE DISTORSIÓN SUTILES - sin pixelación fuerte
-        vec2 distortedUV = uv;
+        // MOVIMIENTO DE EXPANSIÓN/CONTRACCIÓN
+        float expansion = sin(time * 0.5) * 0.3 + 1.0;
+        p *= expansion;
         
-        if (distortionIntensity > 0.01) {
-          // Distorsión de onda suave en lugar de pixelación
-          float waveDistort = distortionIntensity * 0.3;
-          distortedUV.x += sin(uv.y * 8.0 + t * 6.0) * waveDistort * 0.1;
-          distortedUV.y += cos(uv.x * 6.0 + t * 4.0) * waveDistort * 0.1;
-          
-          // Micro-distorsión aleatoria (muy sutil)
-          float microDistort = hash21(uv * 20.0 + t * 10.0) * distortionIntensity * 0.05;
-          distortedUV += microDistort * 0.02;
-          
-          uv = distortedUV;
-        }
+        // COMBINAR TODOS LOS MOVIMIENTOS
+        p.x += bigWaveX * 1.2 + largeWave1 * p.x * 0.7 + bigWaveY * 0.5;
+        p.y += bigWaveY * 1.2 + largeWave1 * p.y * 0.7 + bigWaveX * 0.5;
         
-        // NUEVO SISTEMA DE MOVIMIENTO - Preservando la textura pero con diferente animación
-        float h = noise(vec3(uv * 2.0, t * 0.5));
+        // AÑADIR MOVIMIENTO DE DERIVA SUAVE
+        p.x += sin(time * 0.3) * 0.4;
+        p.y += cos(time * 0.4) * 0.3;
         
-        // DISTORSIÓN UV ALTERNATIVA - Misma estructura, diferentes parámetros
-        for (int n = 1; n < layers; n++) {
-          float i = float(n);
-          // Movimiento de onda circular en lugar de lineal
-          float waveX = 0.6 / i * cos(i * uv.y + i * 2.0 + t * 3.0 + h * i * 1.5) + 0.9;
-          float waveY = 0.5 / i * sin(uv.x * 1.5 + 2.0 - i * 0.8 + h * 2.0 + t * 4.0 + 0.5 * i) + 1.4;
-          uv -= vec2(waveX, waveY);
-        }
-
-        // Distorsión final con patrones circulares
-        float circularDistort = sin(length(uv) * 3.0 - t * 2.0) * 0.3;
-        uv -= vec2(
-          1.0 * sin(uv.x * 1.2 + t * 1.5 + h) + 1.5 + circularDistort, 
-          0.6 * cos(uv.y * 1.4 + t * 1.8 + 0.5 * h) + 1.3 + circularDistort
-        );
-
-        // GENERACIÓN DE COLOR - EXACTAMENTE IGUAL AL ORIGINAL
-        float redValue = 0.5 * sin(uv.x) + 0.5;
-        float greenValue = 0.5 * sin(uv.x + uv.y) + 0.5;
-        float blueValue = 0.5 * sin(uv.y) + 0.8;
+        // PATRONES DE ESCALA MÁS GRANDE
+        float pattern1 = sin(p.x * 2.0 + p.y * 1.5 + time * 0.5) * 0.4;
+        float pattern2 = cos(p.x * 1.8 - p.y * 2.2 + time * 0.7) * 0.3;
         
-        // Combinamos todos los canales en el rojo
+        p.x += pattern1 + pattern2 * 0.5;
+        p.y += pattern2 + pattern1 * 0.5;
+        
+        // GENERACIÓN DE COLOR DEL SEGUNDO CÓDIGO
+        float redValue = 0.5 * sin(p.x) + 0.5;
+        float greenValue = 0.5 * sin(p.x + p.y) + 0.5;
+        float blueValue = 0.5 * sin(p.y) + 0.8;
+        
         float finalRed = (redValue + greenValue + blueValue) / 3.0;
-        
-        // AJUSTE PARA NEGRO MÁS INTENSO (EXACTO):
         finalRed = pow(finalRed, 1.5);
         finalRed *= 0.7;
 
-        // COLORES EXACTOS DE LA MARCA:
         vec3 brandRed = vec3(0.925, 0.137, 0.235);
         vec3 brandBlack = vec3(0.0, 0.0, 0.0);
         
-        // Mezclar entre negro y rojo de marca
         vec3 col = mix(brandBlack, brandRed, finalRed);
         
-        // EFECTOS DE COLOR DURANTE LA DISTORSIÓN (más sutiles)
-        if (distortionIntensity > 0.01) {
-          // Shift RGB muy sutil
-          float rgbShift = distortionIntensity * 0.015;
-          vec3 shiftedCol = vec3(
-            mix(brandBlack, brandRed, finalRed + rgbShift * hash21(uv * 5.0 + t * 3.0)).r,
-            mix(brandBlack, brandRed, finalRed + rgbShift * hash21(uv * 6.0 + t * 4.0) * 0.7).g,
-            mix(brandBlack, brandRed, finalRed + rgbShift * hash21(uv * 7.0 + t * 5.0) * 0.5).b
-          );
+        return col;
+      }
+
+      void main() {
+        // Coordenadas que cubren toda la pantalla
+        vec2 originalUV = (vUv * iResolution.xy - iResolution.xy * 0.5) / iResolution.y;
+        originalUV.x = -originalUV.x;
+        
+        float t = iTime * speed;
+        vec2 uv = originalUV * scale;
+        
+        vec3 backgroundColor = generateBackground(uv, t);
+        
+        // EFECTO CORREGIDO: HALAR EL ROJO HACIA AFUERA SIN CREAR VACÍOS NEGROS
+        if (uMouseActive) {
+          vec2 screenUV = gl_FragCoord.xy / iResolution.xy;
+          vec2 mouseDirection = screenUV - uMouse;
+          float mouseDistance = length(mouseDirection);
           
-          // Ruido digital sutil
-          float digitalNoise = hash21(uv * 50.0 + t * 15.0) * distortionIntensity * 0.2;
-          shiftedCol += digitalNoise * 0.1;
-          
-          // Mezcla suave con el color original
-          col = mix(col, shiftedCol, distortionIntensity * 0.6);
-          
-          // Efecto de "vibración" sutil
-          float vibrate = sin(t * 20.0) * distortionIntensity * 0.02;
-          col += vec3(vibrate * 0.1);
+          // Solo aplicar el efecto cerca del cursor
+          if (mouseDistance < 0.4) {
+            // Calcular la fuerza del efecto basada en la distancia
+            float distanceFactor = 1.0 - smoothstep(0.0, 0.4, mouseDistance);
+            float pullStrength = uDistortion * distanceFactor * 0.8;
+            
+            // Dirección del "halar" (desde el cursor hacia afuera)
+            vec2 pullDirection = normalize(mouseDirection);
+            
+            // Aplicar deformación SUAVE - halar la textura hacia afuera
+            vec2 pulledUV = uv + pullDirection * pullStrength * 0.3;
+            
+            // Generar color con las UV haladas
+            vec3 pulledColor = generateBackground(pulledUV, t);
+            
+            // En lugar de mezclar, usar el color halado directamente en áreas afectadas
+            // pero mantener la intensidad del rojo
+            float effectIntensity = distanceFactor * pullStrength;
+            
+            // Preservar el rojo: si el área halada es más roja, úsala
+            if (length(pulledColor) > length(backgroundColor)) {
+              backgroundColor = mix(backgroundColor, pulledColor, effectIntensity * 0.6);
+            } else {
+              // Si no, aplicar un efecto de "concentración" de rojo
+              vec3 enhancedRed = mix(backgroundColor, vec3(0.925, 0.137, 0.235), effectIntensity * 0.3);
+              backgroundColor = mix(backgroundColor, enhancedRed, effectIntensity * 0.4);
+            }
+            
+            // Efecto adicional: crear un patrón de ondas que refuerce el rojo
+            if (mouseDistance < 0.2) {
+              float wavePattern = sin(mouseDistance * 25.0 - t * 6.0) * pullStrength * 0.5;
+              vec2 waveUV = uv + pullDirection * wavePattern * 0.1;
+              vec3 waveColor = generateBackground(waveUV, t);
+              
+              // Asegurar que las ondas mantengan/intensifiquen el rojo
+              if (length(waveColor) > 0.2) {
+                backgroundColor = mix(backgroundColor, waveColor, wavePattern * 0.3);
+              }
+            }
+          }
         }
 
-        gl_FragColor = vec4(col, 1.0);
+        gl_FragColor = vec4(backgroundColor, 1.0);
       }
     `;
 
@@ -182,11 +199,13 @@ const NoiseGradientBackgroundV2 = () => {
     const material = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
+      transparent: true,
       uniforms: {
         iTime: { value: 0 },
         iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        uDistortion: { value: 0 },
-        uMouse: { value: new THREE.Vector2(0.5, 0.5) }
+        uDistortion: { value: 1.0 },
+        uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+        uMouseActive: { value: false }
       }
     });
 
@@ -201,12 +220,12 @@ const NoiseGradientBackgroundV2 = () => {
       const currentTime = (Date.now() - startTime) / 1000;
       material.uniforms.iTime.value = currentTime;
       
-      // Suavizar transición de distorsión
-      currentDistortion.current += (targetDistortion.current - currentDistortion.current) * 0.15;
+      // Suavizar la transición de la distorsión
+      currentDistortion.current += (targetDistortion.current - currentDistortion.current) * 0.1;
       material.uniforms.uDistortion.value = currentDistortion.current;
       
-      // Actualizar posición del mouse
       material.uniforms.uMouse.value.set(mousePos.current.x, mousePos.current.y);
+      material.uniforms.uMouseActive.value = mouseActive.current;
       
       renderer.render(scene, camera);
     };
@@ -214,18 +233,18 @@ const NoiseGradientBackgroundV2 = () => {
     animate();
 
     const handleMouseMove = (event) => {
-      // Normalizar coordenadas del mouse
       const rect = containerRef.current.getBoundingClientRect();
       mousePos.current.x = (event.clientX - rect.left) / rect.width;
       mousePos.current.y = 1.0 - ((event.clientY - rect.top) / rect.height);
-      targetDistortion.current = 1.0;
+      targetDistortion.current = 1.5; // Reducido para efecto más sutil
+      mouseActive.current = true;
     };
 
     const handleMouseLeave = () => {
-      targetDistortion.current = 0.0;
+      targetDistortion.current = 1.0;
+      mouseActive.current = false;
     };
 
-    // Agregar event listeners al contenedor
     const container = containerRef.current;
     container.addEventListener('mousemove', handleMouseMove);
     container.addEventListener('mouseleave', handleMouseLeave);

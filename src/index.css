@@ -1,5 +1,135 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.cdnfonts.com/css/gotham-condensed');
 
+/* Fuente Rodina-Regular  */
+@font-face {
+  font-family: 'Rodina-Regular';
+  src: url('/fonts/Rodina-Regular/Rodina-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fuentes Gotham */
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/Gotham-Book.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/GothamBookItalic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/Gotham-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/GothamLightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/GothamMedium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/GothamMediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/Gotham-Bold.otf') format('opentype'),
+       url('/fonts/GOTHAM/GothamBold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/GothamBoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/Gotham-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/Gotham-Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/Gotham-ThinItalic.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/Gotham-XLight.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/Gotham-XLightItalic.otf') format('opentype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GOTHAM';
+  src: url('/fonts/GOTHAM/Gotham-UltraItalic.otf') format('opentype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Fuente BBH Sans Bartle */
+@font-face {
+  font-family: 'BBH_Sans_Bartle';
+  src: url('/fonts/BBH_Sans_Bartle/BBHSansBartle-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

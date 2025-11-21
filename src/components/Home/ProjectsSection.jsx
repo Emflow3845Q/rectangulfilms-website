@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { gsap } from "gsap";
-import NoiseGradientBackground from "../../components/Background/NoiseGradientBackground";
+import NoiseGradientBackground from "../Background/NoiseGradientBackground";
 
 const ProjectsSection = ({ 
   featuredProjects, 
@@ -9,7 +9,7 @@ const ProjectsSection = ({
   onProjectClick 
 }) => {
 
-  // Animación de entrada para proyectos responsive
+  // Animation for responsive projects
   useEffect(() => {
     const staggerAmount = isMobile ? 0.07 : isTablet ? 0.09 : 0.12;
     const delayAmount = isMobile ? 0.3 : isTablet ? 0.4 : 0.6;
@@ -34,35 +34,50 @@ const ProjectsSection = ({
     );
   }, [isMobile, isTablet]);
 
-  // Función para obtener clase responsive del proyecto
+  // Function to get responsive project class
   const getProjectClass = (project) => {
     if (isMobile) return project.mobileWidth;
     if (isTablet) return project.tabletWidth || project.width;
     return project.width;
   };
 
+  // Function to get responsive rotation
+  const getRotationClass = (project) => {
+    if (isMobile) return '';
+    
+    if (isTablet) {
+      // Para tablet, reducir la rotación a la mitad
+      const rotationValue = project.rotation.replace('rotate-', '');
+      const isNegative = rotationValue.startsWith('-');
+      const numericValue = Math.abs(parseInt(rotationValue));
+      const reducedValue = numericValue / 2;
+      return isNegative ? `-rotate-${reducedValue}` : `rotate-${reducedValue}`;
+    }
+    
+    // Para desktop, rotación completa
+    return project.rotation;
+  };
+
   return (
     <section className="h-screen snap-start relative bg-black flex items-center justify-center overflow-hidden">
-      {/* Componente de fondo */}
+      {/* Background component */}
       <NoiseGradientBackground />
       
-      {/* Contenido de proyectos */}
+      {/* Projects content */}
       <div className="w-full h-full px-2 xs:px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8 py-3 xs:py-4 sm:py-5 md:py-6 lg:py-8 relative z-10">
         <div className={`grid ${
           isMobile 
-            ? 'grid-cols-2 grid-rows-3 gap-1.5 xs:gap-2' 
+            ? 'grid-cols-2 grid-rows-4 gap-1.5 xs:gap-2'  // 2x4 = 8 espacios
             : isTablet
-            ? 'grid-cols-2 lg:grid-cols-3 grid-rows-2 gap-2 sm:gap-3'
-            : 'grid-cols-2 lg:grid-cols-4 grid-rows-2 gap-3 lg:gap-4'
+            ? 'grid-cols-3 grid-rows-3 gap-2 sm:gap-3'    // 3x3 = 9 espacios
+            : 'grid-cols-4 grid-rows-3 gap-3 lg:gap-4'    // 4x3 = 12 espacios
         } w-full h-full`}>
           {featuredProjects.map((project) => (
             <div
               key={project.id}
               className={`project-card group cursor-pointer bg-black rounded-none overflow-hidden relative ${
                 getProjectClass(project)
-              } ${project.height} ${
-                isMobile ? '' : isTablet ? project.rotation.replace('rotate-', 'rotate-0.5') : project.rotation
-              } transition-all duration-500 ${
+              } ${project.height} ${getRotationClass(project)} transition-all duration-500 ${
                 isMobile ? '' : 'hover:rotate-0 hover:scale-105'
               } hover:z-10`}
               onClick={() => onProjectClick(project)}
@@ -79,13 +94,13 @@ const ProjectsSection = ({
                   Your browser does not support the video tag.
                 </video>
 
-                {/* Información del proyecto responsive */}
+                {/* Responsive project information */}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/20 to-black/80">
                   <div className="absolute bottom-0 left-0 right-0 p-1.5 xs:p-2 sm:p-2.5 md:p-3 lg:p-4">
-                    <h3 className="text-white font-accent text-xs xs:text-xs sm:text-sm uppercase mb-0.5 xs:mb-1 font-bold truncate">
+                    <h3 className="text-white font-accent font-bold text-xs xs:text-xs sm:text-sm uppercase mb-0.5 xs:mb-1 truncate">
                       {project.client}
                     </h3>
-                    <p className="text-white/95 text-xs xs:text-xs leading-tight font-gotham font-medium line-clamp-2">
+                    <p className="text-white/95 font-gotham font-medium text-xs xs:text-xs leading-tight line-clamp-2">
                       {project.title}
                     </p>
                     <div className={`${

@@ -4,12 +4,13 @@ import { gsap } from "gsap";
 const VideoSection = ({ isMobile, isTablet }) => {
   const marqueeRef = useRef(null);
 
-  // Animación marquee responsive
+  // Animación marquee responsive - HIPER LENTA
   useEffect(() => {
     if (!marqueeRef.current) return;
 
     const marqueeContent = marqueeRef.current;
-    const duration = isMobile ? 20 : isTablet ? 22 : 25;
+    // EXTREMADAMENTE LENTO
+    const duration = isMobile ? 120 : isTablet ? 150 : 180;
     const contentWidth = marqueeContent.scrollWidth / (isMobile ? 2 : 2);
 
     gsap.to(marqueeContent, {
@@ -39,7 +40,7 @@ const VideoSection = ({ isMobile, isTablet }) => {
             objectFit: 'cover'
           }}
         >
-          <source src="/videos/DemoRectangulo2025.mp4" type="video/mp4" />
+          <source src="/bg-hero.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         
@@ -51,8 +52,11 @@ const VideoSection = ({ isMobile, isTablet }) => {
         }`}></div>
       </div>
 
-      {/* Marquee responsive - TEXTO MÁS GRANDE */}
-      <div className="absolute bottom-0 w-full overflow-hidden z-10 pb-3 xs:pb-4 sm:pb-6 md:pb-8">
+      {/* Marquee responsive - TEXTO GIGANTE - SUBIDO UN POQUITO MENOS */}
+      <div className="absolute w-full overflow-hidden z-10" 
+           style={{ 
+             bottom: isMobile ? '6%' : isTablet ? '8%' : '10%' 
+           }}>
         <div
           ref={marqueeRef}
           className="flex whitespace-nowrap"
@@ -61,15 +65,19 @@ const VideoSection = ({ isMobile, isTablet }) => {
           {[...Array(isMobile ? 6 : isTablet ? 8 : 10)].map((_, i) => (
             <span
               key={i}
-              className={`font-accent text-white uppercase tracking-tighter font-black ${
-                isMobile 
-                  ? 'text-4xl xs:text-5xl mx-3 xs:mx-4 opacity-90' 
-                  : isTablet
-                  ? 'text-6xl sm:text-7xl mx-4 sm:mx-6 opacity-85'
-                  : 'text-7xl sm:text-8xl md:text-9xl lg:text-9xl xl:text-10xl mx-6 sm:mx-8 md:mx-10 lg:mx-12 opacity-80'
-              }`}
+              className="font-accent text-white uppercase tracking-tighter font-black opacity-90"
               style={{
-                textShadow: '2px 2px 6px rgba(0,0,0,0.6)'
+                textShadow: '5px 5px 15px rgba(0,0,0,1)',
+                fontSize: isMobile 
+                  ? '8rem'  // GIGANTE
+                  : isTablet 
+                  ? '10rem'  // GIGANTE
+                  : '12rem', // GIGANTE
+                marginLeft: isMobile ? '5rem' : isTablet ? '6rem' : '8rem',
+                marginRight: isMobile ? '5rem' : isTablet ? '6rem' : '8rem',
+                lineHeight: '0.8',
+                fontWeight: '900',
+                letterSpacing: '-0.03em'
               }}
             >
               everything is a rectangle
@@ -80,9 +88,9 @@ const VideoSection = ({ isMobile, isTablet }) => {
 
       {/* Gradiente adicional para mejor legibilidad */}
       <div className={`absolute inset-0 bg-gradient-to-t ${
-        isMobile ? 'from-black/70 via-transparent to-black/70' : 
-        isTablet ? 'from-black/60 via-transparent to-black/60' :
-        'from-black/50 via-transparent to-black/50'
+        isMobile ? 'from-black/90 via-transparent to-black/90' : 
+        isTablet ? 'from-black/80 via-transparent to-black/80' :
+        'from-black/70 via-transparent to-black/70'
       } z-5`}></div>
     </section>
   );

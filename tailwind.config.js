@@ -61,10 +61,11 @@ export default {
         }
       },
       fontFamily: {
-        'sans': ['GOTHAM', 'system-ui', 'sans-serif'], // Base tipográfica por defecto
-        'gotham': ['GOTHAM', 'system-ui', 'sans-serif'],
-        'accent': ['BBH_Sans_Bartle', 'system-ui', 'sans-serif'], // Fuente de acento
-        'bbh-sans-bartle': ['BBH_Sans_Bartle', 'system-ui', 'sans-serif'], // Alias alternativo
+        'sans': ['GOTHAM'],
+        'gotham': ['GOTHAM'],
+        'accent': ['BBH_Sans_Bartle'],
+        'rodina': ['Rodina-Regular'],
+        'logo': ['Rodina-Regular'],
       },
       fontWeight: {
         'thin': '100',

@@ -1,6 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
+import gsap from "gsap";
+// Importar todas las imágenes de stills
+import { stillImages as stills } from "../assets/images/stills";
 
 const StillPage = () => {
   const { t } = useLanguage();
@@ -9,6 +12,135 @@ const StillPage = () => {
   const [isInView, setIsInView] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [dragProgress, setDragProgress] = useState(0);
+
+  // Referencias para GSAP
+  const projectRefs = useRef([]);
+  const imageRefs = useRef([]);
+
+  // Función para actualizar el parallax de las imágenes basado en el drag
+  const updateImageParallax = () => {
+    if (!carouselRef.current) return;
+
+    const carousel = carouselRef.current;
+    const scrollLeft = -carousel.scrollLeft || 0;
+    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+    const progress = maxScroll > 0 ? scrollLeft / maxScroll : 0;
+
+    setDragProgress(progress);
+
+    // Aplicar transformación a cada imagen
+    imageRefs.current.forEach((imgRef, index) => {
+      if (!imgRef) return;
+
+      const element = imgRef;
+      const elementRect = element.getBoundingClientRect();
+      const containerRect = carousel.getBoundingClientRect();
+      
+      // Calcular posición relativa del elemento en el viewport
+      const elementCenter = elementRect.left + elementRect.width / 2;
+      const containerCenter = containerRect.left + containerRect.width / 2;
+      const distanceFromCenter = elementCenter - containerCenter;
+      
+      // Calcular intensidad del efecto parallax (ajusta este valor según lo que necesites)
+      const parallaxIntensity = 0.3;
+      const parallaxX = distanceFromCenter * parallaxIntensity;
+      
+      // Aplicar transformación
+      gsap.to(element, {
+        x: -parallaxX,
+        duration: 0.1,
+        ease: "power1.out"
+      });
+    });
+  };
+
+  // Efecto para actualizar parallax cuando se mueve el drag
+  useEffect(() => {
+    if (carouselRef.current && isHovering) {
+      const carousel = carouselRef.current;
+      const handleScroll = () => {
+        updateImageParallax();
+      };
+
+      carousel.addEventListener('scroll', handleScroll);
+      return () => carousel.removeEventListener('scroll', handleScroll);
+    }
+  }, [isHovering]);
+
+  // Función para resetear a estado inicial
+  const resetToInitialState = (index) => {
+    const projectElement = projectRefs.current[index];
+    if (!projectElement) return;
+
+    const imgWrapper = projectElement.querySelector(".js-project-thumbnail-img-wrapper");
+    const hoverImage = projectElement.querySelector(".js-project-thumbnail-image-hover");
+    
+    if (!imgWrapper) return;
+
+    gsap.killTweensOf(imgWrapper);
+    gsap.killTweensOf(hoverImage);
+
+    gsap.set(imgWrapper, {
+      "--first-top": "0%",
+      "--second-top": "33.3333%",
+      "--third-top": "66.6666%"
+    });
+
+    if (hoverImage) {
+      gsap.set(hoverImage, {
+        scale: 1.2
+      });
+    }
+  };
+
+  // Función de animación al hacer hover
+  const handleProjectHover = (index) => {
+    const projectElement = projectRefs.current[index];
+    if (!projectElement) return;
+
+    const imgWrapper = projectElement.querySelector(".js-project-thumbnail-img-wrapper");
+    const hoverImage = projectElement.querySelector(".js-project-thumbnail-image-hover");
+    
+    if (!imgWrapper) return;
+
+    gsap.killTweensOf(imgWrapper);
+    
+    const timeline = gsap.timeline();
+    
+    timeline.fromTo(imgWrapper, {
+      "--first-top": "0%",
+      "--second-top": "33.3333%", 
+      "--third-top": "66.6666%"
+    }, {
+      "--first-top": "33.3333%",
+      "--second-top": "66.6666%",
+      "--third-top": "100%",
+      ease: "power3.out",
+      duration: 1.5
+    });
+
+    if (hoverImage) {
+      gsap.killTweensOf(hoverImage);
+      // No animar escala: mantener la imagen hover en su tamaño por defecto
+      gsap.set(hoverImage, { scale: 1.2 });
+    }
+  };
+
+  // Inicializar event listeners
+  const initializeHoverEffects = () => {
+    projectRefs.current.forEach((projectEl, index) => {
+      if (projectEl) {
+        projectEl.addEventListener("mouseleave", () => {
+          resetToInitialState(index);
+        });
+        
+        projectEl.addEventListener("mouseenter", () => {
+          handleProjectHover(index);
+        });
+      }
+    });
+  };
 
   // Variantes de animación para el efecto cortina
   const curtainVariants = {
@@ -18,7 +150,7 @@ const StillPage = () => {
       y: -50
     },
     visible: {
-      height: "70vh",
+      height: "100%",
       opacity: 1,
       y: 0,
       transition: {
@@ -91,27 +223,20 @@ const StillPage = () => {
   // Deshabilitar el cursor personalizado cuando estamos sobre el carrusel
   useEffect(() => {
     if (isHovering) {
-      // Ocultar el cursor personalizado
       const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
       if (customCursor) {
         customCursor.style.display = 'none';
       }
-      
-      // Ocultar el cursor del sistema
       document.body.style.cursor = 'none';
     } else {
-      // Restaurar el cursor personalizado
       const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
       if (customCursor) {
         customCursor.style.display = 'block';
       }
-      
-      // Restaurar cursor del sistema
       document.body.style.cursor = 'auto';
     }
 
     return () => {
-      // Limpiar al desmontar
       document.body.style.cursor = 'auto';
       const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
       if (customCursor) {
@@ -120,85 +245,372 @@ const StillPage = () => {
     };
   }, [isHovering]);
 
-  // Tus imágenes originales en su orden original
   const projects = [
     {
       id: 1,
-      title: t("stillProjects.billionsFashion.title"),
-      category: t("stillProjects.billionsFashion.category"),
-      image: "/motion/work1.webp",
-    },
-    {
-      id: 3,
-      title: t("stillProjects.ohLaLashes.title"),
-      category: t("stillProjects.ohLaLashes.category"),
-      image: "/motion/work3.webp",
-    },
-    {
-      id: 4,
-      title: t("stillProjects.gnpEncore.title"),
-      category: t("stillProjects.gnpEncore.category"),
-      image: "/motion/work4.webp",
-    },
-    {
-      id: 5,
-      title: t("stillProjects.grupoAeropuertario.title"),
-      category: t("stillProjects.grupoAeropuertario.category"),
-      image: "/motion/work5.webp",
-    },
-    {
-      id: 6,
-      title: t("stillProjects.dac.title"),
-      category: t("stillProjects.dac.category"),
-      image: "/motion/work6.webp",
-    },
-    {
-      id: 7,
-      title: t("stillProjects.drCamilo.title"),
-      category: t("stillProjects.drCamilo.category"),
-      image: "/motion/work7.webp",
-    },
-    {
-      id: 8,
-      title: t("stillProjects.mickFlores.title"),
-      category: t("stillProjects.mickFlores.category"),
-      image: "/motion/work8.webp",
-    },
-    {
-      id: 9,
-      title: t("stillProjects.casaIdea.title"),
-      category: t("stillProjects.casaIdea.category"),
-      image: "/motion/work9.webp",
-    },
-    {
-      id: 10,
-      title: t("stillProjects.laPerla.title"),
-      category: t("stillProjects.laPerla.category"),
-      image: "/motion/work10.webp",
-    },
-    {
-      id: 11,
-      title: t("stillProjects.billionsTrade.title"),
-      category: t("stillProjects.billionsTrade.category"),
-      image: "/motion/work11.webp",
-    },
-    {
-      id: 12,
-      title: t("stillProjects.ramsesSoriano.title"),
-      category: t("stillProjects.ramsesSoriano.category"),
-      image: "/motion/work12.webp",
-    },
-    {
-      id: 13,
-      title: t("stillProjects.elAfilador.title"),
-      category: t("stillProjects.elAfilador.category"),
-      image: "/motion/work13.webp",
+      title: t("stillProjects.project1.title"),
+      category: t("stillProjects.project1.category"),
+      image: stills.still1,
     },
     {
       id: 2,
-      title: t("stillProjects.hpFinance.title"),
-      category: t("stillProjects.hpFinance.category"),
-      image: "/motion/work2.webp",
+      title: t("stillProjects.project2.title"),
+      category: t("stillProjects.project2.category"),
+      image: stills.still2,
+    },
+    {
+      id: 3,
+      title: t("stillProjects.project3.title"),
+      category: t("stillProjects.project3.category"),
+      image: stills.still3,
+    },
+    {
+      id: 4,
+      title: t("stillProjects.project4.title"),
+      category: t("stillProjects.project4.category"),
+      image: stills.still4,
+    },
+    {
+      id: 5,
+      title: t("stillProjects.project5.title"),
+      category: t("stillProjects.project5.category"),
+      image: stills.still5,
+    },
+    {
+      id: 6,
+      title: t("stillProjects.project6.title"),
+      category: t("stillProjects.project6.category"),
+      image: stills.still6,
+    },
+    {
+      id: 7,
+      title: t("stillProjects.project7.title"),
+      category: t("stillProjects.project7.category"),
+      image: stills.still7,
+    },
+    {
+      id: 8,
+      title: t("stillProjects.project8.title"),
+      category: t("stillProjects.project8.category"),
+      image: stills.still8,
+    },
+    {
+      id: 9,
+      title: t("stillProjects.project9.title"),
+      category: t("stillProjects.project9.category"),
+      image: stills.still9,
+    },
+    {
+      id: 10,
+      title: t("stillProjects.project10.title"),
+      category: t("stillProjects.project10.category"),
+      image: stills.still10,
+    },
+    {
+      id: 11,
+      title: t("stillProjects.project11.title"),
+      category: t("stillProjects.project11.category"),
+      image: stills.still11,
+    },
+    {
+      id: 12,
+      title: t("stillProjects.project12.title"),
+      category: t("stillProjects.project12.category"),
+      image: stills.still12,
+    },
+    {
+      id: 13,
+      title: t("stillProjects.project13.title"),
+      category: t("stillProjects.project13.category"),
+      image: stills.still13,
+    },
+    {
+      id: 14,
+      title: t("stillProjects.project14.title"),
+      category: t("stillProjects.project14.category"),
+      image: stills.still14,
+    },
+    {
+      id: 15,
+      title: t("stillProjects.project15.title"),
+      category: t("stillProjects.project15.category"),
+      image: stills.still15,
+    },
+    {
+      id: 16,
+      title: t("stillProjects.project16.title"),
+      category: t("stillProjects.project16.category"),
+      image: stills.still16,
+    },
+    {
+      id: 17,
+      title: t("stillProjects.project17.title"),
+      category: t("stillProjects.project17.category"),
+      image: stills.still17,
+    },
+    {
+      id: 18,
+      title: t("stillProjects.project18.title"),
+      category: t("stillProjects.project18.category"),
+      image: stills.still18,
+    },
+    {
+      id: 19,
+      title: t("stillProjects.project19.title"),
+      category: t("stillProjects.project19.category"),
+      image: stills.still19,
+    },
+    {
+      id: 20,
+      title: t("stillProjects.project20.title"),
+      category: t("stillProjects.project20.category"),
+      image: stills.still20,
+    },
+    {
+      id: 21,
+      title: t("stillProjects.project21.title"),
+      category: t("stillProjects.project21.category"),
+      image: stills.still21,
+    },
+    {
+      id: 22,
+      title: t("stillProjects.project22.title"),
+      category: t("stillProjects.project22.category"),
+      image: stills.still22,
+    },
+    {
+      id: 23,
+      title: t("stillProjects.project23.title"),
+      category: t("stillProjects.project23.category"),
+      image: stills.still23,
+    },
+    {
+      id: 24,
+      title: t("stillProjects.project24.title"),
+      category: t("stillProjects.project24.category"),
+      image: stills.still24,
+    },
+    {
+      id: 25,
+      title: t("stillProjects.project25.title"),
+      category: t("stillProjects.project25.category"),
+      image: stills.still25,
+    },
+    {
+      id: 26,
+      title: t("stillProjects.project26.title"),
+      category: t("stillProjects.project26.category"),
+      image: stills.still26,
+    },
+    {
+      id: 27,
+      title: t("stillProjects.project27.title"),
+      category: t("stillProjects.project27.category"),
+      image: stills.still27,
+    },
+    {
+      id: 28,
+      title: t("stillProjects.project28.title"),
+      category: t("stillProjects.project28.category"),
+      image: stills.still28,
+    },
+    {
+      id: 29,
+      title: t("stillProjects.project29.title"),
+      category: t("stillProjects.project29.category"),
+      image: stills.still29,
+    },
+    {
+      id: 30,
+      title: t("stillProjects.project30.title"),
+      category: t("stillProjects.project30.category"),
+      image: stills.still30,
+    },
+    {
+      id: 31,
+      title: t("stillProjects.project31.title"),
+      category: t("stillProjects.project31.category"),
+      image: stills.still31,
+    },
+    {
+      id: 32,
+      title: t("stillProjects.project32.title"),
+      category: t("stillProjects.project32.category"),
+      image: stills.still32,
+    },
+    {
+      id: 33,
+      title: t("stillProjects.project33.title"),
+      category: t("stillProjects.project33.category"),
+      image: stills.still33,
+    },
+    {
+      id: 34,
+      title: t("stillProjects.project34.title"),
+      category: t("stillProjects.project34.category"),
+      image: stills.still34,
+    },
+    {
+      id: 35,
+      title: t("stillProjects.project35.title"),
+      category: t("stillProjects.project35.category"),
+      image: stills.still35,
+    },
+    {
+      id: 36,
+      title: t("stillProjects.project36.title"),
+      category: t("stillProjects.project36.category"),
+      image: stills.still36,
+    },
+    {
+      id: 37,
+      title: t("stillProjects.project37.title"),
+      category: t("stillProjects.project37.category"),
+      image: stills.still37,
+    },
+    {
+      id: 38,
+      title: t("stillProjects.project38.title"),
+      category: t("stillProjects.project38.category"),
+      image: stills.still38,
+    },
+    {
+      id: 39,
+      title: t("stillProjects.project39.title"),
+      category: t("stillProjects.project39.category"),
+      image: stills.still39,
+    },
+    {
+      id: 40,
+      title: t("stillProjects.project40.title"),
+      category: t("stillProjects.project40.category"),
+      image: stills.still40,
+    },
+    {
+      id: 41,
+      title: t("stillProjects.project41.title"),
+      category: t("stillProjects.project41.category"),
+      image: stills.still41,
+    },
+    {
+      id: 42,
+      title: t("stillProjects.project42.title"),
+      category: t("stillProjects.project42.category"),
+      image: stills.still42,
+    },
+    {
+      id: 43,
+      title: t("stillProjects.project43.title"),
+      category: t("stillProjects.project43.category"),
+      image: stills.still43,
+    },
+    {
+      id: 44,
+      title: t("stillProjects.project44.title"),
+      category: t("stillProjects.project44.category"),
+      image: stills.still44,
+    },
+    {
+      id: 45,
+      title: t("stillProjects.project45.title"),
+      category: t("stillProjects.project45.category"),
+      image: stills.still45,
+    },
+    {
+      id: 46,
+      title: t("stillProjects.project46.title"),
+      category: t("stillProjects.project46.category"),
+      image: stills.still46,
+    },
+    {
+      id: 47,
+      title: t("stillProjects.project47.title"),
+      category: t("stillProjects.project47.category"),
+      image: stills.still47,
+    },
+    {
+      id: 48,
+      title: t("stillProjects.project48.title"),
+      category: t("stillProjects.project48.category"),
+      image: stills.still48,
+    },
+    {
+      id: 49,
+      title: t("stillProjects.project49.title"),
+      category: t("stillProjects.project49.category"),
+      image: stills.still49,
+    },
+    {
+      id: 50,
+      title: t("stillProjects.project50.title"),
+      category: t("stillProjects.project50.category"),
+      image: stills.still50,
+    },
+    {
+      id: 51,
+      title: t("stillProjects.project51.title"),
+      category: t("stillProjects.project51.category"),
+      image: stills.still51,
+    },
+    {
+      id: 52,
+      title: t("stillProjects.project52.title"),
+      category: t("stillProjects.project52.category"),
+      image: stills.still52,
+    },
+    {
+      id: 53,
+      title: t("stillProjects.project53.title"),
+      category: t("stillProjects.project53.category"),
+      image: stills.still53,
+    },
+    {
+      id: 54,
+      title: t("stillProjects.project54.title"),
+      category: t("stillProjects.project54.category"),
+      image: stills.still54,
+    },
+    {
+      id: 55,
+      title: t("stillProjects.project55.title"),
+      category: t("stillProjects.project55.category"),
+      image: stills.still55,
+    },
+    {
+      id: 56,
+      title: t("stillProjects.project56.title"),
+      category: t("stillProjects.project56.category"),
+      image: stills.still56,
+    },
+    {
+      id: 57,
+      title: t("stillProjects.project57.title"),
+      category: t("stillProjects.project57.category"),
+      image: stills.still57,
+    },
+    {
+      id: 58,
+      title: t("stillProjects.project58.title"),
+      category: t("stillProjects.project58.category"),
+      image: stills.still58,
+    },
+    {
+      id: 59,
+      title: t("stillProjects.project59.title"),
+      category: t("stillProjects.project59.category"),
+      image: stills.still59,
+    },
+    {
+      id: 60,
+      title: t("stillProjects.project60.title"),
+      category: t("stillProjects.project60.category"),
+      image: stills.still60,
+    },
+    {
+      id: 61,
+      title: t("stillProjects.project61.title"),
+      category: t("stillProjects.project61.category"),
+      image: stills.still61,
     }
   ];
 
@@ -229,6 +641,27 @@ const StillPage = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Inicializar efectos hover cuando el componente está ready
+  useEffect(() => {
+    if (isInView && window.innerWidth > 767) {
+      setTimeout(() => {
+        initializeHoverEffects();
+      }, 100);
+    }
+  }, [isInView]);
+
+  // Manejar resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 767) {
+        initializeHoverEffects();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <section className="w-full bg-black-pure text-white-pure py-20 overflow-hidden relative">
 
@@ -251,7 +684,7 @@ const StillPage = () => {
       {/* CARRUSEL */}
       <motion.div
         ref={carouselRef}
-        className="pl-6 relative"
+        className="pl-6 relative overflow-x-auto overflow-y-hidden"
         style={{ overflow: "hidden" }}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
@@ -259,7 +692,7 @@ const StillPage = () => {
         onMouseLeave={() => setIsHovering(false)}
         onMouseMove={handleMouseMove}
       >
-        {/* CURSOR PERSONALIZADO DRAG - CON FONDO TRANSPARENTE */}
+        {/* CURSOR PERSONALIZADO DRAG */}
         <motion.div
           className="fixed pointer-events-none z-[999999] flex items-center justify-center"
           style={{
@@ -270,7 +703,6 @@ const StillPage = () => {
           initial="hidden"
           animate={isHovering ? "visible" : "hidden"}
         >
-          {/* BOLA CON FONDO TRANSPARENTE - usando backdrop-filter */}
           <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-white/80 backdrop-blur-md bg-red-primary/20 shadow-lg">
             <span className="text-white text-xs font-gotham font-bold uppercase tracking-wider drop-shadow-sm">
               DRAG
@@ -283,44 +715,83 @@ const StillPage = () => {
           dragConstraints={{ right: 0, left: -width }}
           dragElastic={0.1}
           className="flex gap-2 cursor-none"
+          onDrag={(event, info) => {
+            updateImageParallax();
+          }}
+          onDragEnd={(event, info) => {
+            updateImageParallax();
+          }}
         >
           {projects.map((project, index) => (
             <motion.div
               key={project.id}
-              className="min-w-[24vw] max-w-[24vw] flex-shrink-0 group"
-              whileHover={{ scale: 0.98 }}
-              transition={{ duration: 0.2 }}
+              ref={el => projectRefs.current[index] = el}
+              className="min-w-[24vw] max-w-[24vw] flex-shrink-0 group project-thumbnail"
               custom={index}
               variants={cardVariants}
             >
-              {/* CONTENEDOR DE LA IMAGEN CON EFECTO CORTINA */}
-              <motion.div
-                className="w-full bg-gray-dark overflow-hidden relative"
-                variants={curtainVariants}
-                initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
-                transition={{
-                  duration: 0.8,
-                  delay: index * 0.1,
-                  ease: [0.25, 0.1, 0.25, 1]
-                }}
-              >
-                {/* IMAGEN que aparece después del efecto cortina */}
+              {/* CONTENEDOR PRINCIPAL DE LA IMAGEN */}
+              <div className="project-thumbnail__img relative overflow-hidden">
+                
+                {/* IMAGEN BASE - siempre visible (posición absoluta para evitar cambios de layout) */}
                 <motion.div
+                  className="w-full h-full absolute inset-0"
+                  variants={curtainVariants}
                   initial="hidden"
                   animate={isInView ? "visible" : "hidden"}
-                  variants={contentVariants}
-                  transition={{ delay: index * 0.1 + 0.3 }}
-                  className="w-full h-full"
+                  transition={{
+                    duration: 0.8,
+                    delay: index * 0.1,
+                    ease: [0.25, 0.1, 0.25, 1]
+                  }}
                 >
+                  <motion.div
+                    initial="hidden"
+                    animate={isInView ? "visible" : "hidden"}
+                    variants={contentVariants}
+                    transition={{ delay: index * 0.1 + 0.3 }}
+                    className="w-full h-full overflow-hidden absolute inset-0"
+                  >
+                    <img
+                      ref={el => imageRefs.current[index] = el}
+                      src={project.image}
+                      alt={project.title}
+                      className="img w-full h-full object-cover"
+                      style={{ width: '120%', transformOrigin: 'center center', willChange: 'transform' }} // Imagen más ancha que el contenedor
+                      draggable="false"
+                    />
+                  </motion.div>
+                </motion.div>
+
+                {/* WRAPPER CON CLIP-PATH PARA EL EFECTO HOVER */}
+                <div 
+                  className="project-thumbnail__img-wrapper js-project-thumbnail-img-wrapper absolute inset-0 overflow-hidden"
+                  style={{
+                    "--first-top": "0%",
+                    "--second-top": "33.3333%", 
+                    "--third-top": "66.6666%",
+                    "--first-bottom": "33.3333%",
+                    "--second-bottom": "66.6666%", 
+                    "--third-bottom": "100%"
+                  }}
+                >
+                  {/* IMAGEN HOVER - escala inicial 1.2 y más ancha */}
                   <img
+                    ref={el => imageRefs.current[index + 100] = el} // Referencia separada para hover
                     src={project.image}
                     alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="img project-thumbnail__img-hover js-project-thumbnail-image-hover w-full h-full object-cover"
+                    style={{ 
+                      transform: 'scale(1.2)',
+                      transformOrigin: 'center center',
+                      width: '120%',
+                      willChange: 'transform'
+                    }}
                     draggable="false"
                   />
-                </motion.div>
-              </motion.div>
+                </div>
+
+              </div>
 
               {/* TEXTO que aparece después */}
               <motion.div
@@ -341,6 +812,61 @@ const StillPage = () => {
           ))}
         </motion.div>
       </motion.div>
+
+      {/* ESTILOS CSS PARA EL EFECTO */}
+      <style jsx>{`
+        .project-thumbnail {
+          display: inline-block;
+          width: 100%;
+        }
+
+        .project-thumbnail__img {
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+          aspect-ratio: 0.76;
+        }
+
+        .project-thumbnail__img-wrapper {
+          --first-top: 0%;
+          --first-bottom: 33.3333%;
+          --second-top: 33.3333%;
+          --second-bottom: 66.6666%;
+          --third-top: 66.6666%;
+          --third-bottom: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          clip-path: polygon(
+            0% var(--first-top), 100% var(--first-top), 
+            100% var(--first-bottom), 0% var(--first-bottom),
+            0% var(--second-top), 100% var(--second-top), 
+            100% var(--second-bottom), 0% var(--second-bottom),
+            0% var(--third-top), 100% var(--third-top), 
+            100% var(--third-bottom), 0% var(--third-bottom)
+          );
+          pointer-events: none;
+        }
+
+        .img {
+          height: 100%;
+          object-fit: cover;
+          position: absolute;
+        }
+
+        /* La imagen principal es visible por defecto */
+        .project-thumbnail__img > div:first-child {
+          position: relative;
+          z-index: 1;
+        }
+
+        /* El wrapper con clip-path se superpone */
+        .project-thumbnail__img-wrapper {
+          z-index: 2;
+        }
+      `}</style>
 
     </section>
   );

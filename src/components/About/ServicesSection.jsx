@@ -51,7 +51,7 @@ const ServicesSection = () => {
             </motion.p>
 
             <motion.h2
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-accent uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20 font-black"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-accent font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
