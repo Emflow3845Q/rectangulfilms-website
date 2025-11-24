@@ -247,7 +247,7 @@ const ProjectsSection = ({
                 <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black/70 sm:via-black/20 sm:to-black/80">
                   {/* Información del proyecto */}
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 md:p-4">
-                    <h3 className={`text-white font-accent font-bold uppercase mb-1 truncate ${textSizes.client}`}>
+                    <h3 className={`text-white font-gotham font-bold uppercase mb-1 truncate ${textSizes.client}`}>
                       {project.client}
                     </h3>
                     <p className={`text-white/95 font-gotham font-medium leading-tight line-clamp-2 ${textSizes.title}`}>

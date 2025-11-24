@@ -22,7 +22,7 @@ const RentalsPage = () => {
         {/* Full-bleed background alta - MEJORADO RESPONSIVE */}
         <div
           className="absolute inset-0 bg-cover bg-center h-[480px] xs:h-[520px] sm:h-[580px] md:h-[640px] lg:h-[760px] xl:h-[800px]"
-          style={{ backgroundImage: "url('/bts/bts.jpg')" }}
+          style={{ backgroundImage: "url('https://res.cloudinary.com/dhoyps3vk/image/upload/rentals26_ccyyhc.jpg')" }}
           aria-hidden
         />
 
@@ -38,7 +38,7 @@ const RentalsPage = () => {
         >
           {/* Título RENTALS muy grande centrado - MEJORADO RESPONSIVE */}
           <motion.h1
-            className="w-full max-w-[1200px] mx-auto text-[3.5rem] xs:text-[4rem] sm:text-[5rem] md:text-[6.5rem] lg:text-[8rem] xl:text-[10.5rem] leading-[0.85] xs:leading-[0.8] font-sans uppercase tracking-[-0.01em] text-white font-black text-center mb-6 xs:mb-8 sm:mb-10 md:mb-12"
+            className="w-full max-w-[1200px] mx-auto text-[3.5rem] xs:text-[4rem] sm:text-[5rem] md:text-[6.5rem] lg:text-[8rem] xl:text-[10.5rem] leading-[0.85] xs:leading-[0.8] font-gotham uppercase tracking-[-0.01em] text-white font-black text-center mb-6 xs:mb-8 sm:mb-10 md:mb-12"
             variants={fadeInUp}
             style={{ WebkitFontSmoothing: 'antialiased' }}
           >
@@ -60,7 +60,7 @@ const RentalsPage = () => {
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="inline-block bg-red-primary hover:bg-red-dark text-white font-accent uppercase tracking-widest px-6 xs:px-8 py-2 xs:py-3 text-xs xs:text-sm sm:text-base transition-all duration-200 shadow-lg font-bold"
+            className="inline-block bg-red-primary hover:bg-red-dark text-white font-gotham uppercase tracking-widest px-6 xs:px-8 py-2 xs:py-3 text-xs xs:text-sm sm:text-base transition-all duration-200 shadow-lg font-bold"
             variants={fadeInUp}
           >
             {t('rentals.downloadCatalog')}
@@ -86,7 +86,7 @@ const RentalsPage = () => {
           viewport={{ once: true }}
         >
           {/* Título de contacto en blanco - MEJORADO RESPONSIVE */}
-          <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl font-accent uppercase text-white mb-4 xs:mb-6 sm:mb-8 tracking-widest font-bold">
+          <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl font-gotham uppercase text-white mb-4 xs:mb-6 sm:mb-8 tracking-widest font-bold">
             {t('rentals.contactTitle')}
           </h2>
 

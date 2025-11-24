@@ -17,7 +17,7 @@ const ServicesSection = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay }}
     >
-      <h3 className="text-white-pure text-sm sm:text-base uppercase tracking-[0.3em] mb-3 font-accent font-bold">
+      <h3 className="text-white-pure text-sm sm:text-base uppercase tracking-[0.3em] mb-3 font-gotham font-bold">
         {title}
       </h3>
       <ul className="space-y-0.5">
@@ -51,7 +51,7 @@ const ServicesSection = () => {
             </motion.p>
 
             <motion.h2
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-accent font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-gotham font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20"
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}

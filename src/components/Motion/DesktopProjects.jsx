@@ -32,7 +32,7 @@ const DesktopProjects = ({ projects, onProjectHover }) => {
               <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-red-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               {/* Client */}
-              <div className="text-white-pure group-hover:text-red-primary transition-colors duration-300 font-accent font-bold">
+              <div className="text-white-pure group-hover:text-red-primary transition-colors duration-300 font-gotham font-bold">
                 {project.client}
               </div>
               
