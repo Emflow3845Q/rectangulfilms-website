@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { gsap } from "gsap";
-import NoiseGradientBackground from "../Background/NoiseGradientBackground";
+import RedDistortionBackground from "../Background/RedDistortionBackground";
 
 const ProjectsSection = ({ 
   featuredProjects, 
@@ -205,7 +205,7 @@ const ProjectsSection = ({
   return (
     <section className="h-screen snap-start relative bg-black flex items-center justify-center overflow-hidden">
       {/* Background component */}
-      <NoiseGradientBackground />
+      <RedDistortionBackground />
       
       {/* Projects content */}
       <div className={`w-full h-full relative z-10 ${gridConfig.padding}`}>

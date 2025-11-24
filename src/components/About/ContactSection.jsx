@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "../../context/LanguageContext";
-import NoiseGradientBackground from "../Background/NoiseGradientBackground";
+import RedDistortionBackground from "../Background/RedDistortionBackground";
 
 const ContactSection = () => {
   const { t } = useLanguage();
@@ -10,7 +10,7 @@ const ContactSection = () => {
     <div className="section relative w-full">
       {/* FONDO CON EL EFECTO DE GRADIENTE Y RUIDO */}
       <div className="absolute inset-0 z-0 w-full">
-        <NoiseGradientBackground />
+        <RedDistortionBackground />
       </div>
       
       {/* CONTENIDO SOBRE EL FONDO */}

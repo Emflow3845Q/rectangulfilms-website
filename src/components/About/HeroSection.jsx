@@ -2,7 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "../../context/LanguageContext";
-import FluidDistortionVideo from "../Background/NoiseGradientBackground";
+import FluidDistortionVideo from "../Background/RedDistortionBackground";
 
 const HeroSection = () => {
   const { t } = useLanguage();

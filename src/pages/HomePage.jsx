@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroSection, VideoSection, ProjectsSection, VideoModal } from "../components/Home";
-import NoiseGradientBackground from "../components/Background/NoiseGradientBackground";
+import RedDistortionBackground from "../components/Background/RedDistortionBackground";
 
 const Home = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -197,7 +197,7 @@ const Home = () => {
         }}
         className="absolute inset-0 z-0"
       >
-        <NoiseGradientBackground />
+        <RedDistortionBackground />
       </motion.div>
 
       {/* Contenido que aparece después del fondo */}

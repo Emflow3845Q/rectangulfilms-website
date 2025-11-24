@@ -45,7 +45,7 @@ const HeroSection = ({
     let animationInterval;
     let isTyping = false;
 
-    // FUNCIÓN DE ESCRIBIR CON EFECTO MÁQUINA DE ESCRIBIR
+    // FUNCIÓN DE ESCRIBIR CON EFECTO MÁQUINA DE ESCRIBIR (SIN CURSOR)
     const typeWriterEffect = (element, text, onComplete) => {
       isTyping = true;
       element.textContent = '';
@@ -62,8 +62,7 @@ const HeroSection = ({
           const speed = Math.random() * 40 + 40; // 40-80ms
           setTimeout(typeChar, speed);
         } else {
-          // TERMINÓ DE ESCRIBIR - agregar cursor
-          element.classList.add('typewriter-cursor');
+          // TERMINÓ DE ESCRIBIR
           isTyping = false;
           if (onComplete) onComplete();
         }
