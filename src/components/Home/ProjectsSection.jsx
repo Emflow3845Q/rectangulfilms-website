@@ -9,16 +9,16 @@ const ProjectsSection = ({
 }) => {
   // Array de proyectos integrado directamente en el componente
   const featuredProjects = [
-    // COLUMNA 1
+    // COLUMNA 1 - INTERCAMBIADOS ID 1 e ID 10
     {
-      id: 1,
-      client: "Oh la lashes",
-      title: "Camilo Regresa Oh la lashes",
-      category: "Beauty / Commercial",
-      video: "/videos/camilo-regresa.mp4",
-      thumbnail: "/thumbnails/Portada GIF Camilo Regresa.jpg",
-      hoverVideo: "/gifs/GIF_Camilo Regresa.gif", // GIF real
-      isGif: true, // Indicar que es un GIF
+      id: 10, // AHORA ES ID 10 EN LA POSICIÓN DEL ID 1
+      client: "Rolex",
+      title: "Rolex",
+      category: "Commercial / Branding",
+      video: "/videos/rolex.mp4",
+      thumbnail: "/thumbnails/Portada GIF ROLEX VERTICAL.jpg",
+      hoverVideo: "/gifs/GIF_Rolex VERTICAL.gif", // CORREGIDO: agregué .gif
+      isGif: true,
       width: "col-span-2 lg:col-span-1",
       height: "row-span-2 lg:row-span-2",
       rotation: "rotate-1",
@@ -27,12 +27,12 @@ const ProjectsSection = ({
     },
     {
       id: 4,
-      client: "DAC",
-      title: "DAC 2025 - Recap", 
+      client: "Showreel Fernanda",
+      title: "Showreel Fernanda", 
       category: "Medical / Event",
       video: "/videos/DAC 2025 - Recap.mp4",
-      thumbnail: "/thumbnails/Portada Gif_GNP Encore.jpg",
-      hoverVideo: "/gifs/Gif_DAC Recap 2025 Vertical.gif",
+      thumbnail: "/thumbnails/Portada GIF Showreel Fernanda.jpg",
+      hoverVideo: "/gifs/GIF_Showreel Fernanda.gif",
       isGif: true,
       width: "col-span-2 lg:col-span-1",
       height: "row-span-1 lg:row-span-1",
@@ -41,22 +41,7 @@ const ProjectsSection = ({
       tabletWidth: "col-span-2"
     },
 
-    // COLUMNA 2 
-    {
-      id: 2,
-      client: "DAC",
-      title: "Derma Aesthetics Congress",
-      category: "Medical / Event",
-      video: "/videos/dac-dermaaestheticscongress.mp4",
-      thumbnail: "/thumbnails/Portada Gif_Dac 2025 Recap Vertical.jpg",
-      hoverVideo: "/gifs/dac-congress-preview.gif",
-      isGif: true,
-      width: "col-span-1 lg:col-span-1",
-      height: "row-span-1 lg:row-span-1",
-      rotation: "-rotate-2",
-      mobileWidth: "col-span-1",
-      tabletWidth: "col-span-1"
-    },
+    // COLUMNA 2 - INTERCAMBIADOS ID 2 e ID 5
     {
       id: 5,
       client: "Guerza",
@@ -65,6 +50,21 @@ const ProjectsSection = ({
       video: "/videos/Guerza - Frente al mar.mp4", 
       thumbnail: "/thumbnails/Portada GIF Guerza.jpg",
       hoverVideo: "/gifs/GIF_Guerza.gif",
+      isGif: true,
+      width: "col-span-1 lg:col-span-1",
+      height: "row-span-1 lg:row-span-1",
+      rotation: "-rotate-2",
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
+    },
+    {
+      id: 2,
+      client: "DAC",
+      title: "Derma Aesthetics Congress",
+      category: "Medical / Event",
+      video: "/videos/dac-dermaaestheticscongress.mp4",
+      thumbnail: "/thumbnails/Portada Gif_Dac 2025 Recap Vertical.jpg",
+      hoverVideo: "/gifs/Gif_DAC Recap 2025 Vertical.gif",
       isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-2 lg:row-span-2",
@@ -91,12 +91,12 @@ const ProjectsSection = ({
     },
     {
       id: 6,
-      client: "Recrea",
-      title: "STEAM 2024",
+      client: "Encore",
+      title: "Encore",
       category: "Educational / STEAM",
       video: "/videos/Recrea STEAM - 2024.mp4",
-      thumbnail: "/thumbnails/recrea-steam.jpg",
-      hoverVideo: "/gifs/recrea-preview.gif",
+      thumbnail: "/thumbnails/Portada Gif_GNP Encore.jpg",
+      hoverVideo: "/gifs/Gif_GNP Encore.gif",
       isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1 lg:row-span-1",
@@ -123,12 +123,12 @@ const ProjectsSection = ({
     // COLUMNA 4
     {
       id: 8,
-      client: "Foro Off Screen",
+      client: "Fiel Music",
       title: "Promocional foro Off Screen", 
       category: "Promotional / Event",
       video: "/videos/promocionalforo offscreen.mov",
-      thumbnail: "/thumbnails/foro-off-screen.jpg",
-      hoverVideo: "/gifs/foro-preview.gif",
+      thumbnail: "/thumbnails/Portada Gif_FIEL Music Video.jpg",
+      hoverVideo: "/gifs/Gif_Fiel Music Video.gif",
       isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1 lg:row-span-1",
@@ -150,12 +150,28 @@ const ProjectsSection = ({
       rotation: "rotate-1",
       mobileWidth: "col-span-1",
       tabletWidth: "col-span-1"
+    },
+    {
+      id: 1,
+      client: "Oh la lashes",
+      title: "Camilo Regresa Oh la lashes",
+      category: "Beauty / Commercial",
+      video: "/videos/camilo-regresa.mp4",
+      thumbnail: "/thumbnails/Portada GIF Camilo Regresa.jpg",
+      hoverVideo: "/gifs/GIF_Camilo Regresa.gif",
+      isGif: true,
+      width: "col-span-1 lg:col-span-1",
+      height: "row-span-1 lg:row-span-1",
+      rotation: "rotate-1",
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
     }
   ];
 
   const [deviceType, setDeviceType] = useState('desktop');
   const [hoveredProject, setHoveredProject] = useState(null);
   const [loadedGifs, setLoadedGifs] = useState({});
+  const [loadingErrors, setLoadingErrors] = useState({});
   const videoRefs = useRef({});
 
   // Detectar tipo de dispositivo más preciso
@@ -180,7 +196,7 @@ const ProjectsSection = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Precargar GIFs
+  // Precargar GIFs con manejo de errores
   useEffect(() => {
     featuredProjects.forEach(project => {
       if (project.hoverVideo && project.isGif) {
@@ -188,6 +204,13 @@ const ProjectsSection = ({
         img.src = project.hoverVideo;
         img.onload = () => {
           setLoadedGifs(prev => ({
+            ...prev,
+            [project.id]: true
+          }));
+        };
+        img.onerror = () => {
+          console.error(`Error cargando GIF: ${project.hoverVideo}`);
+          setLoadingErrors(prev => ({
             ...prev,
             [project.id]: true
           }));
@@ -224,7 +247,6 @@ const ProjectsSection = ({
     }
   }, [hoveredProject]);
 
-  // Resto del código permanece igual...
   // Animation for responsive projects
   useEffect(() => {
     const getAnimationConfig = () => {
@@ -268,13 +290,11 @@ const ProjectsSection = ({
 
   // Function to get responsive project class
   const getProjectClass = (project) => {
-    // Priorizar configuraciones específicas por dispositivo
     if (deviceType === 'xs' && project.xsWidth) return project.xsWidth;
     if (deviceType === 'sm' && project.smWidth) return project.smWidth;
     if (deviceType === 'md' && project.mdWidth) return project.mdWidth;
     if (deviceType === 'lg' && project.lgWidth) return project.lgWidth;
     
-    // Fallback a las configuraciones originales
     if (isMobile) return project.mobileWidth;
     if (isTablet) return project.tabletWidth || project.width;
     return project.width;
@@ -285,7 +305,6 @@ const ProjectsSection = ({
     if (deviceType === 'xs' || deviceType === 'sm') return '';
     
     if (deviceType === 'md') {
-      // Para tablet pequeña, reducir rotación a 25%
       const rotationValue = project.rotation?.replace('rotate-', '');
       if (!rotationValue) return '';
       const isNegative = rotationValue.startsWith('-');
@@ -295,7 +314,6 @@ const ProjectsSection = ({
     }
     
     if (deviceType === 'lg') {
-      // Para tablet, reducir rotación a 50%
       const rotationValue = project.rotation?.replace('rotate-', '');
       if (!rotationValue) return '';
       const isNegative = rotationValue.startsWith('-');
@@ -304,7 +322,6 @@ const ProjectsSection = ({
       return reducedValue > 0 ? (isNegative ? `-rotate-${reducedValue}` : `rotate-${reducedValue}`) : '';
     }
     
-    // Para desktop, rotación completa
     return project.rotation || '';
   };
 
@@ -341,7 +358,7 @@ const ProjectsSection = ({
           gap: 'gap-3.5',
           padding: 'px-6 py-7'
         };
-      default: // 2xl
+      default:
         return {
           grid: 'grid-cols-4 grid-rows-3',
           gap: 'gap-4',
@@ -403,7 +420,6 @@ const ProjectsSection = ({
   };
 
   const handleProjectClick = (project) => {
-    // Pausar el video de hover antes de abrir el modal (si es video)
     if (videoRefs.current[project.id]) {
       videoRefs.current[project.id].pause();
       videoRefs.current[project.id].currentTime = 0;
@@ -417,10 +433,8 @@ const ProjectsSection = ({
 
   return (
     <section className="h-screen snap-start relative bg-black flex items-center justify-center overflow-hidden">
-      {/* Background component */}
       <RedDistortionBackground />
       
-      {/* Projects content */}
       <div className={`w-full h-full relative z-10 ${gridConfig.padding}`}>
         <div className={`grid ${gridConfig.grid} ${gridConfig.gap} w-full h-full`}>
           {featuredProjects.map((project) => (
@@ -442,7 +456,7 @@ const ProjectsSection = ({
               }}
             >
               <div className="relative w-full h-full bg-black">
-                {/* Portada estática (siempre visible) */}
+                {/* Portada estática */}
                 <img
                   src={project.thumbnail}
                   alt={`Portada de ${project.title}`}
@@ -451,11 +465,11 @@ const ProjectsSection = ({
                   }`}
                 />
 
-                {/* Contenido en hover (solo en desktop/tablet) */}
+                {/* Contenido en hover */}
                 {(deviceType !== 'xs' && deviceType !== 'sm') && (
                   <>
-                    {/* Si es GIF, mostrar imagen GIF */}
-                    {project.isGif && loadedGifs[project.id] && (
+                    {/* Si es GIF y está cargado */}
+                    {project.isGif && loadedGifs[project.id] && !loadingErrors[project.id] && (
                       <img
                         src={project.hoverVideo}
                         alt={`Preview de ${project.title}`}
@@ -465,7 +479,16 @@ const ProjectsSection = ({
                       />
                     )}
                     
-                    {/* Si es video MP4, mostrar elemento video */}
+                    {/* Si hay error cargando el GIF, mostrar mensaje de debug */}
+                    {project.isGif && loadingErrors[project.id] && (
+                      <div className={`absolute inset-0 bg-red-500/20 flex items-center justify-center transition-opacity duration-500 ${
+                        hoveredProject === project.id ? 'opacity-100' : 'opacity-0'
+                      }`}>
+                        <span className="text-white text-xs">Error cargando GIF</span>
+                      </div>
+                    )}
+                    
+                    {/* Si es video MP4 */}
                     {!project.isGif && (
                       <video
                         ref={el => videoRefs.current[project.id] = el}
@@ -484,7 +507,7 @@ const ProjectsSection = ({
                   </>
                 )}
 
-                {/* Para móviles, mostrar solo la portada */}
+                {/* Para móviles */}
                 {(deviceType === 'xs' || deviceType === 'sm') && (
                   <img
                     src={project.thumbnail}
@@ -493,9 +516,8 @@ const ProjectsSection = ({
                   />
                 )}
 
-                {/* Overlay con gradiente responsive */}
+                {/* Overlay con información */}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black/70 sm:via-black/20 sm:to-black/80">
-                  {/* Información del proyecto */}
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 md:p-4">
                     <h3 className={`text-white font-gotham font-bold uppercase mb-1 truncate ${textSizes.client}`}>
                       {project.client}
@@ -507,13 +529,9 @@ const ProjectsSection = ({
                   </div>
                 </div>
 
-                {/* Overlay de hover mejorado */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
-                
-                {/* Borde sutil en hover */}
                 <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/20 transition-all duration-300" />
                 
-                {/* Indicador de play para móviles */}
                 {(deviceType === 'xs' || deviceType === 'sm') && (
                   <div className="absolute top-2 right-2 bg-black/60 p-1.5 opacity-0 group-active:opacity-100 transition-opacity duration-200">
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -522,7 +540,6 @@ const ProjectsSection = ({
                   </div>
                 )}
 
-                {/* Indicador de hover para desktop */}
                 {(deviceType !== 'xs' && deviceType !== 'sm') && (
                   <div className="absolute top-3 right-3 bg-black/60 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -536,33 +553,24 @@ const ProjectsSection = ({
         </div>
       </div>
 
-      {/* Estilos CSS para mejoras de rendimiento */}
       <style jsx>{`
-        /* Mejoras de rendimiento para móviles */
         @media (max-width: 768px) {
           .project-card {
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
           }
         }
-
-        /* Prevenir flash de contenido no estilizado */
         .project-card {
           opacity: 0;
         }
-
-        /* Mejoras de accesibilidad */
         @media (prefers-reduced-motion: reduce) {
           .project-card {
             transition: none !important;
           }
-          
           .group-hover .project-card {
             transform: none !important;
           }
         }
-
-        /* Mejoras para tablets en landscape */
         @media (max-width: 1024px) and (orientation: landscape) {
           .grid {
             grid-template-rows: repeat(2, 1fr) !important;
