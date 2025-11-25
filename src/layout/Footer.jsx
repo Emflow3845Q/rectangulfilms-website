@@ -53,34 +53,34 @@ const Footer = () => {
         <div className="text-xs uppercase tracking-wide mt-2 md:mt-1">
           <ul className="space-y-1">
             <li>
-              <a href="https://www.linkedin.com/company/rectangulofilms/posts/?feedView=all" 
-                 className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold"
-                 target="_blank" 
-                 rel="noopener noreferrer">
+              <a href="https://www.linkedin.com/company/rectangulofilms/posts/?feedView=all"
+                className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold"
+                target="_blank"
+                rel="noopener noreferrer">
                 LINKEDIN
               </a>
             </li>
             <li>
-              <a href="https://www.instagram.com/rectangulofilms/" 
-                 className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold"
-                 target="_blank" 
-                 rel="noopener noreferrer">
+              <a href="https://www.instagram.com/rectangulofilms/"
+                className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold"
+                target="_blank"
+                rel="noopener noreferrer">
                 INSTAGRAM
               </a>
             </li>
             <li>
-              <a href="https://vimeo.com/userrectangulo" 
-                 className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold"
-                 target="_blank" 
-                 rel="noopener noreferrer">
+              <a href="https://vimeo.com/userrectangulo"
+                className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold"
+                target="_blank"
+                rel="noopener noreferrer">
                 VIMEO
               </a>
             </li>
             <li>
-              <a href="https://www.facebook.com/rectangulofilms" 
-                 className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold"
-                 target="_blank" 
-                 rel="noopener noreferrer">
+              <a href="https://www.facebook.com/rectangulofilms"
+                className="hover:text-red-primary transition-colors duration-300 font-gotham font-bold"
+                target="_blank"
+                rel="noopener noreferrer">
                 FACEBOOK
               </a>
             </li>
@@ -94,23 +94,23 @@ const Footer = () => {
               Rectángulo es una productora audiovisual creativa ubicada en Guadalajara México, con un crew multidisciplinario, especializado en áreas como <strong className="font-gotham font-bold">producción</strong>, <strong className="font-gotham font-bold">dirección</strong>, <strong className="font-gotham font-bold">cinefotografía</strong>, <strong className="font-gotham font-bold">diseño sonoro</strong>, <strong className="font-gotham font-bold">dirección de arte</strong> y entre otras. Nuestra meta es realizar producciones de alta calidad con pensamiento juicioso, logrando el resultado esperado por cada uno de nuestros clientes. ¿Cómo lo logramos? Estableciendo estándares de calidad, aplicando nuestras metodologías, talento y creatividad.
             </p>
           </div>
-          
+
           {/* Contacto - correo a la izquierda y número a la derecha */}
           <div className="text-xs text-gray-400">
             <div className="flex flex-row justify-between w-full">
-              <a 
+              <a
                 href="mailto:contacto@hotmail.com"
                 className="hover:text-red-primary transition-colors duration-300 font-gotham font-light"
               >
-                contacto@hotmail.com
-              </a>
-              <a 
+                contacto@rectangulofilms.com
+                              </a>
+              <a
                 href="https://wa.me/523323881333"
                 className="hover:text-red-primary transition-colors duration-300 font-gotham font-light"
-                target="_blank" 
+                target="_blank"
                 rel="noopener noreferrer"
               >
-                +52 3323 88 1333
+                +52 33 2388 1333
               </a>
             </div>
           </div>
