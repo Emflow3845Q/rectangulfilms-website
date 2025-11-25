@@ -706,7 +706,7 @@ const Header = () => {
                         }
                       }}
                       onClick={() => handleMenuItemClick(item)}
-                      className="text-white text-5xl font-gotham font-bold uppercase tracking-tighter text-left py-1 transition-all duration-300 active:bg-white/10 active:scale-95 group cursor-pointer"
+                      className="text-white text-5xl font-gotham font-bold uppercase tracking-tighter text-left py-0 transition-all duration-300 active:bg-white/10 active:scale-95 group cursor-pointer"
                       style={{ letterSpacing: '-0.08em' }}
                     >
                       <div className="flex items-center justify-between">
@@ -751,7 +751,7 @@ const Header = () => {
                         }}
                         onClick={() => handleMenuItemClick(item)}
                         onMouseEnter={() => handleMenuItemHover(item)}
-                        className="text-white text-6xl xl:text-7xl 2xl:text-8xl font-gotham font-bold uppercase tracking-tighter text-left py-1 hover:text-red-600 transition-all duration-500 hover:translate-x-6 group block cursor-pointer"
+                        className="text-white text-6xl xl:text-7xl 2xl:text-8xl font-gotham font-bold uppercase tracking-tighter text-left py-0 hover:text-red-600 transition-all duration-500 hover:translate-x-6 group block cursor-pointer"
                         style={{ letterSpacing: '-0.08em' }}
                       >
                         {item.label}
