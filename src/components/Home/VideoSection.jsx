@@ -55,7 +55,7 @@ const VideoSection = ({ isMobile, isTablet }) => {
         isTablet={isTablet}
         bottomPosition="10%"
         animationDuration={0.15}
-        fontSize={isMobile ? "text-3xl" : isTablet ? "text-4xl" : "text-5xl"}
+        fontSize={isMobile ? "text-2xl" : isTablet ? "text-3xl" : "text-4xl"}
       />
 
       {/* Gradiente adicional para mejor legibilidad */}
