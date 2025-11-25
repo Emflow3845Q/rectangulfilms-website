@@ -40,7 +40,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section className="section relative w-full"> {/* Cambiado a section para semántica */}
+    <section className="section relative w-full">
       {/* FONDO */}
       <div className="absolute inset-0 z-0 w-full">
         <RedDistortionBackground />
@@ -50,7 +50,7 @@ const ContactSection = () => {
       <div className="min-h-[50vh] sm:min-h-[70vh] text-white-pure flex items-center relative z-10 w-full">
         <div className="px-4 sm:px-6 lg:px-8 xl:px-20 w-full">
           <motion.div 
-            className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8" // Gap mejorado
+            className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -66,11 +66,14 @@ const ContactSection = () => {
                 <div>
                   <a 
                     href={`mailto:${contactData.email}`}
-                    className="text-red-primary text-lg sm:text-xl hover:text-white-pure transition-colors duration-300 block font-medium"
+                    className="text-white-pure text-lg sm:text-xl hover:text-red-500 transition-all duration-300 block font-medium relative group"
                     style={{ fontFamily: 'GOTHAM, sans-serif' }}
                     aria-label={`Enviar email a ${contactData.email} para proyectos comerciales`}
                   >
-                    {contactData.email}
+                    <span className="relative">
+                      {contactData.email}
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+                    </span>
                   </a>
                   <p className="text-white-pure text-xs sm:text-sm font-light mt-1" style={{ fontFamily: 'GOTHAM, sans-serif' }}>
                     {t("about.commercialProjects")}
@@ -81,11 +84,14 @@ const ContactSection = () => {
                 <div>
                   <a 
                     href={`mailto:${contactData.email}?subject=Talent`}
-                    className="text-red-primary text-lg sm:text-xl hover:text-white-pure transition-colors duration-300 block font-medium"
+                    className="text-white-pure text-lg sm:text-xl hover:text-red-500 transition-all duration-300 block font-medium relative group"
                     style={{ fontFamily: 'GOTHAM, sans-serif' }}
                     aria-label="Enviar email para oportunidades de talento"
                   >
-                    Talent
+                    <span className="relative">
+                      Talent
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+                    </span>
                   </a>
                   <p className="text-white-pure text-xs sm:text-sm font-light mt-1" style={{ fontFamily: 'GOTHAM, sans-serif' }}>
                     {t("about.careers")} {t("about.talentSubject")}
@@ -107,11 +113,14 @@ const ContactSection = () => {
                   </p>
                   <a 
                     href={`tel:${contactData.phone}`}
-                    className="text-red-primary text-lg sm:text-xl hover:text-white-pure transition-colors duration-300 font-medium mt-1 block"
+                    className="text-white-pure text-lg sm:text-xl hover:text-red-500 transition-all duration-300 font-medium mt-1 block relative group"
                     style={{ fontFamily: 'GOTHAM, sans-serif' }}
                     aria-label={`Llamar al teléfono ${contactData.phone}`}
                   >
-                    {contactData.phone}
+                    <span className="relative">
+                      {contactData.phone}
+                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
+                    </span>
                   </a>
                 </div>
               </div>
