@@ -50,11 +50,12 @@ const VideoSection = ({ isMobile, isTablet }) => {
       {/* Componente reutilizable de marquee animado */}
       <AnimatedMarquee 
         text="everything is a rectangle"
-        repeatCount={10}
+        repeatCount={15}
         isMobile={isMobile}
         isTablet={isTablet}
         bottomPosition="10%"
-        animationDuration={0.8}
+        animationDuration={0.15}
+        fontSize={isMobile ? "text-3xl" : isTablet ? "text-4xl" : "text-5xl"}
       />
 
       {/* Gradiente adicional para mejor legibilidad */}
