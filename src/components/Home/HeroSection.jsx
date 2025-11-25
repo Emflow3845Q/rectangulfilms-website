@@ -162,13 +162,13 @@ const HeroSection = ({
       tempSpan.style.letterSpacing = '-0.05em';
       tempSpan.style.lineHeight = '0.95';
       
-      // TAMAÑOS MUCHO MÁS GRANDES PARA OCUPAR MITAD DE PANTALLA
+      // TAMAÑOS PROPORCIONALES PARA MITAD DE PANTALLA EN TODOS LOS DISPOSITIVOS
       if (isMobile) {
-        tempSpan.style.fontSize = '4.5rem'; // Aumentado significativamente
+        tempSpan.style.fontSize = '3.2rem'; // Optimizado para mobile
       } else if (isTablet) {
-        tempSpan.style.fontSize = '6.5rem'; // Aumentado significativamente
+        tempSpan.style.fontSize = '4.5rem'; // Optimizado para tablet
       } else {
-        tempSpan.style.fontSize = '8.5rem'; // Aumentado significativamente
+        tempSpan.style.fontSize = '5.8rem'; // Optimizado para desktop
       }
       
       tempSpan.textContent = longestText;
@@ -194,16 +194,16 @@ const HeroSection = ({
 
   return (
     <section 
-      className="h-screen snap-start relative flex items-end justify-start overflow-hidden px-4 xs:px-5 sm:px-6 md:px-8 lg:px-12 xl:px-16 pb-20 xs:pb-24 sm:pb-28 md:pb-32 lg:pb-36 xl:pb-40"
+      className="h-screen snap-start relative flex items-end justify-start overflow-hidden px-4 xs:px-5 sm:px-6 md:px-8 lg:px-12 xl:px-16 pb-24 xs:pb-28 sm:pb-32 md:pb-36 lg:pb-40 xl:pb-44"
       style={{ background: 'transparent' }}
     >
-      <div className="relative z-10 text-left w-full max-w-7xl xl:max-w-8xl 2xl:max-w-9xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8">
+      <div className="relative z-10 text-left w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8">
         <div className="flex flex-col items-start space-y-3 xs:space-y-3 sm:space-y-4 md:space-y-4 lg:space-y-4 xl:space-y-4">
-          {/* TÍTULO - TAMAÑOS MUCHO MÁS GRANDES */}
+          {/* TÍTULO - TAMAÑOS PROPORCIONALES */}
           <h1 className="text-white uppercase flex flex-col xs:flex-row items-start xs:items-end justify-start flex-nowrap gap-1 xs:gap-2 sm:gap-2 md:gap-2 w-full leading-none">
             <span 
               ref={weAreRef}
-              className="block flex-shrink-0 whitespace-nowrap font-accent font-normal opacity-0 text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl 2xl:text-10xl pb-0"
+              className="block flex-shrink-0 whitespace-nowrap font-accent font-normal opacity-0 text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl pb-0"
               style={{ lineHeight: '0.95' }}
             >
               we are
@@ -214,20 +214,20 @@ const HeroSection = ({
               className="inline-block relative flex-shrink-0 pointer-events-none min-w-0 font-gotham font-bold text-left overflow-visible opacity-0 tracking-tighter leading-none"
               style={{ 
                 minHeight: '0.95em',
-                // TAMAÑOS MUCHO MÁS GRANDES PARA OCUPAR MITAD DE PANTALLA
-                fontSize: isMobile ? '4.5rem' : isTablet ? '6.5rem' : '8.5rem',
+                // TAMAÑOS PROPORCIONALES PARA MITAD DE PANTALLA
+                fontSize: isMobile ? '3.2rem' : isTablet ? '4.5rem' : '5.8rem',
                 letterSpacing: '-0.05em',
                 lineHeight: '0.95',
-                marginTop: '-0.02em' // Ajuste mínimo para alineación
+                marginTop: '-0.02em'
               }}
             />
           </h1>
 
-          {/* BOTÓN - TAMBIÉN MÁS GRANDE Y MEJOR POSICIONADO */}
+          {/* BOTÓN - TAMAÑO CONSISTENTE */}
           <button
             ref={buttonRef}
             onClick={onButtonClick}
-            className="bg-white text-black px-8 xs:px-10 sm:px-12 md:px-14 lg:px-16 xl:px-18 py-3 xs:py-3.5 sm:py-4 md:py-4.5 lg:py-5 font-gotham font-bold text-sm xs:text-base sm:text-lg md:text-xl lg:text-2xl uppercase tracking-widest transition-all duration-300 border-2 border-white hover:bg-black hover:text-white hover:border-white mt-4 xs:mt-5 sm:mt-6 md:mt-7 lg:mt-8 xl:mt-10 opacity-0"
+            className="bg-white text-black px-6 xs:px-7 sm:px-8 md:px-9 lg:px-10 xl:px-11 py-2.5 xs:py-3 sm:py-3.5 md:py-4 lg:py-4.5 font-gotham font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl uppercase tracking-widest transition-all duration-300 border-2 border-white hover:bg-black hover:text-white hover:border-white mt-4 xs:mt-5 sm:mt-6 md:mt-7 lg:mt-8 xl:mt-9 opacity-0"
           >
             who we are
           </button>
