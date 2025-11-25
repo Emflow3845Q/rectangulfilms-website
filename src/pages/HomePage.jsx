@@ -1,6 +1,6 @@
 // pages/Home.jsx
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { HeroSection, VideoSection, ProjectsSection, VideoModal } from "../components/Home";
 import RedDistortionBackground from "../components/Background/RedDistortionBackground";
 import { useLanguage } from '../context/LanguageContext';
@@ -12,6 +12,10 @@ const Home = () => {
   const [showContent, setShowContent] = useState(false);
   
   const { currentLanguage } = useLanguage();
+
+  // Refs para las secciones
+  const videoSectionRef = useRef(null);
+  const projectsSectionRef = useRef(null);
 
   // Textos dinámicos en inglés
   const dynamicTextsEN = [
@@ -40,7 +44,6 @@ const Home = () => {
     "Producción"
   ];
 
-  // Seleccionar textos según el idioma del contexto
   const dynamicTexts = currentLanguage === 'en' ? dynamicTextsEN : dynamicTextsES;
 
   const featuredProjects = [
@@ -171,7 +174,6 @@ const Home = () => {
     checkDevice();
     window.addEventListener('resize', checkDevice);
 
-    // Mostrar el contenido después de que el fondo haya bajado
     const timer = setTimeout(() => {
       setShowContent(true);
     }, 800);
@@ -187,13 +189,13 @@ const Home = () => {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
-      document.documentElement.style.overflow = 'unset';
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
-      document.documentElement.style.overflow = 'unset';
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
     };
   }, [fullscreenVideo]);
 
@@ -209,8 +211,24 @@ const Home = () => {
     setFullscreenVideo(null);
   };
 
+  // Animación para las secciones que entran desde abajo
+  const sectionVariants = {
+    hidden: {
+      opacity: 0,
+      y: 100,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.25, 0.1, 0.25, 1], // Curva suave
+      }
+    }
+  };
+
   return (
-    <div className="relative min-h-screen bg-black">
+    <div className="relative bg-black">
       {/* Fondo con animación de bajada */}
       <motion.div
         initial={{ y: '-100%' }}
@@ -219,7 +237,7 @@ const Home = () => {
           duration: 0.8, 
           ease: "easeOut" 
         }}
-        className="absolute inset-0 z-0"
+        className="fixed inset-0 z-0"
       >
         <RedDistortionBackground />
       </motion.div>
@@ -238,48 +256,55 @@ const Home = () => {
                 delay: 0.2
               }
             }}
-            className="relative z-10 min-h-screen"
+            className="relative z-10"
           >
-            <div className="relative z-10 min-h-screen">
-              <div className="h-screen overflow-y-scroll snap-y snap-mandatory hide-scrollbar">
-                <HeroSection
-                  dynamicTexts={dynamicTexts}
-                  isMobile={isMobile}
-                  isTablet={isTablet}
-                  onButtonClick={handleButtonClick}
-                />
-
-                <VideoSection
-                  isMobile={isMobile}
-                  isTablet={isTablet}
-                />
-
-                <ProjectsSection
-                  featuredProjects={featuredProjects}
-                  isMobile={isMobile}
-                  isTablet={isTablet}
-                  onProjectClick={handleProjectClick}
-                />
-
-                <VideoModal
-                  fullscreenVideo={fullscreenVideo}
-                  onClose={closeFullscreen}
-                />
-              </div>
+            {/* Hero Section - Altura completa */}
+            <div className="h-screen">
+              <HeroSection
+                dynamicTexts={dynamicTexts}
+                isMobile={isMobile}
+                isTablet={isTablet}
+                onButtonClick={handleButtonClick}
+              />
             </div>
+
+            {/* Video Section - Con animación de entrada */}
+            <motion.div
+              ref={videoSectionRef}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={sectionVariants}
+            >
+              <VideoSection
+                isMobile={isMobile}
+                isTablet={isTablet}
+              />
+            </motion.div>
+
+            {/* Projects Section - Con animación de entrada */}
+            <motion.div
+              ref={projectsSectionRef}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={sectionVariants}
+            >
+              <ProjectsSection
+                featuredProjects={featuredProjects}
+                isMobile={isMobile}
+                isTablet={isTablet}
+                onProjectClick={handleProjectClick}
+              />
+            </motion.div>
+
+            <VideoModal
+              fullscreenVideo={fullscreenVideo}
+              onClose={closeFullscreen}
+            />
           </motion.div>
         )}
       </AnimatePresence>
-
-      <style jsx>{`
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
     </div>
   );
 };

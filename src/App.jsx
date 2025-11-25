@@ -53,7 +53,7 @@ function App() {
 
           {/* Main Content */}
           {!isLoading && (
-            <>
+            <div className="relative min-h-screen flex flex-col">
               {/* Custom Cursor */}
               <TargetCursor
                 spinDuration={2}
@@ -66,7 +66,7 @@ function App() {
               <Header />
 
               {/* Main Routes - Cada página maneja su propio fondo */}
-              <main className="relative">
+              <main className="flex-grow relative z-10">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/about" element={<Aboutpages />} />
@@ -76,9 +76,9 @@ function App() {
                 </Routes>
               </main>
 
-              {/* Footer con fondo negro sólido */}
+              {/* Footer con posición relativa y z-index alto */}
               <Footer />
-            </>
+            </div>
           )}
         </div>
       </Router>

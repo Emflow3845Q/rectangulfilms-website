@@ -1,30 +1,14 @@
-import React, { useRef, useEffect } from "react";
-import { gsap } from "gsap";
+import React, { useRef } from "react";
+import AnimatedMarquee from "../AnimatedMarquee";
 
 const VideoSection = ({ isMobile, isTablet }) => {
-  const marqueeRef = useRef(null);
-
-  // Animación marquee responsive - HIPER LENTA
-  useEffect(() => {
-    if (!marqueeRef.current) return;
-
-    const marqueeContent = marqueeRef.current;
-    const duration = isMobile ? 120 : isTablet ? 150 : 180;
-    const contentWidth = marqueeContent.scrollWidth / (isMobile ? 2 : 2);
-
-    gsap.to(marqueeContent, {
-      x: `-=${contentWidth}`,
-      duration: duration,
-      ease: "none",
-      repeat: -1,
-      modifiers: {
-        x: gsap.utils.unitize(x => parseFloat(x) % contentWidth)
-      }
-    });
-  }, [isMobile, isTablet]);
+  const sectionRef = useRef(null);
 
   return (
-    <section className="h-screen snap-start relative bg-black overflow-hidden">
+    <section 
+      ref={sectionRef}
+      className="h-screen snap-start relative bg-black overflow-hidden"
+    >
       {/* Video de Vimeo como fondo completo */}
       <div className="absolute inset-0 z-0 w-full h-full">
         <div style={{
@@ -63,39 +47,15 @@ const VideoSection = ({ isMobile, isTablet }) => {
         }}></div>
       </div>
 
-      {/* Marquee responsive - TEXTO GIGANTE */}
-      <div className="absolute w-full overflow-hidden z-10" 
-           style={{ 
-             bottom: isMobile ? '6%' : isTablet ? '8%' : '10%' 
-           }}>
-        <div
-          ref={marqueeRef}
-          className="flex whitespace-nowrap"
-          style={{ willChange: 'transform' }}
-        >
-          {[...Array(isMobile ? 6 : isTablet ? 8 : 10)].map((_, i) => (
-            <span
-              key={i}
-              className="font-sans text-white uppercase tracking-tighter font-black opacity-90"
-              style={{
-                textShadow: '5px 5px 15px rgba(0,0,0,1)',
-                fontSize: isMobile 
-                  ? '8rem'
-                  : isTablet 
-                  ? '10rem'
-                  : '12rem',
-                marginLeft: isMobile ? '5rem' : isTablet ? '6rem' : '8rem',
-                marginRight: isMobile ? '5rem' : isTablet ? '6rem' : '8rem',
-                lineHeight: '0.8',
-                fontWeight: '900',
-                letterSpacing: '-0.03em'
-              }}
-            >
-              everything is a rectangle
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* Componente reutilizable de marquee animado */}
+      <AnimatedMarquee 
+        text="everything is a rectangle"
+        repeatCount={10}
+        isMobile={isMobile}
+        isTablet={isTablet}
+        bottomPosition="10%"
+        animationDuration={0.8}
+      />
 
       {/* Gradiente adicional para mejor legibilidad */}
       <div className={`absolute inset-0 bg-gradient-to-t ${
