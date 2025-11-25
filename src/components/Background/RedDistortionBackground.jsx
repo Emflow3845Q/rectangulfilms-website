@@ -11,6 +11,9 @@ const RedDistortionBackground = () => {
   const prevMousePosition = useRef({ x: 0.5, y: 0.5 });
   const easeFactor = useRef(0.02);
 
+  // Control de tipo de movimiento
+  const movementType = useRef(0); // 0: Original, 1: Espiral, 2: Pulso, 3: Caótico, 4: Grid
+
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -49,6 +52,7 @@ const RedDistortionBackground = () => {
       uniform vec2 iResolution;
       uniform vec2 u_mouse;
       uniform vec2 u_prevMouse;
+      uniform int u_movementType;
       varying vec2 vUv;
 
       #define speed 0.35
@@ -80,9 +84,8 @@ const RedDistortionBackground = () => {
                 dot(hash(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)), u.x), u.y), u.z);
       }
 
-      vec3 generateBackground(vec2 uv, float time) {
-        vec2 p = uv;
-        
+      // MOVIMIENTO 0: ORIGINAL (TEXTURA BASE)
+      vec2 movementOriginal(vec2 p, float time) {
         // MOVIMIENTOS ORIGINALES CON AJUSTES SUTILES
         float bigWaveX = sin(p.x * 1.6 + time * 0.85) * cos(p.y * 1.3 - time * 0.65) * 0.75;
         float bigWaveY = cos(p.x * 1.3 - time * 0.75) * sin(p.y * 1.6 + time * 0.95) * 0.75;
@@ -109,14 +112,106 @@ const RedDistortionBackground = () => {
         p.x += pattern1 + pattern2 * 0.45;
         p.y += pattern2 + pattern1 * 0.45;
         
-        // MANTENER EXACTAMENTE LA MISMA GENERACIÓN DE COLOR
+        return p;
+      }
+
+      // MOVIMIENTO 1: ESPIRAL SUAVE
+      vec2 movementSpiral(vec2 p, float time) {
+        float angle = atan(p.y, p.x);
+        float radius = length(p);
+        
+        // Espiral suave que mantiene la textura
+        angle += time * 1.2 + radius * 1.5;
+        radius += sin(angle * 2.0 + time * 1.5) * 0.08;
+        
+        p.x = cos(angle) * radius;
+        p.y = sin(angle) * radius;
+        
+        // Añadir movimiento original sutil
+        p.x += sin(time * 0.4) * 0.2;
+        p.y += cos(time * 0.3) * 0.15;
+        
+        return p;
+      }
+
+      // MOVIMIENTO 2: PULSO RÍTMICO
+      vec2 movementPulse(vec2 p, float time) {
+        float dist = length(p);
+        
+        // Pulsos expansivos
+        float pulse1 = sin(time * 1.5) * 0.3;
+        float pulse2 = cos(time * 0.9) * 0.2;
+        float expansion = 1.0 + (pulse1 + pulse2) * (1.0 - dist * 0.5);
+        
+        p *= expansion;
+        
+        // Ondas concéntricas suaves
+        float concentric = sin(dist * 8.0 - time * 2.0) * 0.15;
+        p += normalize(p) * concentric;
+        
+        // Movimiento base preservado
+        p.x += sin(time * 0.3) * 0.25;
+        p.y += cos(time * 0.4) * 0.2;
+        
+        return p;
+      }
+
+      // MOVIMIENTO 3: CAÓTICO CONTROLADO
+      vec2 movementChaotic(vec2 p, float time) {
+        // Ruido controlado que no cambia la textura base
+        float n1 = noise(vec3(p * 1.5, time * 0.6));
+        float n2 = noise(vec3(p * 2.5 + 50.0, time * 0.9));
+        
+        p.x += (n1 - 0.5) * 0.25;
+        p.y += (n2 - 0.5) * 0.25;
+        
+        // Movimiento browniano suave
+        p.x += sin(time * 0.5 + p.y * 2.0) * 0.15;
+        p.y += cos(time * 0.6 + p.x * 2.0) * 0.15;
+        
+        return p;
+      }
+
+      // MOVIMIENTO 4: GRID DINÁMICO
+      vec2 movementGrid(vec2 p, float time) {
+        // Grid sutil que no domina la textura
+        float gridSize = 4.0 + sin(time * 0.2) * 1.0;
+        vec2 gridPos = floor(p * gridSize);
+        vec2 gridOffset = fract(p * gridSize) - 0.5;
+        
+        // Movimiento leve de celdas
+        float cellPhase = sin(gridPos.x * 3.0 + gridPos.y * 2.0 + time * 1.0) * 0.1;
+        gridOffset += normalize(gridOffset) * cellPhase;
+        
+        p = gridPos + (gridOffset + 0.5) / gridSize;
+        
+        return p;
+      }
+
+      vec3 generateBackground(vec2 uv, float time, int movementType) {
+        vec2 p = uv;
+        
+        // APLICAR MOVIMIENTO SELECCIONADO
+        if (movementType == 0) {
+          p = movementOriginal(p, time);
+        } else if (movementType == 1) {
+          p = movementSpiral(p, time);
+        } else if (movementType == 2) {
+          p = movementPulse(p, time);
+        } else if (movementType == 3) {
+          p = movementChaotic(p, time);
+        } else if (movementType == 4) {
+          p = movementGrid(p, time);
+        }
+        
+        // GENERACIÓN DE COLOR ORIGINAL (MISMA TEXTURA VISUAL)
         float redValue = 0.5 * sin(p.x) + 0.5;
         float greenValue = 0.5 * sin(p.x + p.y) + 0.5;
-        float blueValue = 0.5 * sin(p.y) + 0.8;
-        
+        float blueValue = 0.5 * sin(p.y) + 0.4;
+
         float finalRed = (redValue + greenValue + blueValue) / 3.0;
-        finalRed = pow(finalRed, 1.5);
-        finalRed *= 0.7;
+        finalRed = pow(finalRed, 2.5);
+        finalRed = finalRed * 0.8 + 0.05;
 
         vec3 brandRed = vec3(0.925, 0.137, 0.235);
         vec3 brandBlack = vec3(0.0, 0.0, 0.0);
@@ -133,38 +228,38 @@ const RedDistortionBackground = () => {
         float t = iTime * speed;
         vec2 uv = originalUV * scale;
         
-        // EFECTO DE GRID Y MOUSE - GRID MÁS FINO (25x25 en lugar de 15x15)
+        // Generar el fondo base con el movimiento seleccionado
+        vec3 baseColor = generateBackground(uv, t, u_movementType);
+        
+        // EFECTO DE DISTORSIÓN POR MOUSE (igual que antes)
         vec2 gridUV = floor(vUv * vec2(25.0, 25.0)) / vec2(25.0, 25.0);
         vec2 centerOfPixel = gridUV + vec2(1.0/50.0, 1.0/50.0);
         
         vec2 mouseDirection = u_mouse - u_prevMouse;
-        
-        // Aumentar la fuerza del movimiento del mouse
         float mouseSpeed = length(mouseDirection);
-        mouseDirection = normalize(mouseDirection) * min(mouseSpeed * 10.0, 1.0);
         
-        vec2 pixelToMouseDirection = centerOfPixel - u_mouse;
-        float pixelDistanceToMouse = length(pixelToMouseDirection);
+        vec3 finalColor = baseColor;
         
-        // Hacer el efecto más amplio y fuerte
-        float strength = 1.0 - smoothstep(0.0, 0.4, pixelDistanceToMouse);
-        strength = pow(strength, 0.5); // Hacer la caída más suave
-        
-        // DISTORSIÓN MUCHO MÁS FUERTE - como en el ejemplo
-        vec2 uvOffset = strength * -mouseDirection * 0.8; // Aumentado de 0.1 a 0.8
-        
-        // Aplicar distorsión a las coordenadas UV originales
-        vec2 distortedUV = uv + uvOffset;
-        
-        // Generar el fondo con la distorsión aplicada
-        vec3 finalColor = generateBackground(distortedUV, t);
-        
-        // Añadir efecto de aberración cromática como en el ejemplo
-        vec3 colorR = generateBackground(distortedUV + vec2(strength * 0.02, 0.0), t);
-        vec3 colorG = generateBackground(distortedUV, t);
-        vec3 colorB = generateBackground(distortedUV - vec2(strength * 0.02, 0.0), t);
-        
-        finalColor = vec3(colorR.r, colorG.g, colorB.b);
+        if (mouseSpeed > 0.0001) {
+          mouseDirection = normalize(mouseDirection) * min(mouseSpeed * 10.0, 1.0);
+          
+          vec2 pixelToMouseDirection = centerOfPixel - u_mouse;
+          float pixelDistanceToMouse = length(pixelToMouseDirection);
+          
+          float strength = 1.0 - smoothstep(0.0, 0.4, pixelDistanceToMouse);
+          strength = pow(strength, 0.5);
+          
+          vec2 uvOffset = strength * -mouseDirection * 0.8;
+          vec2 distortedUV = uv + uvOffset;
+          
+          vec3 colorR = generateBackground(distortedUV + vec2(strength * 0.02, 0.0), t, u_movementType);
+          vec3 colorG = generateBackground(distortedUV, t, u_movementType);
+          vec3 colorB = generateBackground(distortedUV - vec2(strength * 0.02, 0.0), t, u_movementType);
+          
+          vec3 distortedColor = vec3(colorR.r, colorG.g, colorB.b);
+          
+          finalColor = mix(baseColor, distortedColor, strength);
+        }
         
         gl_FragColor = vec4(finalColor, 1.0);
       }
@@ -179,7 +274,8 @@ const RedDistortionBackground = () => {
         iTime: { value: 0 },
         iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
         u_mouse: { value: new THREE.Vector2(0.5, 0.5) },
-        u_prevMouse: { value: new THREE.Vector2(0.5, 0.5) }
+        u_prevMouse: { value: new THREE.Vector2(0.5, 0.5) },
+        u_movementType: { value: 0 }
       }
     });
 
@@ -188,21 +284,37 @@ const RedDistortionBackground = () => {
 
     let startTime = Date.now();
 
+    // Función para renderizado inicial
+    const forceInitialRender = () => {
+      material.uniforms.iTime.value = 0.001;
+      material.uniforms.u_mouse.value.set(0.5, 0.5);
+      material.uniforms.u_prevMouse.value.set(0.5, 0.5);
+      material.uniforms.u_movementType.value = movementType.current;
+      renderer.render(scene, camera);
+    };
+
+    // Función para cambiar el tipo de movimiento con las teclas 1-5
+    const handleKeyPress = (event) => {
+      if (event.key >= '1' && event.key <= '5') {
+        movementType.current = parseInt(event.key) - 1;
+        material.uniforms.u_movementType.value = movementType.current;
+        console.log('Movimiento cambiado a tipo:', movementType.current + 1);
+      }
+    };
+
     // Función para manejar el movimiento del mouse
     const handleMouseMove = (event) => {
       if (!containerRef.current) return;
       
       const rect = containerRef.current.getBoundingClientRect();
       
-      // Guardar posición anterior
       prevMousePosition.current.x = targetMousePosition.current.x;
       prevMousePosition.current.y = targetMousePosition.current.y;
       
-      // Actualizar posición objetivo (coordenadas normalizadas 0-1)
       targetMousePosition.current.x = (event.clientX - rect.left) / rect.width;
       targetMousePosition.current.y = 1.0 - (event.clientY - rect.top) / rect.height;
       
-      easeFactor.current = 0.08; // Más rápido
+      easeFactor.current = 0.08;
     };
 
     const handleMouseEnter = () => {
@@ -218,6 +330,7 @@ const RedDistortionBackground = () => {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseenter', handleMouseEnter, true);
     document.addEventListener('mouseleave', handleMouseLeave, true);
+    document.addEventListener('keydown', handleKeyPress);
 
     const animate = () => {
       animationIdRef.current = requestAnimationFrame(animate);
@@ -232,10 +345,15 @@ const RedDistortionBackground = () => {
       material.uniforms.iTime.value = currentTime;
       material.uniforms.u_mouse.value.set(mousePosition.current.x, mousePosition.current.y);
       material.uniforms.u_prevMouse.value.set(prevMousePosition.current.x, prevMousePosition.current.y);
+      material.uniforms.u_movementType.value = movementType.current;
       
       renderer.render(scene, camera);
     };
 
+    // Ejecutar renderizado inicial
+    forceInitialRender();
+    
+    // Iniciar animación
     animate();
 
     const handleResize = () => {
@@ -244,6 +362,7 @@ const RedDistortionBackground = () => {
       
       renderer.setSize(width, height);
       material.uniforms.iResolution.value.set(width, height);
+      renderer.render(scene, camera);
     };
 
     window.addEventListener('resize', handleResize);
@@ -256,6 +375,7 @@ const RedDistortionBackground = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseenter', handleMouseEnter, true);
       document.removeEventListener('mouseleave', handleMouseLeave, true);
+      document.removeEventListener('keydown', handleKeyPress);
       
       if (containerRef.current && renderer.domElement) {
         containerRef.current.removeChild(renderer.domElement);
@@ -277,8 +397,11 @@ const RedDistortionBackground = () => {
         width: '100%',
         height: '100%',
         zIndex: 0,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        background: 'transparent',
+        cursor: 'none'
       }}
+      title="Presiona las teclas 1-5 para cambiar el tipo de movimiento"
     />
   );
 };
