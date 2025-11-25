@@ -3,21 +3,45 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HeroSection, VideoSection, ProjectsSection, VideoModal } from "../components/Home";
 import RedDistortionBackground from "../components/Background/RedDistortionBackground";
+import { useLanguage } from '../context/LanguageContext';
 
 const Home = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const [fullscreenVideo, setFullscreenVideo] = useState(null);
   const [showContent, setShowContent] = useState(false);
+  
+  const { currentLanguage } = useLanguage();
 
-  const dynamicTexts = [
-    "rectángulo",
-    "Cine",
-    "publicity",
-    "music video",
-    "comercial",
-    "events"
+  // Textos dinámicos en inglés
+  const dynamicTextsEN = [
+    "Rectángulo",
+    "Advertising",
+    "Narrative",
+    "Storytellers",
+    "Motion",
+    "Cinema",
+    "Vision",
+    "Events",
+    "Music Video",
+    "Production"
   ];
+
+  // Textos dinámicos en español
+  const dynamicTextsES = [
+    "Rectángulo",
+    "Publicidad",
+    "Narradores",
+    "Movimiento", 
+    "Cine",
+    "Visión",
+    "Eventos",
+    "Videoclip",
+    "Producción"
+  ];
+
+  // Seleccionar textos según el idioma del contexto
+  const dynamicTexts = currentLanguage === 'en' ? dynamicTextsEN : dynamicTextsES;
 
   const featuredProjects = [
   // COLUMNA 1

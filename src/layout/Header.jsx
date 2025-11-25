@@ -2,10 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-// Importar las imágenes de stills, rentals, photography y videos
+// Importar las imágenes de stills, rentals y videos
 import { stillImages as stills } from '../assets/images/stills';
 import { rentalsImages as rentals } from '../assets/images/rentals';
-import { photographyImages as photography } from '../assets/images/photography';
 import { videos } from "../assets/videos";
 
 const Header = () => {
@@ -19,7 +18,6 @@ const Header = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [randomImageOrder, setRandomImageOrder] = useState([]);
   const [randomRentalsOrder, setRandomRentalsOrder] = useState([]);
-  const [randomPhotographyOrder, setRandomPhotographyOrder] = useState([]);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
@@ -53,13 +51,6 @@ const Header = () => {
     alt: `Rentals ${index + 1}`
   }));
 
-  // Crear array de imágenes de photography para el carrusel
-  const photographyImagesArray = Array.from({ length: 48 }, (_, index) => ({
-    id: index + 1,
-    image: photography[`photography${index + 1}`],
-    alt: `Photography ${index + 1}`
-  }));
-
   // Función para mezclar array aleatoriamente (Fisher-Yates shuffle)
   const shuffleArray = (array) => {
     const shuffled = [...array];
@@ -74,10 +65,9 @@ const Header = () => {
   useEffect(() => {
     setRandomImageOrder(shuffleArray(stillsImagesArray));
     setRandomRentalsOrder(shuffleArray(rentalsImagesArray));
-    setRandomPhotographyOrder(shuffleArray(photographyImagesArray));
   }, []);
 
-  // Menú items actualizado con photography usando imágenes
+  // Menú items actualizado con rentals usando imágenes
   const menuItems = [
     {
       id: 'motion',
@@ -100,8 +90,8 @@ const Header = () => {
       label: t('header.menu.about'),
       path: '/about',
       type: 'page',
-      media: randomPhotographyOrder,
-      mediaType: 'image'
+      media: videos.motionGraphicsSymetriAcademy,
+      mediaType: 'video'
     },
     {
       id: 'rentals',

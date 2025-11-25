@@ -59,20 +59,21 @@ const HeroSection = ({
     const text1 = document.createElement('span');
     const text2 = document.createElement('span');
     
-    // Configurar estilos de los textos
+    // Configurar estilos de los textos - GOTHAM BOLD CON LETRAS MUY JUNTAS
     [text1, text2].forEach(text => {
       text.style.color = 'white';
       text.style.fontFamily = 'GOTHAM';
-      text.style.fontWeight = '700';
+      text.style.fontWeight = '700'; // Bold
       text.style.textTransform = 'uppercase';
       text.style.whiteSpace = 'nowrap';
-      text.style.lineHeight = 'inherit';
+      text.style.lineHeight = '0.95'; // Line height un poco más aumentado
       text.style.opacity = '0';
       text.style.position = 'absolute';
       text.style.left = '0';
       text.style.top = '0';
       text.style.width = '100%';
       text.style.textAlign = 'left';
+      text.style.letterSpacing = '-0.05em'; // LETRAS MUCHO MÁS JUNTAS
       container.appendChild(text);
     });
 
@@ -156,23 +157,27 @@ const HeroSection = ({
       tempSpan.style.position = 'absolute';
       tempSpan.style.whiteSpace = 'nowrap';
       tempSpan.style.fontFamily = 'GOTHAM';
-      tempSpan.style.fontWeight = '700';
+      tempSpan.style.fontWeight = '700'; // Bold
       tempSpan.style.textTransform = 'uppercase';
+      tempSpan.style.letterSpacing = '-0.05em'; // LETRAS MUCHO MÁS JUNTAS
+      tempSpan.style.lineHeight = '0.95'; // Line height un poco más aumentado
       
+      // TAMAÑOS UN POCO MÁS PEQUEÑOS PARA EL TEXTO DINÁMICO
       if (isMobile) {
-        tempSpan.style.fontSize = '1.5rem';
+        tempSpan.style.fontSize = '2.8rem'; // Un poco más pequeño
       } else if (isTablet) {
-        tempSpan.style.fontSize = '2.25rem';
+        tempSpan.style.fontSize = '3.8rem'; // Un poco más pequeño
       } else {
-        tempSpan.style.fontSize = '3rem';
+        tempSpan.style.fontSize = '4.8rem'; // Un poco más pequeño
       }
       
       tempSpan.textContent = longestText;
       container.appendChild(tempSpan);
       
       const width = tempSpan.offsetWidth;
+      const height = tempSpan.offsetHeight;
       container.style.minWidth = `${width}px`;
-      container.style.height = `${tempSpan.offsetHeight}px`;
+      container.style.height = `${height}px`;
       container.removeChild(tempSpan);
       
       startAnimation();
@@ -193,20 +198,28 @@ const HeroSection = ({
       style={{ background: 'transparent' }}
     >
       <div className="relative z-10 text-left w-full max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8">
-        <div className="flex flex-col items-start space-y-4 xs:space-y-5 sm:space-y-6 md:space-y-7 lg:space-y-8 xl:space-y-9">
-          {/* TÍTULO */}
-          <h1 className="text-2xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-white uppercase tracking-tight leading-tight sm:leading-snug md:leading-normal flex flex-col xs:flex-row items-start xs:items-baseline justify-start flex-nowrap gap-1 xs:gap-2 sm:gap-3 md:gap-4 w-full">
+        <div className="flex flex-col items-start space-y-2 xs:space-y-2 sm:space-y-3 md:space-y-3 lg:space-y-3 xl:space-y-3"> {/* Space-y ligeramente aumentado */}
+          {/* TÍTULO - UN POCO MÁS SEPARADO VERTICALMENTE */}
+          <h1 className="text-white uppercase flex flex-col xs:flex-row items-start xs:items-end justify-start flex-nowrap gap-0 xs:gap-1 sm:gap-1 md:gap-1 w-full leading-none">
             <span 
               ref={weAreRef}
-              className="block flex-shrink-0 whitespace-nowrap font-accent font-normal mt-0.5 xs:mt-0 opacity-0"
+              className="block flex-shrink-0 whitespace-nowrap font-accent font-normal opacity-0 text-2xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl pb-0"
+              style={{ lineHeight: '0.95' }} // Line height un poco más aumentado
             >
               we are
             </span>
             
             <span
               ref={textContainerRef}
-              className="inline-block relative flex-shrink-0 pointer-events-none min-w-0 font-gotham font-bold text-left overflow-visible opacity-0"
-              style={{ minHeight: '1.2em' }}
+              className="inline-block relative flex-shrink-0 pointer-events-none min-w-0 font-gotham font-bold text-left overflow-visible opacity-0 tracking-tighter leading-none"
+              style={{ 
+                minHeight: '0.95em', // Altura mínima un poco más aumentada
+                // Tamaños un poco más pequeños para el texto dinámico
+                fontSize: isMobile ? '2.8rem' : isTablet ? '3.8rem' : '4.8rem',
+                letterSpacing: '-0.05em',
+                lineHeight: '0.95', // Line height un poco más aumentado
+                marginTop: '-0.15em' // Margen superior negativo reducido (menos negativo)
+              }}
             />
           </h1>
 
