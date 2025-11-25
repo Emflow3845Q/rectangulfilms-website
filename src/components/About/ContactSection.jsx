@@ -80,19 +80,14 @@ const ContactSection = () => {
                   </p>
                 </div>
                 
-                {/* Email Talent */}
+                {/* Email Talent - SIN HOVER */}
                 <div>
-                  <a 
-                    href={`mailto:${contactData.email}?subject=Talent`}
-                    className="text-white-pure text-lg sm:text-xl hover:text-red-500 transition-all duration-300 block font-medium relative group"
+                  <span 
+                    className="text-white-pure text-lg sm:text-xl block font-medium"
                     style={{ fontFamily: 'GOTHAM, sans-serif' }}
-                    aria-label="Enviar email para oportunidades de talento"
                   >
-                    <span className="relative">
-                      Talent
-                      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-red-500 transition-all duration-300 group-hover:w-full"></span>
-                    </span>
-                  </a>
+                    Talent
+                  </span>
                   <p className="text-white-pure text-xs sm:text-sm font-light mt-1" style={{ fontFamily: 'GOTHAM, sans-serif' }}>
                     {t("about.careers")} {t("about.talentSubject")}
                   </p>
