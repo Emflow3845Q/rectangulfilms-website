@@ -162,13 +162,13 @@ const HeroSection = ({
       tempSpan.style.letterSpacing = '-0.05em'; // LETRAS MUCHO MÁS JUNTAS
       tempSpan.style.lineHeight = '0.95'; // Line height un poco más aumentado
       
-      // TAMAÑOS UN POCO MÁS PEQUEÑOS PARA EL TEXTO DINÁMICO
+      // TAMAÑOS UN POQUITO MÁS PEQUEÑOS PARA EL TEXTO DINÁMICO
       if (isMobile) {
-        tempSpan.style.fontSize = '2.8rem'; // Un poco más pequeño
+        tempSpan.style.fontSize = '2.6rem'; // Un poquito más pequeño
       } else if (isTablet) {
-        tempSpan.style.fontSize = '3.8rem'; // Un poco más pequeño
+        tempSpan.style.fontSize = '3.6rem'; // Un poquito más pequeño
       } else {
-        tempSpan.style.fontSize = '4.8rem'; // Un poco más pequeño
+        tempSpan.style.fontSize = '4.6rem'; // Un poquito más pequeño
       }
       
       tempSpan.textContent = longestText;
@@ -194,12 +194,12 @@ const HeroSection = ({
 
   return (
     <section 
-      className="h-screen snap-start relative flex items-end justify-start overflow-hidden px-4 xs:px-5 sm:px-6 md:px-8 lg:px-12 xl:px-16 pb-8 xs:pb-10 sm:pb-12 md:pb-16 lg:pb-20 xl:pb-24"
+      className="h-screen snap-start relative flex items-start justify-start overflow-hidden px-4 xs:px-5 sm:px-6 md:px-8 lg:px-12 xl:px-16 pt-32 xs:pt-36 sm:pt-40 md:pt-44 lg:pt-48 xl:pt-52"
       style={{ background: 'transparent' }}
     >
       <div className="relative z-10 text-left w-full max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8">
-        <div className="flex flex-col items-start space-y-2 xs:space-y-2 sm:space-y-3 md:space-y-3 lg:space-y-3 xl:space-y-3"> {/* Space-y ligeramente aumentado */}
-          {/* TÍTULO - UN POCO MÁS SEPARADO VERTICALMENTE */}
+        <div className="flex flex-col items-start space-y-2 xs:space-y-2 sm:space-y-3 md:space-y-3 lg:space-y-3 xl:space-y-3">
+          {/* TÍTULO - DISTANCIA VERTICAL AUMENTADA UN POQUITO */}
           <h1 className="text-white uppercase flex flex-col xs:flex-row items-start xs:items-end justify-start flex-nowrap gap-0 xs:gap-1 sm:gap-1 md:gap-1 w-full leading-none">
             <span 
               ref={weAreRef}
@@ -214,11 +214,11 @@ const HeroSection = ({
               className="inline-block relative flex-shrink-0 pointer-events-none min-w-0 font-gotham font-bold text-left overflow-visible opacity-0 tracking-tighter leading-none"
               style={{ 
                 minHeight: '0.95em', // Altura mínima un poco más aumentada
-                // Tamaños un poco más pequeños para el texto dinámico
-                fontSize: isMobile ? '2.8rem' : isTablet ? '3.8rem' : '4.8rem',
+                // Tamaños un poquito más pequeños para el texto dinámico
+                fontSize: isMobile ? '2.6rem' : isTablet ? '3.6rem' : '4.6rem',
                 letterSpacing: '-0.05em',
                 lineHeight: '0.95', // Line height un poco más aumentado
-                marginTop: '-0.15em' // Margen superior negativo reducido (menos negativo)
+                marginTop: '-0.1em' // Margen superior negativo reducido (más separación)
               }}
             />
           </h1>
