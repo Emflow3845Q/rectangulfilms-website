@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
-// Importar las imágenes de stills, rentals y videos
+// Importar las imágenes de stills, rentals, photography y videos
 import { stillImages as stills } from '../assets/images/stills';
-import { rentalsImages as rentals } from '../assets/images/rentals'; // NUEVA IMPORTACIÓN
+import { rentalsImages as rentals } from '../assets/images/rentals';
+import { photographyImages as photography } from '../assets/images/photography';
 import { videos } from "../assets/videos";
 
 const Header = () => {
@@ -17,7 +18,8 @@ const Header = () => {
   const [nextImageIndex, setNextImageIndex] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [randomImageOrder, setRandomImageOrder] = useState([]);
-  const [randomRentalsOrder, setRandomRentalsOrder] = useState([]); // NUEVO ESTADO
+  const [randomRentalsOrder, setRandomRentalsOrder] = useState([]);
+  const [randomPhotographyOrder, setRandomPhotographyOrder] = useState([]);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
 
@@ -51,6 +53,13 @@ const Header = () => {
     alt: `Rentals ${index + 1}`
   }));
 
+  // Crear array de imágenes de photography para el carrusel
+  const photographyImagesArray = Array.from({ length: 48 }, (_, index) => ({
+    id: index + 1,
+    image: photography[`photography${index + 1}`],
+    alt: `Photography ${index + 1}`
+  }));
+
   // Función para mezclar array aleatoriamente (Fisher-Yates shuffle)
   const shuffleArray = (array) => {
     const shuffled = [...array];
@@ -64,17 +73,18 @@ const Header = () => {
   // Inicializar órdenes aleatorios cuando se monta el componente
   useEffect(() => {
     setRandomImageOrder(shuffleArray(stillsImagesArray));
-    setRandomRentalsOrder(shuffleArray(rentalsImagesArray)); // INICIALIZAR RENTALS
+    setRandomRentalsOrder(shuffleArray(rentalsImagesArray));
+    setRandomPhotographyOrder(shuffleArray(photographyImagesArray));
   }, []);
 
-  // Menú items actualizado con rentals usando imágenes
+  // Menú items actualizado con photography usando imágenes
   const menuItems = [
     {
       id: 'motion',
       label: t('header.menu.motion'),
       path: '/motion',
       type: 'page',
-      media: videos.dacDermaaestheticsCongress, // Demo Reel 2025
+      media: videos.dacDermaaestheticsCongress,
       mediaType: 'video'
     },
     {
@@ -82,7 +92,7 @@ const Header = () => {
       label: t('header.menu.still'),
       path: '/stills',
       type: 'page',
-      media: randomImageOrder, // Array de imágenes en orden aleatorio
+      media: randomImageOrder,
       mediaType: 'image'
     },
     {
@@ -90,22 +100,72 @@ const Header = () => {
       label: t('header.menu.about'),
       path: '/about',
       type: 'page',
-      media: videos.motionGraphicsSymetriAcademy, // Motion Graphics
-      mediaType: 'video'
+      media: randomPhotographyOrder,
+      mediaType: 'image'
     },
     {
       id: 'rentals',
       label: t('header.menu.rentals'),
       path: '/rentals',
       type: 'page',
-      media: randomRentalsOrder, // NUEVO: Array de imágenes de rentals en orden aleatorio
-      mediaType: 'image' // CAMBIADO: Ahora es imagen en lugar de video
+      media: randomRentalsOrder,
+      mediaType: 'image'
     },
   ];
 
+  // Función para limpiar completamente el estado del media
+  const cleanupMedia = () => {
+    // Limpiar intervalo de imágenes
+    if (imageIntervalRef.current) {
+      clearInterval(imageIntervalRef.current);
+      imageIntervalRef.current = null;
+    }
+
+    // Pausar y resetear video
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+
+    // Resetear estados de transición
+    setIsTransitioning(false);
+    setCurrentImageIndex(0);
+    setNextImageIndex(1);
+  };
+
+  // Función para inicializar el media según su tipo
+  const initializeMedia = (media, mediaType) => {
+    cleanupMedia();
+
+    if (mediaType === 'video') {
+      // Para video, simplemente establecer el media
+      setCurrentMedia(media);
+      setCurrentMediaType('video');
+    } else if (mediaType === 'image' && Array.isArray(media)) {
+      // Para imágenes, establecer el array y reiniciar índices
+      setCurrentMedia(media);
+      setCurrentMediaType('image');
+      setCurrentImageIndex(0);
+      setNextImageIndex(1);
+      
+      // Resetear opacidades de las imágenes
+      setTimeout(() => {
+        if (currentImageRef.current) {
+          gsap.set(currentImageRef.current, { opacity: 1 });
+        }
+        if (nextImageRef.current) {
+          gsap.set(nextImageRef.current, { opacity: 0 });
+        }
+      }, 50);
+    }
+  };
+
   // Función para manejar la transición entre imágenes CON CROSSFADE
   const transitionToNextImage = () => {
-    if (!currentMedia || currentMedia.length === 0 || isTransitioning) return;
+    if (!currentMedia || !Array.isArray(currentMedia) || currentMedia.length === 0 || isTransitioning) return;
+
+    // Si solo hay una imagen, no hacer transición
+    if (currentMedia.length === 1) return;
 
     setIsTransitioning(true);
 
@@ -150,7 +210,7 @@ const Header = () => {
 
   // Efecto para el carrusel automático de imágenes
   useEffect(() => {
-    if (currentMediaType === 'image' && currentMedia && currentMedia.length > 0 && isMenuOpen) {
+    if (currentMediaType === 'image' && currentMedia && Array.isArray(currentMedia) && currentMedia.length > 1 && isMenuOpen) {
       // Limpiar intervalo anterior
       if (imageIntervalRef.current) {
         clearInterval(imageIntervalRef.current);
@@ -168,6 +228,22 @@ const Header = () => {
       };
     }
   }, [currentMediaType, currentMedia, isMenuOpen, currentImageIndex, isTransitioning]);
+
+  // Efecto para manejar la reproducción del video cuando cambia
+  useEffect(() => {
+    if (videoRef.current && currentMediaType === 'video' && currentMedia) {
+      const playVideo = async () => {
+        try {
+          videoRef.current.currentTime = 0;
+          await videoRef.current.play();
+        } catch (error) {
+          console.warn('No se pudo reproducir el video automáticamente:', error);
+        }
+      };
+
+      playVideo();
+    }
+  }, [currentMedia, currentMediaType]);
 
   // Efecto para detectar scroll y mostrar/ocultar header
   useEffect(() => {
@@ -241,24 +317,12 @@ const Header = () => {
         document.body.style.overflow = 'unset';
         setCurrentMedia('');
         setCurrentMediaType('');
-        setCurrentImageIndex(0);
-        setNextImageIndex(1);
-        setIsTransitioning(false);
-        // Limpiar intervalo de imágenes
-        if (imageIntervalRef.current) {
-          clearInterval(imageIntervalRef.current);
-        }
-        // Pausar video cuando se cierra el menú
-        if (videoRef.current) {
-          videoRef.current.pause();
-          videoRef.current.currentTime = 0;
-        }
+        cleanupMedia();
         setIsVisible(true);
       },
       onStart: () => {
         if (menuItems[0]?.media && window.innerWidth > 768) {
-          setCurrentMedia(menuItems[0].media);
-          setCurrentMediaType(menuItems[0].mediaType);
+          initializeMedia(menuItems[0].media, menuItems[0].mediaType);
         }
         setIsVisible(false);
       }
@@ -339,18 +403,7 @@ const Header = () => {
         document.body.style.overflow = 'unset';
         setCurrentMedia('');
         setCurrentMediaType('');
-        setCurrentImageIndex(0);
-        setNextImageIndex(1);
-        setIsTransitioning(false);
-        // Limpiar intervalo de imágenes
-        if (imageIntervalRef.current) {
-          clearInterval(imageIntervalRef.current);
-        }
-        // Pausar video cuando se cierra el menú
-        if (videoRef.current) {
-          videoRef.current.pause();
-          videoRef.current.currentTime = 0;
-        }
+        cleanupMedia();
         const isMobile = window.innerWidth <= 768;
         gsap.to(menuRef.current, { 
           [isMobile ? 'y' : 'x']: isMobile ? '-100%' : '-100%', 
@@ -380,17 +433,8 @@ const Header = () => {
         duration: 0.3,
         ease: "power2.inOut",
         onComplete: () => {
-          // Pausar video actual antes de cambiar
-          if (videoRef.current) {
-            videoRef.current.pause();
-            videoRef.current.currentTime = 0;
-          }
-          
-          setCurrentMedia(item.media);
-          setCurrentMediaType(item.mediaType);
-          setCurrentImageIndex(0); // Reiniciar índice de imagen
-          setNextImageIndex(1);
-          setIsTransitioning(false);
+          // Inicializar el nuevo media
+          initializeMedia(item.media, item.mediaType);
           
           gsap.set(mediaContainerRef.current, { y: 30 });
           gsap.to(mediaContainerRef.current, {
@@ -403,22 +447,6 @@ const Header = () => {
       });
     }
   };
-
-  // Efecto para manejar la reproducción del video cuando cambia
-  useEffect(() => {
-    if (videoRef.current && currentMediaType === 'video' && currentMedia) {
-      const playVideo = async () => {
-        try {
-          videoRef.current.currentTime = 0;
-          await videoRef.current.play();
-        } catch (error) {
-          console.warn('No se pudo reproducir el video automáticamente:', error);
-        }
-      };
-
-      playVideo();
-    }
-  }, [currentMedia, currentMediaType]);
 
   const handleVideoError = (e) => {
     console.error('❌ Error cargando video del menú:', e.target.src);
@@ -443,7 +471,7 @@ const Header = () => {
       return (
         <video
           ref={videoRef}
-          key={currentMedia}
+          key={`video-${currentMedia}`} // Key único para forzar re-render
           autoPlay
           muted
           loop
@@ -465,22 +493,24 @@ const Header = () => {
           {/* Imagen actual - se desvanece */}
           <img
             ref={currentImageRef}
-            key={`current-${currentImage.id}`}
+            key={`current-${currentImage.id}-${currentMedia.length}`}
             src={currentImage.image}
             alt={currentImage.alt}
             className="absolute inset-0 w-full h-full object-cover"
             style={{ opacity: 1 }}
           />
           
-          {/* Siguiente imagen - aparece */}
-          <img
-            ref={nextImageRef}
-            key={`next-${nextImage.id}`}
-            src={nextImage.image}
-            alt={nextImage.alt}
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: 0 }}
-          />
+          {/* Siguiente imagen - aparece (solo si hay más de una imagen) */}
+          {currentMedia.length > 1 && (
+            <img
+              ref={nextImageRef}
+              key={`next-${nextImage.id}-${currentMedia.length}`}
+              src={nextImage.image}
+              alt={nextImage.alt}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ opacity: 0 }}
+            />
+          )}
           
           {/* Overlay sutil */}
           <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>

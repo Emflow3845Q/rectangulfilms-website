@@ -11,9 +11,6 @@ const RedDistortionBackground = () => {
   const prevMousePosition = useRef({ x: 0.5, y: 0.5 });
   const easeFactor = useRef(0.02);
 
-  // Control de tipo de movimiento
-  const movementType = useRef(0); // 0: Original, 1: Espiral, 2: Pulso, 3: Caótico, 4: Grid
-
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -52,10 +49,9 @@ const RedDistortionBackground = () => {
       uniform vec2 iResolution;
       uniform vec2 u_mouse;
       uniform vec2 u_prevMouse;
-      uniform int u_movementType;
       varying vec2 vUv;
 
-      #define speed 0.35
+      #define speed 0.4
       #define scale 2.0
 
       vec3 hash(vec3 p) {
@@ -84,127 +80,75 @@ const RedDistortionBackground = () => {
                 dot(hash(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)), u.x), u.y), u.z);
       }
 
-      // MOVIMIENTO 0: ORIGINAL (TEXTURA BASE)
-      vec2 movementOriginal(vec2 p, float time) {
-        // MOVIMIENTOS ORIGINALES CON AJUSTES SUTILES
-        float bigWaveX = sin(p.x * 1.6 + time * 0.85) * cos(p.y * 1.3 - time * 0.65) * 0.75;
-        float bigWaveY = cos(p.x * 1.3 - time * 0.75) * sin(p.y * 1.6 + time * 0.95) * 0.75;
+      // MOVIMIENTO MULTI-CAPA CON GENERACIÓN CONSTANTE
+      vec2 movementMultiLayer(vec2 p, float time) {
+        // CAPA 1: Movimiento base original
+        vec2 baseLayer = p;
+        float bigWaveX = sin(baseLayer.x * 1.6 + time * 0.85) * cos(baseLayer.y * 1.3 - time * 0.65) * 0.75;
+        float bigWaveY = cos(baseLayer.x * 1.3 - time * 0.75) * sin(baseLayer.y * 1.6 + time * 0.95) * 0.75;
         
-        float largeWave1 = sin(length(p) * 2.2 - time * 1.3) * 0.55;
-        float largeWave2 = cos(length(p) * 1.9 + time * 1.0) * 0.35;
+        baseLayer.x += bigWaveX * 1.1 + bigWaveY * 0.45;
+        baseLayer.y += bigWaveY * 1.1 + bigWaveX * 0.45;
         
-        float globalRotation = time * 0.25;
-        p = mat2(cos(globalRotation), -sin(globalRotation), 
-                sin(globalRotation), cos(globalRotation)) * p;
+        // CAPA 2: Generador de nuevas texturas - se mueve independientemente
+        vec2 newTexLayer = p;
+        float layer2Time = time * 1.3;
+        float moveX2 = sin(layer2Time * 0.7) * 1.8;
+        float moveY2 = cos(layer2Time * 0.5) * 1.5;
+        newTexLayer.x += moveX2;
+        newTexLayer.y += moveY2;
         
-        float expansion = sin(time * 0.6) * 0.25 + 1.0;
-        p *= expansion;
+        float newWaveX = sin(newTexLayer.x * 1.8 + layer2Time * 1.1) * cos(newTexLayer.y * 1.5 - layer2Time * 0.9) * 0.6;
+        float newWaveY = cos(newTexLayer.x * 1.5 - layer2Time * 0.8) * sin(newTexLayer.y * 1.8 + layer2Time * 1.2) * 0.6;
         
-        p.x += bigWaveX * 1.1 + largeWave1 * p.x * 0.65 + bigWaveY * 0.45;
-        p.y += bigWaveY * 1.1 + largeWave1 * p.y * 0.65 + bigWaveX * 0.45;
+        // CAPA 3: Otro generador con diferente velocidad y posición
+        vec2 layer3 = p;
+        float layer3Time = time * 0.8;
+        float moveX3 = cos(layer3Time * 0.9) * 2.2;
+        float moveY3 = sin(layer3Time * 0.6) * 1.8;
+        layer3.x += moveX3;
+        layer3.y += moveY3;
         
-        p.x += sin(time * 0.35) * 0.35;
+        float wave3X = sin(layer3.x * 2.2 + layer3Time * 0.6) * cos(layer3.y * 1.9 - layer3Time * 1.1) * 0.5;
+        float wave3Y = cos(layer3.x * 1.7 - layer3Time * 1.0) * sin(layer3.y * 2.1 + layer3Time * 0.7) * 0.5;
+        
+        // CAPA 4: Pulsos que aparecen y desaparecen en diferentes lugares
+        float pulseTime = time * 2.0;
+        float pulse1 = sin(pulseTime * 1.5) * 0.5 + 0.5;
+        float pulse2 = cos(pulseTime * 1.2) * 0.5 + 0.5;
+        
+        vec2 pulseLayer1 = p;
+        pulseLayer1.x += sin(time * 0.4) * 2.5;
+        pulseLayer1.y += cos(time * 0.3) * 2.0;
+        float pulseWave1 = sin(pulseLayer1.x * 2.5) * cos(pulseLayer1.y * 2.2) * pulse1 * 0.4;
+        
+        vec2 pulseLayer2 = p;
+        pulseLayer2.x += cos(time * 0.5) * 2.8;
+        pulseLayer2.y += sin(time * 0.6) * 2.3;
+        float pulseWave2 = cos(pulseLayer2.x * 2.3) * sin(pulseLayer2.y * 2.6) * pulse2 * 0.3;
+        
+        // COMBINAR TODAS LAS CAPAS
+        p.x = baseLayer.x + newWaveX * 0.7 + wave3X * 0.5 + pulseWave1 + pulseWave2;
+        p.y = baseLayer.y + newWaveY * 0.7 + wave3Y * 0.5 + pulseWave1 + pulseWave2;
+        
+        // Movimientos globales adicionales
+        p.x += sin(time * 0.35) * 0.3;
         p.y += cos(time * 0.45) * 0.25;
         
-        float pattern1 = sin(p.x * 2.2 + p.y * 1.6 + time * 0.55) * 0.35;
-        float pattern2 = cos(p.x * 1.9 - p.y * 2.3 + time * 0.75) * 0.25;
+        // Patrones que aparecen constantemente
+        float pattern1 = sin(p.x * 2.2 + p.y * 1.6 + time * 1.2) * 0.25;
+        float pattern2 = cos(p.x * 1.9 - p.y * 2.3 + time * 1.5) * 0.2;
         
-        p.x += pattern1 + pattern2 * 0.45;
-        p.y += pattern2 + pattern1 * 0.45;
-        
-        return p;
-      }
-
-      // MOVIMIENTO 1: ESPIRAL SUAVE
-      vec2 movementSpiral(vec2 p, float time) {
-        float angle = atan(p.y, p.x);
-        float radius = length(p);
-        
-        // Espiral suave que mantiene la textura
-        angle += time * 1.2 + radius * 1.5;
-        radius += sin(angle * 2.0 + time * 1.5) * 0.08;
-        
-        p.x = cos(angle) * radius;
-        p.y = sin(angle) * radius;
-        
-        // Añadir movimiento original sutil
-        p.x += sin(time * 0.4) * 0.2;
-        p.y += cos(time * 0.3) * 0.15;
+        p.x += pattern1 + pattern2 * 0.3;
+        p.y += pattern2 + pattern1 * 0.3;
         
         return p;
       }
 
-      // MOVIMIENTO 2: PULSO RÍTMICO
-      vec2 movementPulse(vec2 p, float time) {
-        float dist = length(p);
+      vec3 generateBackground(vec2 uv, float time) {
+        vec2 p = movementMultiLayer(uv, time);
         
-        // Pulsos expansivos
-        float pulse1 = sin(time * 1.5) * 0.3;
-        float pulse2 = cos(time * 0.9) * 0.2;
-        float expansion = 1.0 + (pulse1 + pulse2) * (1.0 - dist * 0.5);
-        
-        p *= expansion;
-        
-        // Ondas concéntricas suaves
-        float concentric = sin(dist * 8.0 - time * 2.0) * 0.15;
-        p += normalize(p) * concentric;
-        
-        // Movimiento base preservado
-        p.x += sin(time * 0.3) * 0.25;
-        p.y += cos(time * 0.4) * 0.2;
-        
-        return p;
-      }
-
-      // MOVIMIENTO 3: CAÓTICO CONTROLADO
-      vec2 movementChaotic(vec2 p, float time) {
-        // Ruido controlado que no cambia la textura base
-        float n1 = noise(vec3(p * 1.5, time * 0.6));
-        float n2 = noise(vec3(p * 2.5 + 50.0, time * 0.9));
-        
-        p.x += (n1 - 0.5) * 0.25;
-        p.y += (n2 - 0.5) * 0.25;
-        
-        // Movimiento browniano suave
-        p.x += sin(time * 0.5 + p.y * 2.0) * 0.15;
-        p.y += cos(time * 0.6 + p.x * 2.0) * 0.15;
-        
-        return p;
-      }
-
-      // MOVIMIENTO 4: GRID DINÁMICO
-      vec2 movementGrid(vec2 p, float time) {
-        // Grid sutil que no domina la textura
-        float gridSize = 4.0 + sin(time * 0.2) * 1.0;
-        vec2 gridPos = floor(p * gridSize);
-        vec2 gridOffset = fract(p * gridSize) - 0.5;
-        
-        // Movimiento leve de celdas
-        float cellPhase = sin(gridPos.x * 3.0 + gridPos.y * 2.0 + time * 1.0) * 0.1;
-        gridOffset += normalize(gridOffset) * cellPhase;
-        
-        p = gridPos + (gridOffset + 0.5) / gridSize;
-        
-        return p;
-      }
-
-      vec3 generateBackground(vec2 uv, float time, int movementType) {
-        vec2 p = uv;
-        
-        // APLICAR MOVIMIENTO SELECCIONADO
-        if (movementType == 0) {
-          p = movementOriginal(p, time);
-        } else if (movementType == 1) {
-          p = movementSpiral(p, time);
-        } else if (movementType == 2) {
-          p = movementPulse(p, time);
-        } else if (movementType == 3) {
-          p = movementChaotic(p, time);
-        } else if (movementType == 4) {
-          p = movementGrid(p, time);
-        }
-        
-        // GENERACIÓN DE COLOR ORIGINAL (MISMA TEXTURA VISUAL)
+        // GENERACIÓN DE COLOR ORIGINAL EXACTA (MISMA TEXTURA VISUAL)
         float redValue = 0.5 * sin(p.x) + 0.5;
         float greenValue = 0.5 * sin(p.x + p.y) + 0.5;
         float blueValue = 0.5 * sin(p.y) + 0.4;
@@ -229,7 +173,7 @@ const RedDistortionBackground = () => {
         vec2 uv = originalUV * scale;
         
         // Generar el fondo base con el movimiento seleccionado
-        vec3 baseColor = generateBackground(uv, t, u_movementType);
+        vec3 baseColor = generateBackground(uv, t);
         
         // EFECTO DE DISTORSIÓN POR MOUSE (igual que antes)
         vec2 gridUV = floor(vUv * vec2(25.0, 25.0)) / vec2(25.0, 25.0);
@@ -252,9 +196,9 @@ const RedDistortionBackground = () => {
           vec2 uvOffset = strength * -mouseDirection * 0.8;
           vec2 distortedUV = uv + uvOffset;
           
-          vec3 colorR = generateBackground(distortedUV + vec2(strength * 0.02, 0.0), t, u_movementType);
-          vec3 colorG = generateBackground(distortedUV, t, u_movementType);
-          vec3 colorB = generateBackground(distortedUV - vec2(strength * 0.02, 0.0), t, u_movementType);
+          vec3 colorR = generateBackground(distortedUV + vec2(strength * 0.02, 0.0), t);
+          vec3 colorG = generateBackground(distortedUV, t);
+          vec3 colorB = generateBackground(distortedUV - vec2(strength * 0.02, 0.0), t);
           
           vec3 distortedColor = vec3(colorR.r, colorG.g, colorB.b);
           
@@ -274,8 +218,7 @@ const RedDistortionBackground = () => {
         iTime: { value: 0 },
         iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
         u_mouse: { value: new THREE.Vector2(0.5, 0.5) },
-        u_prevMouse: { value: new THREE.Vector2(0.5, 0.5) },
-        u_movementType: { value: 0 }
+        u_prevMouse: { value: new THREE.Vector2(0.5, 0.5) }
       }
     });
 
@@ -289,17 +232,7 @@ const RedDistortionBackground = () => {
       material.uniforms.iTime.value = 0.001;
       material.uniforms.u_mouse.value.set(0.5, 0.5);
       material.uniforms.u_prevMouse.value.set(0.5, 0.5);
-      material.uniforms.u_movementType.value = movementType.current;
       renderer.render(scene, camera);
-    };
-
-    // Función para cambiar el tipo de movimiento con las teclas 1-5
-    const handleKeyPress = (event) => {
-      if (event.key >= '1' && event.key <= '5') {
-        movementType.current = parseInt(event.key) - 1;
-        material.uniforms.u_movementType.value = movementType.current;
-        console.log('Movimiento cambiado a tipo:', movementType.current + 1);
-      }
     };
 
     // Función para manejar el movimiento del mouse
@@ -330,7 +263,6 @@ const RedDistortionBackground = () => {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseenter', handleMouseEnter, true);
     document.addEventListener('mouseleave', handleMouseLeave, true);
-    document.addEventListener('keydown', handleKeyPress);
 
     const animate = () => {
       animationIdRef.current = requestAnimationFrame(animate);
@@ -345,7 +277,6 @@ const RedDistortionBackground = () => {
       material.uniforms.iTime.value = currentTime;
       material.uniforms.u_mouse.value.set(mousePosition.current.x, mousePosition.current.y);
       material.uniforms.u_prevMouse.value.set(prevMousePosition.current.x, prevMousePosition.current.y);
-      material.uniforms.u_movementType.value = movementType.current;
       
       renderer.render(scene, camera);
     };
@@ -375,7 +306,6 @@ const RedDistortionBackground = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseenter', handleMouseEnter, true);
       document.removeEventListener('mouseleave', handleMouseLeave, true);
-      document.removeEventListener('keydown', handleKeyPress);
       
       if (containerRef.current && renderer.domElement) {
         containerRef.current.removeChild(renderer.domElement);
@@ -401,7 +331,7 @@ const RedDistortionBackground = () => {
         background: 'transparent',
         cursor: 'none'
       }}
-      title="Presiona las teclas 1-5 para cambiar el tipo de movimiento"
+      title="Fondo rojo con generación constante de texturas"
     />
   );
 };
