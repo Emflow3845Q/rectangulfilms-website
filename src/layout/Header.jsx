@@ -75,8 +75,8 @@ const Header = () => {
       label: t('header.menu.motion'),
       path: '/motion',
       type: 'page',
-      media: videos.dacDermaaestheticsCongress,
-      mediaType: 'video'
+      media: '/gifs/Gif_Video portada MOTION.gif', // CAMBIADO: GIF en lugar de video
+      mediaType: 'gif' // CAMBIADO: 'gif' en lugar de 'video'
     },
     {
       id: 'still',
@@ -148,6 +148,10 @@ const Header = () => {
           gsap.set(nextImageRef.current, { opacity: 0 });
         }
       }, 50);
+    } else if (mediaType === 'gif') {
+      // Para GIF, establecer el media como imagen
+      setCurrentMedia(media);
+      setCurrentMediaType('gif');
     }
   };
 
@@ -201,7 +205,7 @@ const Header = () => {
 
   // Efecto para el carrusel automático de imágenes
   useEffect(() => {
-    if (currentMediaType === 'image' && currentMedia && Array.isArray(currentMedia) && currentMedia.length > 1 && isMenuOpen) {
+    if ((currentMediaType === 'image' || currentMediaType === 'gif') && currentMedia && Array.isArray(currentMedia) && currentMedia.length > 1 && isMenuOpen) {
       // Limpiar intervalo anterior
       if (imageIntervalRef.current) {
         clearInterval(imageIntervalRef.current);
@@ -281,6 +285,13 @@ const Header = () => {
         video.preload = 'metadata';
         video.onerror = () => {
           console.warn(`⚠️ No se pudo cargar el video: ${item.media}`);
+        };
+      } else if (item.mediaType === 'gif' && item.media) {
+        // Precargar GIF
+        const img = new Image();
+        img.src = item.media;
+        img.onerror = () => {
+          console.warn(`⚠️ No se pudo cargar el GIF: ${item.media}`);
         };
       }
     });
@@ -533,6 +544,19 @@ const Header = () => {
           <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
         </div>
       );
+    } else if (currentMediaType === 'gif') {
+      // Renderizar GIF
+      return (
+        <div className="relative w-full h-full">
+          <img
+            src={currentMedia}
+            alt="Motion GIF"
+            className="w-full h-full object-cover"
+          />
+          {/* Overlay sutil */}
+          <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
+        </div>
+      );
     } else {
       return (
         <div className="absolute inset-0 w-full h-full flex items-center justify-center">
@@ -655,9 +679,9 @@ const Header = () => {
         </button>
 
         <div className={`h-full ${window.innerWidth <= 768 ? '' : 'flex flex-col md:flex-row'}`}>
-          {/* VERSIÓN MÓVIL - LOGO VISIBLE INMEDIATAMENTE */}
+          {/* VERSIÓN MÓVIL - OPCIONES MÁS CERCANAS */}
           {window.innerWidth <= 768 ? (
-            <div className="w-full h-full flex flex-col pt-20 pb-8">
+            <div className="w-full h-full flex flex-col pt-16 pb-8">
               {/* LOGO EN MÓVIL - VISIBLE INMEDIATAMENTE */}
               <div 
                 ref={menuLogoRef}
@@ -666,7 +690,7 @@ const Header = () => {
                 <img
                   src="/logo.png"
                   alt="Rectángulo Films"
-                  className="h-12 w-auto" 
+                  className="h-12 w-auto"
                 />
               </div>
 
@@ -682,7 +706,7 @@ const Header = () => {
                         }
                       }}
                       onClick={() => handleMenuItemClick(item)}
-                      className="text-white text-5xl font-gotham font-bold uppercase tracking-tighter text-left py-3 transition-all duration-300 active:bg-white/10 active:scale-95 group cursor-pointer"
+                      className="text-white text-5xl font-gotham font-bold uppercase tracking-tighter text-left py-1 transition-all duration-300 active:bg-white/10 active:scale-95 group cursor-pointer"
                       style={{ letterSpacing: '-0.08em' }}
                     >
                       <div className="flex items-center justify-between">
@@ -699,7 +723,7 @@ const Header = () => {
               </div>
             </div>
           ) : (
-            // VERSIÓN DESKTOP - LOGO VISIBLE INMEDIATAMENTE
+            // VERSIÓN DESKTOP - OPCIONES MÁS CERCANAS
             <>
               <div className="w-full md:w-1/2 relative z-10 flex flex-col justify-center pl-12 xl:pl-24">
                 {/* LOGO EN DESKTOP - VISIBLE INMEDIATAMENTE */}
@@ -710,7 +734,7 @@ const Header = () => {
                   <img
                     src="/logo.png"
                     alt="Rectángulo Films"
-                    className="h-16 w-auto" 
+                    className="h-16 w-auto"
                   />
                 </div>
 
@@ -727,7 +751,7 @@ const Header = () => {
                         }}
                         onClick={() => handleMenuItemClick(item)}
                         onMouseEnter={() => handleMenuItemHover(item)}
-                        className="text-white text-6xl xl:text-7xl 2xl:text-8xl font-gotham font-bold uppercase tracking-tighter text-left py-3 hover:text-red-600 transition-all duration-500 hover:translate-x-6 group block cursor-pointer"
+                        className="text-white text-6xl xl:text-7xl 2xl:text-8xl font-gotham font-bold uppercase tracking-tighter text-left py-1 hover:text-red-600 transition-all duration-500 hover:translate-x-6 group block cursor-pointer"
                         style={{ letterSpacing: '-0.08em' }}
                       >
                         {item.label}

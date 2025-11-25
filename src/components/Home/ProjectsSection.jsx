@@ -16,8 +16,9 @@ const ProjectsSection = ({
       title: "Camilo Regresa Oh la lashes",
       category: "Beauty / Commercial",
       video: "/videos/camilo-regresa.mp4",
-      thumbnail: "/thumbnails/Portada GIF Camilo Regresa.jpg", // Imagen de portada
-      hoverVideo: "/gifs/camilo-regresa-preview.gif", // GIF o video corto para hover
+      thumbnail: "/thumbnails/Portada GIF Camilo Regresa.jpg",
+      hoverVideo: "/gifs/GIF_Camilo Regresa.gif", // GIF real
+      isGif: true, // Indicar que es un GIF
       width: "col-span-2 lg:col-span-1",
       height: "row-span-2 lg:row-span-2",
       rotation: "rotate-1",
@@ -30,8 +31,9 @@ const ProjectsSection = ({
       title: "DAC 2025 - Recap", 
       category: "Medical / Event",
       video: "/videos/DAC 2025 - Recap.mp4",
-      thumbnail: "/thumbnails/Portada Gif_Dac 2025 Recap Vertical.jpg",
-      hoverVideo: "/gifs/dac-2025-preview.gif",
+      thumbnail: "/thumbnails/Portada Gif_GNP Encore.jpg",
+      hoverVideo: "/gifs/Gif_DAC Recap 2025 Vertical.gif",
+      isGif: true,
       width: "col-span-2 lg:col-span-1",
       height: "row-span-1 lg:row-span-1",
       rotation: "-rotate-1",
@@ -48,6 +50,7 @@ const ProjectsSection = ({
       video: "/videos/dac-dermaaestheticscongress.mp4",
       thumbnail: "/thumbnails/Portada Gif_Dac 2025 Recap Vertical.jpg",
       hoverVideo: "/gifs/dac-congress-preview.gif",
+      isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1 lg:row-span-1",
       rotation: "-rotate-2",
@@ -61,7 +64,8 @@ const ProjectsSection = ({
       category: "Music Video",
       video: "/videos/Guerza - Frente al mar.mp4", 
       thumbnail: "/thumbnails/Portada GIF Guerza.jpg",
-      hoverVideo: "/gifs/guerza-preview.gif",
+      hoverVideo: "/gifs/GIF_Guerza.gif",
+      isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-2 lg:row-span-2",
       rotation: "rotate-2",
@@ -77,7 +81,8 @@ const ProjectsSection = ({
       category: "Documentary / Short Film",
       video: "/videos/El afilador .mp4",
       thumbnail: "/thumbnails/Portada Gif_Don Ricardo Afilador.jpg",
-      hoverVideo: "/gifs/afilador-preview.gif",
+      hoverVideo: "/gifs/Gif_Don Ricardo Afilador.gif",
+      isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1 lg:row-span-1",
       rotation: "rotate-3",
@@ -92,6 +97,7 @@ const ProjectsSection = ({
       video: "/videos/Recrea STEAM - 2024.mp4",
       thumbnail: "/thumbnails/recrea-steam.jpg",
       hoverVideo: "/gifs/recrea-preview.gif",
+      isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1 lg:row-span-1",
       rotation: "-rotate-3",
@@ -104,8 +110,9 @@ const ProjectsSection = ({
       title: "1 Corte",
       category: "Documentary / Corporate",
       video: "/videos/Bomberos Guadalajara - 1 Corte .mp4",
-      thumbnail: "/thumbnails/Portada Gif_Bomberos2.jpg",
+      thumbnail: "/thumbnails/Portada Gif_Bomberos.jpg",
       hoverVideo: "/gifs/GIF_bomberos.gif",
+      isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1 lg:row-span-1",
       rotation: "rotate-2",
@@ -122,6 +129,7 @@ const ProjectsSection = ({
       video: "/videos/promocionalforo offscreen.mov",
       thumbnail: "/thumbnails/foro-off-screen.jpg",
       hoverVideo: "/gifs/foro-preview.gif",
+      isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1 lg:row-span-1",
       rotation: "-rotate-2",
@@ -135,7 +143,8 @@ const ProjectsSection = ({
       category: "Commercial / Branding",
       video: "/videos/rosk.mp4",
       thumbnail: "/thumbnails/Portada Gif_Rosk.jpg",
-      hoverVideo: "/gifs/rosk-preview.gif",
+      hoverVideo: "/gifs/Gif_Rosk Donas.gif",
+      isGif: true,
       width: "col-span-1 lg:col-span-1",
       height: "row-span-1 lg:row-span-1", 
       rotation: "rotate-1",
@@ -146,6 +155,7 @@ const ProjectsSection = ({
 
   const [deviceType, setDeviceType] = useState('desktop');
   const [hoveredProject, setHoveredProject] = useState(null);
+  const [loadedGifs, setLoadedGifs] = useState({});
   const videoRefs = useRef({});
 
   // Detectar tipo de dispositivo más preciso
@@ -170,14 +180,35 @@ const ProjectsSection = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Controlar la reproducción del video en hover
+  // Precargar GIFs
   useEffect(() => {
-    if (hoveredProject && videoRefs.current[hoveredProject]) {
-      const video = videoRefs.current[hoveredProject];
-      video.currentTime = 0;
-      video.play().catch(error => {
-        console.log("Error al reproducir video en hover:", error);
-      });
+    featuredProjects.forEach(project => {
+      if (project.hoverVideo && project.isGif) {
+        const img = new Image();
+        img.src = project.hoverVideo;
+        img.onload = () => {
+          setLoadedGifs(prev => ({
+            ...prev,
+            [project.id]: true
+          }));
+        };
+      }
+    });
+  }, []);
+
+  // Controlar la reproducción del video en hover (para videos MP4)
+  useEffect(() => {
+    if (hoveredProject) {
+      const project = featuredProjects.find(p => p.id === hoveredProject);
+      
+      // Si es un video MP4 (no GIF), reproducirlo
+      if (project && !project.isGif && videoRefs.current[hoveredProject]) {
+        const video = videoRefs.current[hoveredProject];
+        video.currentTime = 0;
+        video.play().catch(error => {
+          console.log("Error al reproducir video en hover:", error);
+        });
+      }
     }
   }, [hoveredProject]);
 
@@ -185,7 +216,7 @@ const ProjectsSection = ({
   useEffect(() => {
     if (!hoveredProject) {
       Object.values(videoRefs.current).forEach(video => {
-        if (video) {
+        if (video && video.pause) {
           video.pause();
           video.currentTime = 0;
         }
@@ -193,6 +224,7 @@ const ProjectsSection = ({
     }
   }, [hoveredProject]);
 
+  // Resto del código permanece igual...
   // Animation for responsive projects
   useEffect(() => {
     const getAnimationConfig = () => {
@@ -371,7 +403,7 @@ const ProjectsSection = ({
   };
 
   const handleProjectClick = (project) => {
-    // Pausar el video de hover antes de abrir el modal
+    // Pausar el video de hover antes de abrir el modal (si es video)
     if (videoRefs.current[project.id]) {
       videoRefs.current[project.id].pause();
       videoRefs.current[project.id].currentTime = 0;
@@ -397,17 +429,14 @@ const ProjectsSection = ({
               className={`project-card group cursor-pointer bg-black overflow-hidden relative ${
                 getProjectClass(project)
               } ${project.height} ${getRotationClass(project)} transition-all duration-500 ${
-                // Solo habilitar hover effects en dispositivos que no sean táctiles
                 deviceType === 'xs' || deviceType === 'sm' ? '' : 'hover:rotate-0 hover:scale-105'
               } hover:z-10 active:scale-95 ${
-                // Mejoras táctiles para móviles
                 deviceType === 'xs' || deviceType === 'sm' ? 'touch-manipulation' : ''
               }`}
               onMouseEnter={() => handleMouseEnter(project.id)}
               onMouseLeave={handleMouseLeave}
               onClick={() => handleProjectClick(project)}
               style={{
-                // Mejora de rendimiento para animaciones
                 transform: 'translateZ(0)',
                 backfaceVisibility: 'hidden'
               }}
@@ -422,21 +451,37 @@ const ProjectsSection = ({
                   }`}
                 />
 
-                {/* Video/GIF en hover (solo en desktop/tablet) */}
+                {/* Contenido en hover (solo en desktop/tablet) */}
                 {(deviceType !== 'xs' && deviceType !== 'sm') && (
-                  <video
-                    ref={el => videoRefs.current[project.id] = el}
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-                      hoveredProject === project.id ? 'opacity-100' : 'opacity-0'
-                    }`}
-                  >
-                    <source src={project.hoverVideo} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
+                  <>
+                    {/* Si es GIF, mostrar imagen GIF */}
+                    {project.isGif && loadedGifs[project.id] && (
+                      <img
+                        src={project.hoverVideo}
+                        alt={`Preview de ${project.title}`}
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                          hoveredProject === project.id ? 'opacity-100' : 'opacity-0'
+                        }`}
+                      />
+                    )}
+                    
+                    {/* Si es video MP4, mostrar elemento video */}
+                    {!project.isGif && (
+                      <video
+                        ref={el => videoRefs.current[project.id] = el}
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                          hoveredProject === project.id ? 'opacity-100' : 'opacity-0'
+                        }`}
+                      >
+                        <source src={project.hoverVideo} type="video/mp4" />
+                        Your browser does not support the video tag.
+                      </video>
+                    )}
+                  </>
                 )}
 
                 {/* Para móviles, mostrar solo la portada */}
@@ -465,7 +510,7 @@ const ProjectsSection = ({
                 {/* Overlay de hover mejorado */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
                 
-                {/* Borde sutil en hover - SIN BORDES REDONDOS */}
+                {/* Borde sutil en hover */}
                 <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/20 transition-all duration-300" />
                 
                 {/* Indicador de play para móviles */}
