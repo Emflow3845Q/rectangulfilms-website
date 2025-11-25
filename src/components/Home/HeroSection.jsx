@@ -194,7 +194,7 @@ const HeroSection = ({
 
   return (
     <section 
-      className="h-screen snap-start relative flex items-start justify-start overflow-hidden px-4 xs:px-5 sm:px-6 md:px-8 lg:px-12 xl:px-16 pt-32 xs:pt-36 sm:pt-40 md:pt-44 lg:pt-48 xl:pt-52"
+      className="h-screen snap-start relative flex items-end justify-start overflow-hidden px-4 xs:px-5 sm:px-6 md:px-8 lg:px-12 xl:px-16 pb-32 xs:pb-36 sm:pb-40 md:pb-44 lg:pb-48 xl:pb-52"
       style={{ background: 'transparent' }}
     >
       <div className="relative z-10 text-left w-full max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8">
