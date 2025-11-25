@@ -57,7 +57,7 @@ const ContactSection = () => {
           >
             {/* COLUMNA IZQUIERDA - CONTACTO */}
             <motion.div variants={itemVariants}>
-              <h3 className="text-white-pure text-xl sm:text-2xl mb-3 sm:mb-4 font-accent font-bold">
+              <h3 className="text-white-pure text-xl sm:text-2xl mb-3 sm:mb-4 font-bold" style={{ fontFamily: 'BBH_Sans_Bartle, sans-serif' }}>
                 {t("about.contactTitle")}
               </h3>
               
@@ -66,12 +66,13 @@ const ContactSection = () => {
                 <div>
                   <a 
                     href={`mailto:${contactData.email}`}
-                    className="text-red-primary text-lg sm:text-xl hover:text-white-pure transition-colors duration-300 block font-gotham font-medium"
+                    className="text-red-primary text-lg sm:text-xl hover:text-white-pure transition-colors duration-300 block font-medium"
+                    style={{ fontFamily: 'GOTHAM, sans-serif' }}
                     aria-label={`Enviar email a ${contactData.email} para proyectos comerciales`}
                   >
                     {contactData.email}
                   </a>
-                  <p className="text-white-pure text-xs sm:text-sm font-gotham font-light mt-1">
+                  <p className="text-white-pure text-xs sm:text-sm font-light mt-1" style={{ fontFamily: 'GOTHAM, sans-serif' }}>
                     {t("about.commercialProjects")}
                   </p>
                 </div>
@@ -80,12 +81,13 @@ const ContactSection = () => {
                 <div>
                   <a 
                     href={`mailto:${contactData.email}?subject=Talent`}
-                    className="text-red-primary text-lg sm:text-xl hover:text-white-pure transition-colors duration-300 block font-gotham font-medium"
+                    className="text-red-primary text-lg sm:text-xl hover:text-white-pure transition-colors duration-300 block font-medium"
+                    style={{ fontFamily: 'GOTHAM, sans-serif' }}
                     aria-label="Enviar email para oportunidades de talento"
                   >
                     Talent
                   </a>
-                  <p className="text-white-pure text-xs sm:text-sm font-gotham font-light mt-1">
+                  <p className="text-white-pure text-xs sm:text-sm font-light mt-1" style={{ fontFamily: 'GOTHAM, sans-serif' }}>
                     {t("about.careers")} {t("about.talentSubject")}
                   </p>
                 </div>
@@ -94,18 +96,19 @@ const ContactSection = () => {
 
             {/* COLUMNA DERECHA - UBICACIÓN */}
             <motion.div variants={rightItemVariants}>
-              <h3 className="text-white-pure text-xl sm:text-2xl mb-3 sm:mb-4 font-accent font-bold">
+              <h3 className="text-white-pure text-xl sm:text-2xl mb-3 sm:mb-4 font-bold" style={{ fontFamily: 'BBH_Sans_Bartle, sans-serif' }}>
                 {t("about.locationTitle")}
               </h3>
               
               <div className="space-y-2">
                 <div>
-                  <p className="text-white-pure text-lg sm:text-xl font-gotham font-medium">
+                  <p className="text-white-pure text-lg sm:text-xl font-medium" style={{ fontFamily: 'GOTHAM, sans-serif' }}>
                     {contactData.location}
                   </p>
                   <a 
                     href={`tel:${contactData.phone}`}
-                    className="text-red-primary text-lg sm:text-xl hover:text-white-pure transition-colors duration-300 font-gotham font-medium mt-1 block"
+                    className="text-red-primary text-lg sm:text-xl hover:text-white-pure transition-colors duration-300 font-medium mt-1 block"
+                    style={{ fontFamily: 'GOTHAM, sans-serif' }}
                     aria-label={`Llamar al teléfono ${contactData.phone}`}
                   >
                     {contactData.phone}
