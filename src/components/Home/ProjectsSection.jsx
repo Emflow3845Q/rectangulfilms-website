@@ -1,14 +1,152 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { gsap } from "gsap";
 import RedDistortionBackground from "../Background/RedDistortionBackground";
 
 const ProjectsSection = ({ 
-  featuredProjects, 
   isMobile, 
   isTablet, 
   onProjectClick 
 }) => {
+  // Array de proyectos integrado directamente en el componente
+  const featuredProjects = [
+    // COLUMNA 1
+    {
+      id: 1,
+      client: "Oh la lashes",
+      title: "Camilo Regresa Oh la lashes",
+      category: "Beauty / Commercial",
+      video: "/videos/camilo-regresa.mp4",
+      thumbnail: "/thumbnails/Portada GIF Camilo Regresa.jpg", // Imagen de portada
+      hoverVideo: "/gifs/camilo-regresa-preview.gif", // GIF o video corto para hover
+      width: "col-span-2 lg:col-span-1",
+      height: "row-span-2 lg:row-span-2",
+      rotation: "rotate-1",
+      mobileWidth: "col-span-2",
+      tabletWidth: "col-span-2"
+    },
+    {
+      id: 4,
+      client: "DAC",
+      title: "DAC 2025 - Recap", 
+      category: "Medical / Event",
+      video: "/videos/DAC 2025 - Recap.mp4",
+      thumbnail: "/thumbnails/Portada Gif_Dac 2025 Recap Vertical.jpg",
+      hoverVideo: "/gifs/dac-2025-preview.gif",
+      width: "col-span-2 lg:col-span-1",
+      height: "row-span-1 lg:row-span-1",
+      rotation: "-rotate-1",
+      mobileWidth: "col-span-2",
+      tabletWidth: "col-span-2"
+    },
+
+    // COLUMNA 2 
+    {
+      id: 2,
+      client: "DAC",
+      title: "Derma Aesthetics Congress",
+      category: "Medical / Event",
+      video: "/videos/dac-dermaaestheticscongress.mp4",
+      thumbnail: "/thumbnails/Portada Gif_Dac 2025 Recap Vertical.jpg",
+      hoverVideo: "/gifs/dac-congress-preview.gif",
+      width: "col-span-1 lg:col-span-1",
+      height: "row-span-1 lg:row-span-1",
+      rotation: "-rotate-2",
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
+    },
+    {
+      id: 5,
+      client: "Guerza",
+      title: "Frente al mar",
+      category: "Music Video",
+      video: "/videos/Guerza - Frente al mar.mp4", 
+      thumbnail: "/thumbnails/Portada GIF Guerza.jpg",
+      hoverVideo: "/gifs/guerza-preview.gif",
+      width: "col-span-1 lg:col-span-1",
+      height: "row-span-2 lg:row-span-2",
+      rotation: "rotate-2",
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
+    },
+
+    // COLUMNA 3
+    {
+      id: 3,
+      client: "Don Ricardo",
+      title: "El afilador",
+      category: "Documentary / Short Film",
+      video: "/videos/El afilador .mp4",
+      thumbnail: "/thumbnails/Portada Gif_Don Ricardo Afilador.jpg",
+      hoverVideo: "/gifs/afilador-preview.gif",
+      width: "col-span-1 lg:col-span-1",
+      height: "row-span-1 lg:row-span-1",
+      rotation: "rotate-3",
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
+    },
+    {
+      id: 6,
+      client: "Recrea",
+      title: "STEAM 2024",
+      category: "Educational / STEAM",
+      video: "/videos/Recrea STEAM - 2024.mp4",
+      thumbnail: "/thumbnails/recrea-steam.jpg",
+      hoverVideo: "/gifs/recrea-preview.gif",
+      width: "col-span-1 lg:col-span-1",
+      height: "row-span-1 lg:row-span-1",
+      rotation: "-rotate-3",
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
+    },
+    {
+      id: 7,
+      client: "Bomberos Guadalajara",
+      title: "1 Corte",
+      category: "Documentary / Corporate",
+      video: "/videos/Bomberos Guadalajara - 1 Corte .mp4",
+      thumbnail: "/thumbnails/Portada Gif_Bomberos2.jpg",
+      hoverVideo: "/gifs/GIF_bomberos.gif",
+      width: "col-span-1 lg:col-span-1",
+      height: "row-span-1 lg:row-span-1",
+      rotation: "rotate-2",
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
+    },
+
+    // COLUMNA 4
+    {
+      id: 8,
+      client: "Foro Off Screen",
+      title: "Promocional foro Off Screen", 
+      category: "Promotional / Event",
+      video: "/videos/promocionalforo offscreen.mov",
+      thumbnail: "/thumbnails/foro-off-screen.jpg",
+      hoverVideo: "/gifs/foro-preview.gif",
+      width: "col-span-1 lg:col-span-1",
+      height: "row-span-1 lg:row-span-1",
+      rotation: "-rotate-2",
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
+    },
+    {
+      id: 9,
+      client: "Rosk",
+      title: "Rosk",
+      category: "Commercial / Branding",
+      video: "/videos/rosk.mp4",
+      thumbnail: "/thumbnails/Portada Gif_Rosk.jpg",
+      hoverVideo: "/gifs/rosk-preview.gif",
+      width: "col-span-1 lg:col-span-1",
+      height: "row-span-1 lg:row-span-1", 
+      rotation: "rotate-1",
+      mobileWidth: "col-span-1",
+      tabletWidth: "col-span-1"
+    }
+  ];
+
   const [deviceType, setDeviceType] = useState('desktop');
+  const [hoveredProject, setHoveredProject] = useState(null);
+  const videoRefs = useRef({});
 
   // Detectar tipo de dispositivo más preciso
   useEffect(() => {
@@ -31,6 +169,29 @@ const ProjectsSection = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Controlar la reproducción del video en hover
+  useEffect(() => {
+    if (hoveredProject && videoRefs.current[hoveredProject]) {
+      const video = videoRefs.current[hoveredProject];
+      video.currentTime = 0;
+      video.play().catch(error => {
+        console.log("Error al reproducir video en hover:", error);
+      });
+    }
+  }, [hoveredProject]);
+
+  // Pausar todos los videos cuando no hay hover
+  useEffect(() => {
+    if (!hoveredProject) {
+      Object.values(videoRefs.current).forEach(video => {
+        if (video) {
+          video.pause();
+          video.currentTime = 0;
+        }
+      });
+    }
+  }, [hoveredProject]);
 
   // Animation for responsive projects
   useEffect(() => {
@@ -199,6 +360,26 @@ const ProjectsSection = ({
     }
   };
 
+  const handleMouseEnter = (projectId) => {
+    if (deviceType !== 'xs' && deviceType !== 'sm') {
+      setHoveredProject(projectId);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredProject(null);
+  };
+
+  const handleProjectClick = (project) => {
+    // Pausar el video de hover antes de abrir el modal
+    if (videoRefs.current[project.id]) {
+      videoRefs.current[project.id].pause();
+      videoRefs.current[project.id].currentTime = 0;
+    }
+    setHoveredProject(null);
+    onProjectClick(project);
+  };
+
   const gridConfig = getGridConfig();
   const textSizes = getTextSizes();
 
@@ -222,7 +403,9 @@ const ProjectsSection = ({
                 // Mejoras táctiles para móviles
                 deviceType === 'xs' || deviceType === 'sm' ? 'touch-manipulation' : ''
               }`}
-              onClick={() => onProjectClick(project)}
+              onMouseEnter={() => handleMouseEnter(project.id)}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => handleProjectClick(project)}
               style={{
                 // Mejora de rendimiento para animaciones
                 transform: 'translateZ(0)',
@@ -230,18 +413,40 @@ const ProjectsSection = ({
               }}
             >
               <div className="relative w-full h-full bg-black">
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="metadata"
-                  className="w-full h-full object-cover"
-                  aria-label={`Video de ${project.client} - ${project.title}`}
-                >
-                  <source src={project.video} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
+                {/* Portada estática (siempre visible) */}
+                <img
+                  src={project.thumbnail}
+                  alt={`Portada de ${project.title}`}
+                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                    hoveredProject === project.id ? 'opacity-0' : 'opacity-100'
+                  }`}
+                />
+
+                {/* Video/GIF en hover (solo en desktop/tablet) */}
+                {(deviceType !== 'xs' && deviceType !== 'sm') && (
+                  <video
+                    ref={el => videoRefs.current[project.id] = el}
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                      hoveredProject === project.id ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  >
+                    <source src={project.hoverVideo} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+
+                {/* Para móviles, mostrar solo la portada */}
+                {(deviceType === 'xs' || deviceType === 'sm') && (
+                  <img
+                    src={project.thumbnail}
+                    alt={`Portada de ${project.title}`}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                )}
 
                 {/* Overlay con gradiente responsive */}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black/70 sm:via-black/20 sm:to-black/80">
@@ -267,6 +472,15 @@ const ProjectsSection = ({
                 {(deviceType === 'xs' || deviceType === 'sm') && (
                   <div className="absolute top-2 right-2 bg-black/60 p-1.5 opacity-0 group-active:opacity-100 transition-opacity duration-200">
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
+                )}
+
+                {/* Indicador de hover para desktop */}
+                {(deviceType !== 'xs' && deviceType !== 'sm') && (
+                  <div className="absolute top-3 right-3 bg-black/60 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                   </div>

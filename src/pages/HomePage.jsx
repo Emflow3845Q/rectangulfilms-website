@@ -1,4 +1,3 @@
-// pages/Home.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { HeroSection, VideoSection, ProjectsSection, VideoModal } from "../components/Home";
@@ -46,123 +45,21 @@ const Home = () => {
 
   const dynamicTexts = currentLanguage === 'en' ? dynamicTextsEN : dynamicTextsES;
 
-  const featuredProjects = [
-  // COLUMNA 1
-  {
-    id: 1,
-    client: "Oh la lashes",
-    title: "Camilo Regresa Oh la lashes",
-    category: "Beauty / Commercial",
-    video: "/videos/camilo-regresa.mp4",
-    width: "col-span-2 lg:col-span-1",
-    height: "row-span-2 lg:row-span-2",
-    rotation: "rotate-1",
-    mobileWidth: "col-span-2",
-    tabletWidth: "col-span-2"
-  },
-  {
-    id: 4,
-    client: "DAC",
-    title: "DAC 2025 - Recap", 
-    category: "Medical / Event",
-    video: "/videos/DAC 2025 - Recap.mp4",
-    width: "col-span-2 lg:col-span-1",
-    height: "row-span-1 lg:row-span-1",
-    rotation: "-rotate-1",
-    mobileWidth: "col-span-2",
-    tabletWidth: "col-span-2"
-  },
-
-  // COLUMNA 2 
-  {
-    id: 2,
-    client: "DAC",
-    title: "Derma Aesthetics Congress",
-    category: "Medical / Event",
-    video: "/videos/dac-dermaaestheticscongress.mp4",
-    width: "col-span-1 lg:col-span-1",
-    height: "row-span-1 lg:row-span-1",
-    rotation: "-rotate-2",
-    mobileWidth: "col-span-1",
-    tabletWidth: "col-span-1"
-  },
-  {
-    id: 5,
-    client: "Guerza",
-    title: "Frente al mar",
-    category: "Music Video",
-    video: "/videos/Guerza - Frente al mar.mp4", 
-    width: "col-span-1 lg:col-span-1",
-    height: "row-span-2 lg:row-span-2",
-    rotation: "rotate-2",
-    mobileWidth: "col-span-1",
-    tabletWidth: "col-span-1"
-  },
-
-  // COLUMNA 3
-  {
-    id: 3,
-    client: "Don Ricardo",
-    title: "El afilador",
-    category: "Documentary / Short Film",
-    video: "/videos/El afilador .mp4",
-    width: "col-span-1 lg:col-span-1",
-    height: "row-span-1 lg:row-span-1",
-    rotation: "rotate-3",
-    mobileWidth: "col-span-1",
-    tabletWidth: "col-span-1"
-  },
-  {
-    id: 6,
-    client: "Recrea",
-    title: "STEAM 2024",
-    category: "Educational / STEAM",
-    video: "/videos/Recrea STEAM - 2024.mp4",
-    width: "col-span-1 lg:col-span-1",
-    height: "row-span-1 lg:row-span-1",
-    rotation: "-rotate-3",
-    mobileWidth: "col-span-1",
-    tabletWidth: "col-span-1"
-  },
-  {
-    id: 7,
-    client: "Bomberos Guadalajara",
-    title: "1 Corte",
-    category: "Documentary / Corporate",
-    video: "/videos/Bomberos Guadalajara - 1 Corte .mp4",
-    width: "col-span-1 lg:col-span-1",
-    height: "row-span-1 lg:row-span-1",
-    rotation: "rotate-2",
-    mobileWidth: "col-span-1",
-    tabletWidth: "col-span-1"
-  },
-
-  // COLUMNA 4
-  {
-    id: 8,
-    client: "Foro Off Screen",
-    title: "Promocional foro Off Screen", 
-    category: "Promotional / Event",
-    video: "/videos/promocionalforo offscreen.mov",
-    width: "col-span-1 lg:col-span-1",
-    height: "row-span-1 lg:row-span-1",
-    rotation: "-rotate-2",
-    mobileWidth: "col-span-1",
-    tabletWidth: "col-span-1"
-  },
-  {
-    id: 9,
-    client: "Rosk",
-    title: "Rosk",
-    category: "Commercial / Branding",
-    video: "/videos/rosk.mp4",
-    width: "col-span-1 lg:col-span-1",
-    height: "row-span-1 lg:row-span-1", 
-    rotation: "rotate-1",
-    mobileWidth: "col-span-1",
-    tabletWidth: "col-span-1"
-  }
-];
+  // Animación mejorada para las secciones
+  const sectionVariants = {
+    hidden: {
+      opacity: 0,
+      y: 50,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.25, 0.1, 0.25, 1],
+      }
+    }
+  };
 
   useEffect(() => {
     const checkDevice = () => {
@@ -211,25 +108,9 @@ const Home = () => {
     setFullscreenVideo(null);
   };
 
-  // Animación para las secciones que entran desde abajo
-  const sectionVariants = {
-    hidden: {
-      opacity: 0,
-      y: 100,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.1, 0.25, 1], // Curva suave
-      }
-    }
-  };
-
   return (
-    <div className="relative bg-black">
-      {/* Fondo con animación de bajada */}
+    <div className="relative bg-black min-h-screen">
+      {/* Fondo con animación de bajada - SIN overlay que lo tape */}
       <motion.div
         initial={{ y: '-100%' }}
         animate={{ y: 0 }}
@@ -268,12 +149,12 @@ const Home = () => {
               />
             </div>
 
-            {/* Video Section - Con animación de entrada */}
+            {/* Video Section - Con animación de entrada mejorada */}
             <motion.div
               ref={videoSectionRef}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: true, margin: "0px" }}
               variants={sectionVariants}
             >
               <VideoSection
@@ -282,16 +163,15 @@ const Home = () => {
               />
             </motion.div>
 
-            {/* Projects Section - Con animación de entrada */}
+            {/* Projects Section - Con animación de entrada mejorada */}
             <motion.div
               ref={projectsSectionRef}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: true, margin: "0px" }}
               variants={sectionVariants}
             >
               <ProjectsSection
-                featuredProjects={featuredProjects}
                 isMobile={isMobile}
                 isTablet={isTablet}
                 onProjectClick={handleProjectClick}
