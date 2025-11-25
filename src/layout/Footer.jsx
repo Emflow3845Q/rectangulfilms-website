@@ -87,9 +87,9 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Descripción con contacto debajo - texto más pequeño y contenedor más ancho */}
-        <div className="max-w-lg w-full"> {/* Cambiado de max-w-md a max-w-lg */}
-          <div className="text-[11px] leading-relaxed text-gray-300 mb-3 text-justify w-full"> {/* Cambiado de text-xs a text-[11px] */}
+        {/* Descripción con contacto debajo - ajuste sutil del ancho */}
+        <div className="max-w-xl w-full"> {/* Cambiado a max-w-xl (más ancho que lg pero no tanto) */}
+          <div className="text-[11px] leading-relaxed text-gray-300 mb-3 text-justify w-full">
             <p className="font-gotham font-light w-full" style={{ textAlignLast: 'justify' }}>
               Rectángulo es una productora audiovisual creativa ubicada en Guadalajara México, con un crew multidisciplinario, especializado en áreas como <strong className="font-gotham font-bold">producción</strong>, <strong className="font-gotham font-bold">dirección</strong>, <strong className="font-gotham font-bold">cinefotografía</strong>, <strong className="font-gotham font-bold">diseño sonoro</strong>, <strong className="font-gotham font-bold">dirección de arte</strong> y entre otras. Nuestra meta es realizar producciones de alta calidad con pensamiento juicioso, logrando el resultado esperado por cada uno de nuestros clientes. ¿Cómo lo logramos? Estableciendo estándares de calidad, aplicando nuestras metodologías, talento y creatividad.
             </p>
