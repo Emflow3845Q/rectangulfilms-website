@@ -62,41 +62,41 @@
       },
       "serviceItems": {
         "production": [
-          "Advertising and commercial videos",
-          "Music videos",
           "Corporate and institutional productions",
-          "High-end social media content",
           "Testimonial capsules and interviews",
-          "Product and fashion spots",
+          "Advertising and commercial videos",
+          "High-end social media content",
           "Series and cinematic projects",
+          "Product and fashion spots",
+          "Aerial drone filming",
           "Event coverage",
-          "Aerial drone filming"
+          "Music videos"
         ],
         "liveEvents": [
-          "Live event production and coverage",
-          "Real-time multiplatform streaming",
           "Live graphics integration (visuals and overlays)",
-          "Screen setup and AV equipment",
-          "Technical and creative coordination",
+          "Event recording and post-event recap videos",
           "Multicam closed-circuit operation (CCTV)",
-          "Event recording and post-event recap videos"
+          "Live event production and coverage",
+          "Technical and creative coordination",
+          "Real-time multiplatform streaming",
+          "Screen setup and AV equipment"
         ],
         "photography": [
-          "Product photography",
           "Fashion and editorial campaigns",
           "Corporate and artistic portraits",
           "Advertising photography",
-          "Film and video stills",
-          "Event photo coverage"
+          "Event photo coverage",
+          "Product photography",
+          "Film and video stills"
         ],
         "equipment": [
-          "Digital cinema cameras",
-          "Cinema lenses and accessories",
-          "Professional lighting",
-          "Professional audio and microphones",
           "Grip gear, tripods, C-stands, and rigging",
           "Monitors, transmitters, and on-set accessories",
-          "Fully equipped soundstage"
+          "Professional audio and microphones",
+          "Cinema lenses and accessories",
+          "Fully equipped soundstage",
+          "Digital cinema cameras",
+          "Professional lighting"
         ]
       }
     },

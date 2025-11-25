@@ -12,27 +12,29 @@ const ServicesSection = () => {
     serviceKey 
   }) => (
     <motion.div 
-      className="text-center"
+      className="text-center min-w-0"
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay }}
     >
-      <h3 className="text-white-pure text-sm sm:text-base uppercase tracking-[0.3em] mb-3 font-gotham font-bold">
-        {title}
-      </h3>
-      <ul className="space-y-0.5">
-        {services.map((service, index) => (
-          <motion.li 
-            key={index} 
-            className="text-white-pure text-xs sm:text-sm tracking-wide font-gotham font-light"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: delay + 0.2 + index * 0.05 }}
-          >
-            {service}
-          </motion.li>
-        ))}
-      </ul>
+      <div className="bg-black-pure p-6 lg:p-8 h-full">
+        <h3 className="text-white-pure text-sm sm:text-base uppercase tracking-[0.3em] mb-4 font-gotham font-bold">
+          {title}
+        </h3>
+        <ul className="space-y-2">
+          {services.map((service, index) => (
+            <motion.li 
+              key={index} 
+              className="text-white-pure text-xs sm:text-sm tracking-wide font-gotham font-light leading-relaxed break-words"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: delay + 0.2 + index * 0.05 }}
+            >
+              {service}
+            </motion.li>
+          ))}
+        </ul>
+      </div>
     </motion.div>
   );
 
@@ -40,7 +42,7 @@ const ServicesSection = () => {
     <div className="section">
       <div className="min-h-[90vh] bg-black-pure text-white-pure flex items-center py-12">
         <div className="px-4 sm:px-6 lg:px-8 xl:px-20 w-full">
-          <div className="max-w-7xl mx-auto">
+          <div className="w-full">
             <motion.p
               className="text-xs sm:text-sm text-white-pure uppercase tracking-[0.3em] text-left mb-3 font-gotham font-medium"
               initial={{ opacity: 0, y: 20 }}
@@ -59,7 +61,13 @@ const ServicesSection = () => {
               {t("about.servicesTitle")}
             </motion.h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 xl:gap-8">
+            {/* Columnas más anchas con grid template columns personalizado */}
+            <div 
+              className="grid gap-8 lg:gap-12 xl:gap-16"
+              style={{
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))'
+              }}
+            >
               <ServiceColumn
                 title={t("about.services.production")}
                 services={t("about.serviceItems.production", { returnObjects: true })}
