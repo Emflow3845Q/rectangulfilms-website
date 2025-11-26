@@ -169,7 +169,7 @@ const MotionPage = () => {
     },
     {
       id: 20,
-      client: "Symetry Academy",
+      client: "Symetri Academy",
       title: "Motion Graphics",
       category: "Motion Graphics",
       thumbnail: "/motion/motion-graphics.webp",
