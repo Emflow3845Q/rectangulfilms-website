@@ -57,8 +57,8 @@ const MotionPage = () => {
     },
     {
       id: 6,
-      client: "Casalideas",
-      title: "Casalideas",
+      client: "CasaIdeas",
+      title: "CasaIdeas",
       category: "Comercial",
       thumbnail: "/motion/casa-ideas.webp",
       video: "/videos/CasaIdeas.mp4",
@@ -129,7 +129,7 @@ const MotionPage = () => {
     },
     {
       id: 15,
-      client: "BS Practica",
+      client: "Práctica América",
       title: "Fosa Temporal",
       category: "Education",
       thumbnail: "/motion/fosa-temporal.webp",
@@ -169,7 +169,7 @@ const MotionPage = () => {
     },
     {
       id: 20,
-      client: "Simetry Academy",
+      client: "Symetry Academy",
       title: "Motion Graphics",
       category: "Motion Graphics",
       thumbnail: "/motion/motion-graphics.webp",
@@ -218,7 +218,7 @@ const MotionPage = () => {
     {
       id: 26,
       client: "Rolex",
-      title: "Rolex Product",
+      title: "Rolex",
       category: "Product comercial",
       thumbnail: "/motion/rolex-producto.webp",
       video: "/videos/RolexProducto.mp4",
@@ -241,7 +241,7 @@ const MotionPage = () => {
     },
     {
       id: 29,
-      client: "Fernanda T",
+      client: "Fernanda",
       title: "Showreel - Fernanda",
       category: "Showreel",
       thumbnail: "/motion/showreel-fernanda.webp",
@@ -265,8 +265,8 @@ const MotionPage = () => {
     },
     {
       id: 32,
-      client: "Sesión Acústica",
-      title: "Guerra - frente al mar",
+      client: "Guerza - frente al mar",
+      title: "Sesión Acústica",
       category: "Music video",
       thumbnail: "/motion/guerra-frente-mar.webp",
       video: "/videos/GuerraFrenteAlMar.mp4",
