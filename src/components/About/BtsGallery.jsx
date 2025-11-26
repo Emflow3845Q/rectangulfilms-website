@@ -12,8 +12,6 @@ const BtsGallery = () => {
 
   // Array de imágenes de photography (1-49)
   const btsImages = [
-    { id: 1, image: photography.photography1, alt: "Photography production 1" },
-    { id: 2, image: photography.photography2, alt: "Photography production 2" },
     { id: 3, image: photography.photography3, alt: "Photography production 3" },
     { id: 4, image: photography.photography4, alt: "Photography production 4" },
     { id: 6, image: photography.photography6, alt: "Photography production 6" },
