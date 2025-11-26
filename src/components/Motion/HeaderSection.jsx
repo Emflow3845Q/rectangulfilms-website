@@ -23,9 +23,6 @@ const HeaderSection = ({ projects }) => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
         >
-          <p className="text-white text-sm uppercase tracking-widest mb-2 font-gotham font-medium">
-            {projects.length} {t("motion.projects")}
-          </p>
           <p className="text-white text-base lg:max-w-xs leading-relaxed font-gotham font-light">
             {t("motion.description")}
           </p>

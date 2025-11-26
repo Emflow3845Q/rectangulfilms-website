@@ -9,11 +9,10 @@ const DesktopProjects = ({ projects, onProjectHover }) => {
     <div className="hidden lg:block">
       <div className="px-6 lg:px-20">
         {/* Header de la tabla */}
-        <div className="grid grid-cols-4 gap-8 text-white uppercase tracking-widest text-sm border-b border-white/40 pb-4 mb-2 pl-8 font-gotham font-medium">
+        <div className="grid grid-cols-3 gap-8 text-white uppercase tracking-widest text-sm border-b border-white/40 pb-4 mb-2 pl-8 font-gotham font-medium">
           <div>{t("client")}</div>
           <div>{t("project")}</div>
           <div>{t("category")}</div>
-          <div className="text-right">{t("year")}</div>
         </div>
 
         {/* Lista de proyectos */}
@@ -21,7 +20,7 @@ const DesktopProjects = ({ projects, onProjectHover }) => {
           {projects.map((project, index) => (
             <motion.div
               key={project.id}
-              className="grid grid-cols-4 gap-8 py-6 border-b border-white/20 group cursor-pointer relative pl-8"
+              className="grid grid-cols-3 gap-8 py-6 border-b border-white/20 group cursor-pointer relative pl-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
@@ -44,11 +43,6 @@ const DesktopProjects = ({ projects, onProjectHover }) => {
               {/* Category */}
               <div className="text-white group-hover:text-white-pure transition-colors duration-300 font-gotham font-light">
                 {project.category}
-              </div>
-              
-              {/* Year */}
-              <div className="text-white text-right group-hover:text-white-pure transition-colors duration-300 font-gotham font-light">
-                2025
               </div>
 
               {/* Efecto de fondo al hover */}
