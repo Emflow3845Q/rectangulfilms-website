@@ -76,7 +76,7 @@ const ProjectsSection = ({
     // COLUMNA 3
     {
       id: 3,
-      client: "Don Ricardo",
+      client: "Don Ricardo - El afilador",
       title: "Documental",
       category: "Documentary / Short Film",
       video: "/videos/El afilador .mp4",

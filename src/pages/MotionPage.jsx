@@ -33,7 +33,7 @@ const MotionPage = () => {
     },
     {
       id: 3,
-      client: "Bomberos Guadalajara",
+      client: "Docuchamba",
       title: "Bomberos Guadalajara",
       category: "Documental",
       thumbnail: "/motion/bomberos-guadalajara.webp",
@@ -105,8 +105,8 @@ const MotionPage = () => {
     },
     {
       id: 12,
-      client: "Don Ricardo",
-      title: "El afilador",
+      client: "Docuchamba",
+      title: "Don Ricardo El afilador",
       category: "Documental",
       thumbnail: "/motion/don-ricardo.webp",
       video: "/videos/DonRicardoElAfilador.mp4",
