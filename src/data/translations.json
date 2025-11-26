@@ -59,45 +59,6 @@
         "liveEvents": "Live Events & Broadcasts",
         "photography": "Photography",
         "equipment": "Equipment Rental"
-      },
-      "serviceItems": {
-        "production": [
-          "Corporate and institutional productions",
-          "Testimonial capsules and interviews",
-          "Advertising and commercial videos",
-          "High-end social media content",
-          "Series and cinematic projects",
-          "Product and fashion spots",
-          "Aerial drone filming",
-          "Event coverage",
-          "Music videos"
-        ],
-        "liveEvents": [
-          "Live graphics integration (visuals and overlays)",
-          "Event recording and post-event recap videos",
-          "Multicam closed-circuit operation (CCTV)",
-          "Live event production and coverage",
-          "Technical and creative coordination",
-          "Real-time multiplatform streaming",
-          "Screen setup and AV equipment"
-        ],
-        "photography": [
-          "Fashion and editorial campaigns",
-          "Corporate and artistic portraits",
-          "Advertising photography",
-          "Event photo coverage",
-          "Product photography",
-          "Film and video stills"
-        ],
-        "equipment": [
-          "Grip gear, tripods, C-stands, and rigging",
-          "Monitors, transmitters, and on-set accessories",
-          "Professional audio and microphones",
-          "Cinema lenses and accessories",
-          "Fully equipped soundstage",
-          "Digital cinema cameras",
-          "Professional lighting"
-        ]
       }
     },
     "motionProjects": {
@@ -287,45 +248,6 @@
         "liveEvents": "Eventos en Vivo & Transmisiones",
         "photography": "Fotografía",
         "equipment": "Renta de Equipo"
-      },
-      "serviceItems": {
-        "production": [
-          "Videos publicitarios y comerciales",
-          "Videos musicales",
-          "Producciones corporativas e institucionales",
-          "Contenido de alta calidad para redes sociales",
-          "Cápsulas de testimonio y entrevistas",
-          "Spots de producto y moda",
-          "Proyectos de series y cine",
-          "Cobertura de eventos",
-          "Filmación con drones aéreos"
-        ],
-        "liveEvents": [
-          "Producción y cobertura de eventos en vivo",
-          "Transmisión multiplataforma en tiempo real",
-          "Integración de gráficos en vivo (visuales y overlays)",
-          "Configuración de pantallas y equipo AV",
-          "Coordinación técnica y creativa",
-          "Operación multicámara de circuito cerrado (CCTV)",
-          "Grabación de eventos y videos resumen post-evento"
-        ],
-        "photography": [
-          "Fotografía de producto",
-          "Campañas de moda y editorial",
-          "Retratos corporativos y artísticos",
-          "Fotografía publicitaria",
-          "Fotografías fijas de cine y video",
-          "Cobertura fotográfica de eventos"
-        ],
-        "equipment": [
-          "Cámaras de cine digital",
-          "Lentes de cine y accesorios",
-          "Iluminación profesional",
-          "Audio profesional y micrófonos",
-          "Equipo de grip, tripies, C-stands y rigging",
-          "Monitores, transmisores y accesorios de set",
-          "Soundstage completamente equipado"
-        ]
       }
     },
     "motionProjects": {

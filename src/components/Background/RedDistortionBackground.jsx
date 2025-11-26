@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from 'three';
 
-const RedDistortionBackground = () => {
+const VideoBackground = () => {
   const containerRef = useRef(null);
   const animationIdRef = useRef(null);
   
-  // Referencias para el mouse con suavizado
-  const mousePosition = useRef({ x: 0.5, y: 0.5 });
-  const targetMousePosition = useRef({ x: 0.5, y: 0.5 });
-  const prevMousePosition = useRef({ x: 0.5, y: 0.5 });
-  const easeFactor = useRef(0.02);
+  const scene = useRef(null);
+  const camera = useRef(null);
+  const renderer = useRef(null);
+  const video = useRef(null);
+  const videoTexture = useRef(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -19,301 +19,248 @@ const RedDistortionBackground = () => {
       containerRef.current.removeChild(containerRef.current.firstChild);
     }
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    // 1. CREAR ELEMENTO DE VIDEO CON MEJORES CONFIGURACIONES
+    video.current = document.createElement('video');
+    video.current.src = '/leeroy-background.mp4';
+    video.current.loop = true;
+    video.current.muted = true;
+    video.current.playsInline = true;
+    video.current.preload = 'auto';
+    video.current.crossOrigin = 'anonymous';
+    video.current.style.display = 'none';
 
-    const renderer = new THREE.WebGLRenderer({ 
-      antialias: false,
+    // Configurar calidad de video
+    video.current.setAttribute('webkit-playsinline', 'true');
+    video.current.setAttribute('playsinline', 'true');
+
+    document.body.appendChild(video.current);
+
+    // 2. CONFIGURAR THREE.JS CON CORRECCIÓN DE COLOR
+    scene.current = new THREE.Scene();
+    camera.current = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    
+    renderer.current = new THREE.WebGLRenderer({ 
+      antialias: true,
       alpha: true,
-      powerPreference: "high-performance"
+      powerPreference: "high-performance",
+      preserveDrawingBuffer: false
     });
     
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-    renderer.setClearColor(0x000000, 0);
+    const container = containerRef.current;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
     
-    containerRef.current.appendChild(renderer.domElement);
+    // Configurar renderer con corrección de color
+    renderer.current.setSize(width, height);
+    renderer.current.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.current.setClearColor(0x000000, 0);
+    
+    // CORRECCIÓN CRÍTICA: Configuración de color space
+    if (THREE.SRGBColorSpace) {
+      // Three.js r152+
+      renderer.current.outputColorSpace = THREE.SRGBColorSpace;
+    } else {
+      // Versiones anteriores
+      renderer.current.outputEncoding = THREE.sRGBEncoding;
+    }
+    
+    const canvas = renderer.current.domElement;
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.display = 'block';
+    canvas.style.objectFit = 'cover';
+    
+    containerRef.current.appendChild(canvas);
 
-    const vertexShader = `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = vec4(position, 1.0);
-      }
-    `;
-
-    const fragmentShader = `
-      precision highp float;
+    // 3. CONFIGURACIÓN MEJORADA DE TEXTURA DE VIDEO CON CORRECCIÓN DE COLOR
+    const initVideoTexture = () => {
+      videoTexture.current = new THREE.VideoTexture(video.current);
       
-      uniform float iTime;
-      uniform vec2 iResolution;
-      uniform vec2 u_mouse;
-      uniform vec2 u_prevMouse;
-      varying vec2 vUv;
-
-      #define speed 0.4
-      #define scale 2.0
-
-      vec3 hash(vec3 p) {
-        p = vec3(dot(p, vec3(127.1, 311.7, 74.7)),
-                 dot(p, vec3(269.5, 183.3, 246.1)),
-                 dot(p, vec3(113.5, 271.9, 124.6)));
-        p = -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
-        return p;
+      // CONFIGURACIÓN CORREGIDA PARA COLOR
+      videoTexture.current.minFilter = THREE.LinearFilter;
+      videoTexture.current.magFilter = THREE.LinearFilter;
+      videoTexture.current.format = THREE.RGBAFormat;
+      
+      // CORRECCIÓN MÁS IMPORTANTE: Color space de la textura
+      if (THREE.SRGBColorSpace) {
+        // Three.js r152+
+        videoTexture.current.colorSpace = THREE.SRGBColorSpace;
+      } else {
+        // Versiones anteriores
+        videoTexture.current.encoding = THREE.sRGBEncoding;
       }
+      
+      videoTexture.current.anisotropy = renderer.current.capabilities.getMaxAnisotropy();
+      videoTexture.current.generateMipmaps = false;
+      videoTexture.current.wrapS = THREE.ClampToEdgeWrapping;
+      videoTexture.current.wrapT = THREE.ClampToEdgeWrapping;
 
-      float noise(in vec3 p) {
-        vec3 i = floor(p);
-        vec3 f = fract(p);
-        vec3 u = f * f * (3.0 - 2.0 * f);
-        
-        return mix(
-          mix(
-            mix(dot(hash(i + vec3(0.0, 0.0, 0.0)), f - vec3(0.0, 0.0, 0.0)), 
-                dot(hash(i + vec3(1.0, 0.0, 0.0)), f - vec3(1.0, 0.0, 0.0)), u.x),
-            mix(dot(hash(i + vec3(0.0, 1.0, 0.0)), f - vec3(0.0, 1.0, 0.0)), 
-                dot(hash(i + vec3(1.0, 1.0, 0.0)), f - vec3(1.0, 1.0, 0.0)), u.x), u.y),
-          mix(
-            mix(dot(hash(i + vec3(0.0, 0.0, 1.0)), f - vec3(0.0, 0.0, 1.0)), 
-                dot(hash(i + vec3(1.0, 0.0, 1.0)), f - vec3(1.0, 0.0, 1.0)), u.x),
-            mix(dot(hash(i + vec3(0.0, 1.0, 1.0)), f - vec3(0.0, 1.0, 1.0)), 
-                dot(hash(i + vec3(1.0, 1.0, 1.0)), f - vec3(1.0, 1.0, 1.0)), u.x), u.y), u.z);
-      }
+      const material = new THREE.MeshBasicMaterial({
+        map: videoTexture.current,
+        transparent: true,
+        opacity: 1,
+        toneMapped: false // Importante para mantener colores fieles al video original
+      });
 
-      // MOVIMIENTO MULTI-CAPA CON GENERACIÓN CONSTANTE
-      vec2 movementMultiLayer(vec2 p, float time) {
-        // CAPA 1: Movimiento base original
-        vec2 baseLayer = p;
-        float bigWaveX = sin(baseLayer.x * 1.6 + time * 0.85) * cos(baseLayer.y * 1.3 - time * 0.65) * 0.75;
-        float bigWaveY = cos(baseLayer.x * 1.3 - time * 0.75) * sin(baseLayer.y * 1.6 + time * 0.95) * 0.75;
-        
-        baseLayer.x += bigWaveX * 1.1 + bigWaveY * 0.45;
-        baseLayer.y += bigWaveY * 1.1 + bigWaveX * 0.45;
-        
-        // CAPA 2: Generador de nuevas texturas - se mueve independientemente
-        vec2 newTexLayer = p;
-        float layer2Time = time * 1.3;
-        float moveX2 = sin(layer2Time * 0.7) * 1.8;
-        float moveY2 = cos(layer2Time * 0.5) * 1.5;
-        newTexLayer.x += moveX2;
-        newTexLayer.y += moveY2;
-        
-        float newWaveX = sin(newTexLayer.x * 1.8 + layer2Time * 1.1) * cos(newTexLayer.y * 1.5 - layer2Time * 0.9) * 0.6;
-        float newWaveY = cos(newTexLayer.x * 1.5 - layer2Time * 0.8) * sin(newTexLayer.y * 1.8 + layer2Time * 1.2) * 0.6;
-        
-        // CAPA 3: Otro generador con diferente velocidad y posición
-        vec2 layer3 = p;
-        float layer3Time = time * 0.8;
-        float moveX3 = cos(layer3Time * 0.9) * 2.2;
-        float moveY3 = sin(layer3Time * 0.6) * 1.8;
-        layer3.x += moveX3;
-        layer3.y += moveY3;
-        
-        float wave3X = sin(layer3.x * 2.2 + layer3Time * 0.6) * cos(layer3.y * 1.9 - layer3Time * 1.1) * 0.5;
-        float wave3Y = cos(layer3.x * 1.7 - layer3Time * 1.0) * sin(layer3.y * 2.1 + layer3Time * 0.7) * 0.5;
-        
-        // CAPA 4: Pulsos que aparecen y desaparecen en diferentes lugares
-        float pulseTime = time * 2.0;
-        float pulse1 = sin(pulseTime * 1.5) * 0.5 + 0.5;
-        float pulse2 = cos(pulseTime * 1.2) * 0.5 + 0.5;
-        
-        vec2 pulseLayer1 = p;
-        pulseLayer1.x += sin(time * 0.4) * 2.5;
-        pulseLayer1.y += cos(time * 0.3) * 2.0;
-        float pulseWave1 = sin(pulseLayer1.x * 2.5) * cos(pulseLayer1.y * 2.2) * pulse1 * 0.4;
-        
-        vec2 pulseLayer2 = p;
-        pulseLayer2.x += cos(time * 0.5) * 2.8;
-        pulseLayer2.y += sin(time * 0.6) * 2.3;
-        float pulseWave2 = cos(pulseLayer2.x * 2.3) * sin(pulseLayer2.y * 2.6) * pulse2 * 0.3;
-        
-        // COMBINAR TODAS LAS CAPAS
-        p.x = baseLayer.x + newWaveX * 0.7 + wave3X * 0.5 + pulseWave1 + pulseWave2;
-        p.y = baseLayer.y + newWaveY * 0.7 + wave3Y * 0.5 + pulseWave1 + pulseWave2;
-        
-        // Movimientos globales adicionales
-        p.x += sin(time * 0.35) * 0.3;
-        p.y += cos(time * 0.45) * 0.25;
-        
-        // Patrones que aparecen constantemente
-        float pattern1 = sin(p.x * 2.2 + p.y * 1.6 + time * 1.2) * 0.25;
-        float pattern2 = cos(p.x * 1.9 - p.y * 2.3 + time * 1.5) * 0.2;
-        
-        p.x += pattern1 + pattern2 * 0.3;
-        p.y += pattern2 + pattern1 * 0.3;
-        
-        return p;
-      }
+      const geometry = new THREE.PlaneGeometry(2, 2);
+      const mesh = new THREE.Mesh(geometry, material);
+      scene.current.add(mesh);
 
-      vec3 generateBackground(vec2 uv, float time) {
-        vec2 p = movementMultiLayer(uv, time);
+      video.current.addEventListener('loadeddata', () => {
+        console.log('✅ Video cargado - Dimensiones:', 
+          video.current.videoWidth, 'x', video.current.videoHeight);
         
-        // GENERACIÓN DE COLOR ORIGINAL EXACTA (MISMA TEXTURA VISUAL)
-        float redValue = 0.5 * sin(p.x) + 0.5;
-        float greenValue = 0.5 * sin(p.x + p.y) + 0.5;
-        float blueValue = 0.5 * sin(p.y) + 0.4;
-
-        float finalRed = (redValue + greenValue + blueValue) / 3.0;
-        finalRed = pow(finalRed, 2.5);
-        finalRed = finalRed * 0.8 + 0.05;
-
-        vec3 brandRed = vec3(0.925, 0.137, 0.235);
-        vec3 brandBlack = vec3(0.0, 0.0, 0.0);
-        
-        vec3 col = mix(brandBlack, brandRed, finalRed);
-        
-        return col;
-      }
-
-      void main() {
-        vec2 originalUV = (vUv * iResolution.xy - iResolution.xy * 0.5) / iResolution.y;
-        originalUV.x = -originalUV.x;
-        
-        float t = iTime * speed;
-        vec2 uv = originalUV * scale;
-        
-        // Generar el fondo base con el movimiento seleccionado
-        vec3 baseColor = generateBackground(uv, t);
-        
-        // EFECTO DE DISTORSIÓN POR MOUSE (igual que antes)
-        vec2 gridUV = floor(vUv * vec2(25.0, 25.0)) / vec2(25.0, 25.0);
-        vec2 centerOfPixel = gridUV + vec2(1.0/50.0, 1.0/50.0);
-        
-        vec2 mouseDirection = u_mouse - u_prevMouse;
-        float mouseSpeed = length(mouseDirection);
-        
-        vec3 finalColor = baseColor;
-        
-        if (mouseSpeed > 0.0001) {
-          mouseDirection = normalize(mouseDirection) * min(mouseSpeed * 10.0, 1.0);
-          
-          vec2 pixelToMouseDirection = centerOfPixel - u_mouse;
-          float pixelDistanceToMouse = length(pixelToMouseDirection);
-          
-          float strength = 1.0 - smoothstep(0.0, 0.4, pixelDistanceToMouse);
-          strength = pow(strength, 0.5);
-          
-          vec2 uvOffset = strength * -mouseDirection * 0.8;
-          vec2 distortedUV = uv + uvOffset;
-          
-          vec3 colorR = generateBackground(distortedUV + vec2(strength * 0.02, 0.0), t);
-          vec3 colorG = generateBackground(distortedUV, t);
-          vec3 colorB = generateBackground(distortedUV - vec2(strength * 0.02, 0.0), t);
-          
-          vec3 distortedColor = vec3(colorR.r, colorG.g, colorB.b);
-          
-          finalColor = mix(baseColor, distortedColor, strength);
+        // Verificar metadata de color
+        console.log('🎨 Configuración de color aplicada:');
+        if (THREE.SRGBColorSpace) {
+          console.log('- Color Space:', videoTexture.current.colorSpace);
+          console.log('- Output Color Space:', renderer.current.outputColorSpace);
+        } else {
+          console.log('- Encoding:', videoTexture.current.encoding);
+          console.log('- Output Encoding:', renderer.current.outputEncoding);
         }
         
-        gl_FragColor = vec4(finalColor, 1.0);
-      }
-    `;
+        playVideo();
+      });
 
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    const material = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      transparent: true,
-      uniforms: {
-        iTime: { value: 0 },
-        iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        u_mouse: { value: new THREE.Vector2(0.5, 0.5) },
-        u_prevMouse: { value: new THREE.Vector2(0.5, 0.5) }
-      }
-    });
+      // Manejar errores de video
+      video.current.addEventListener('error', (e) => {
+        console.error('❌ Error de video:', e);
+        console.error('Detalles del error:', video.current.error);
+      });
 
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+      // Cuando el video puede reproducirse completamente
+      video.current.addEventListener('canplaythrough', () => {
+        console.log('🎬 Video listo para reproducirse sin interrupciones');
+      });
 
-    let startTime = Date.now();
+      // Evento para cuando el video realmente comienza a reproducirse
+      video.current.addEventListener('playing', () => {
+        console.log('🔊 Video reproduciéndose correctamente');
+      });
 
-    // Función para renderizado inicial
-    const forceInitialRender = () => {
-      material.uniforms.iTime.value = 0.001;
-      material.uniforms.u_mouse.value.set(0.5, 0.5);
-      material.uniforms.u_prevMouse.value.set(0.5, 0.5);
-      renderer.render(scene, camera);
+      const playVideo = () => {
+        console.log('🔄 Intentando reproducir video...');
+        const playPromise = video.current.play();
+        
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              console.log('▶️ Video reproduciéndose correctamente');
+              console.log('📊 Estado del video:', {
+                duración: video.current.duration,
+                estado: video.current.readyState,
+                pausado: video.current.paused,
+                acabado: video.current.ended
+              });
+            })
+            .catch(error => {
+              console.log('⚠️ Esperando interacción del usuario:', error);
+              
+              const handleUserInteraction = () => {
+                video.current.play().then(() => {
+                  console.log('🎮 Video iniciado por interacción del usuario');
+                }).catch(e => {
+                  console.error('❌ Error al reproducir después de interacción:', e);
+                });
+                document.removeEventListener('click', handleUserInteraction);
+                document.removeEventListener('touchstart', handleUserInteraction);
+              };
+              
+              document.addEventListener('click', handleUserInteraction);
+              document.addEventListener('touchstart', handleUserInteraction);
+            });
+        }
+      };
+
+      video.current.load();
     };
 
-    // Función para manejar el movimiento del mouse
-    const handleMouseMove = (event) => {
-      if (!containerRef.current) return;
-      
-      const rect = containerRef.current.getBoundingClientRect();
-      
-      prevMousePosition.current.x = targetMousePosition.current.x;
-      prevMousePosition.current.y = targetMousePosition.current.y;
-      
-      targetMousePosition.current.x = (event.clientX - rect.left) / rect.width;
-      targetMousePosition.current.y = 1.0 - (event.clientY - rect.top) / rect.height;
-      
-      easeFactor.current = 0.08;
-    };
+    initVideoTexture();
 
-    const handleMouseEnter = () => {
-      easeFactor.current = 0.08;
-    };
-
-    const handleMouseLeave = () => {
-      easeFactor.current = 0.02;
-      targetMousePosition.current = { x: 0.5, y: 0.5 };
-    };
-
-    // Agregar event listeners
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseenter', handleMouseEnter, true);
-    document.addEventListener('mouseleave', handleMouseLeave, true);
-
+    // 4. ANIMACIÓN OPTIMIZADA
     const animate = () => {
       animationIdRef.current = requestAnimationFrame(animate);
       
-      const currentTime = (Date.now() - startTime) / 1000;
+      if (videoTexture.current && video.current.readyState >= video.current.HAVE_CURRENT_DATA) {
+        videoTexture.current.needsUpdate = true;
+      }
       
-      // Suavizar el movimiento del mouse
-      mousePosition.current.x += (targetMousePosition.current.x - mousePosition.current.x) * easeFactor.current;
-      mousePosition.current.y += (targetMousePosition.current.y - mousePosition.current.y) * easeFactor.current;
-      
-      // Actualizar uniforms
-      material.uniforms.iTime.value = currentTime;
-      material.uniforms.u_mouse.value.set(mousePosition.current.x, mousePosition.current.y);
-      material.uniforms.u_prevMouse.value.set(prevMousePosition.current.x, prevMousePosition.current.y);
-      
-      renderer.render(scene, camera);
+      renderer.current.render(scene.current, camera.current);
     };
 
-    // Ejecutar renderizado inicial
-    forceInitialRender();
-    
-    // Iniciar animación
     animate();
 
+    // 5. MANEJAR RESIZE MÁS PRECISO
     const handleResize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
+      const container = containerRef.current;
+      if (!container) return;
       
-      renderer.setSize(width, height);
-      material.uniforms.iResolution.value.set(width, height);
-      renderer.render(scene, camera);
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      
+      renderer.current.setSize(width, height);
+      
+      // Forzar actualización de textura después del resize
+      if (videoTexture.current) {
+        videoTexture.current.needsUpdate = true;
+      }
     };
+
+    // Usar ResizeObserver para cambios más precisos
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(containerRef.current);
 
     window.addEventListener('resize', handleResize);
 
+    // 6. CLEANUP MEJORADO
     return () => {
+      console.log('🧹 Limpiando recursos del video...');
+      
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
       }
-      window.removeEventListener('resize', handleResize);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseenter', handleMouseEnter, true);
-      document.removeEventListener('mouseleave', handleMouseLeave, true);
       
-      if (containerRef.current && renderer.domElement) {
-        containerRef.current.removeChild(renderer.domElement);
+      window.removeEventListener('resize', handleResize);
+      
+      if (resizeObserver) {
+        resizeObserver.disconnect();
       }
       
-      geometry.dispose();
-      material.dispose();
-      renderer.dispose();
+      if (renderer.current) {
+        renderer.current.dispose();
+      }
+      
+      if (video.current) {
+        video.current.pause();
+        video.current.src = ''; // Limpiar source
+        video.current.load(); // Reiniciar
+        if (video.current.parentNode) {
+          video.current.parentNode.removeChild(video.current);
+        }
+      }
+      
+      if (videoTexture.current) {
+        videoTexture.current.dispose();
+      }
+      
+      // Limpiar materiales y geometrías
+      if (scene.current) {
+        scene.current.traverse((object) => {
+          if (object.isMesh) {
+            if (object.geometry) {
+              object.geometry.dispose();
+            }
+            if (object.material) {
+              if (Array.isArray(object.material)) {
+                object.material.forEach(material => material.dispose());
+              } else {
+                object.material.dispose();
+              }
+            }
+          }
+        });
+      }
     };
   }, []);
 
@@ -321,19 +268,16 @@ const RedDistortionBackground = () => {
     <div 
       ref={containerRef}
       style={{
-        position: 'absolute', 
+        position: 'absolute',
         top: 0,
         left: 0,
         width: '100%',
         height: '100%',
-        zIndex: 0,
         overflow: 'hidden',
-        background: 'transparent',
-        cursor: 'none'
+        zIndex: 0
       }}
-      title="Fondo rojo con generación constante de texturas"
     />
   );
 };
 
-export default RedDistortionBackground;
+export default VideoBackground;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { HeroSection, VideoSection, ProjectsSection, VideoModal } from "../components/Home";
-import RedDistortionBackground from "../components/Background/RedDistortionBackground";
 import { useLanguage } from '../context/LanguageContext';
 
 const Home = () => {
@@ -109,21 +108,8 @@ const Home = () => {
   };
 
   return (
-    <div className="relative bg-black min-h-screen">
-      {/* Fondo con animación de bajada - SIN overlay que lo tape */}
-      <motion.div
-        initial={{ y: '-100%' }}
-        animate={{ y: 0 }}
-        transition={{ 
-          duration: 0.8, 
-          ease: "easeOut" 
-        }}
-        className="fixed inset-0 z-0"
-      >
-        <RedDistortionBackground />
-      </motion.div>
-
-      {/* Contenido que aparece después del fondo */}
+    <div className="relative min-h-screen">
+      {/* Contenido principal */}
       <AnimatePresence>
         {showContent && (
           <motion.div

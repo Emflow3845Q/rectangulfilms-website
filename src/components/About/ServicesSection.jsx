@@ -1,30 +1,73 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useLanguage } from "../../context/LanguageContext";
 
 const ServicesSection = () => {
-  const { t } = useLanguage();
+  // Versión ULTRA FORZADA - arrays congelados
+  const serviceColumns = Object.freeze([
+    Object.freeze({
+      title: "Production",
+      services: Object.freeze([
+        "Corporate and institutional productions",
+        "Testimonial capsules and interviews",
+        "Advertising and commercial videos",
+        "High-end social media content",
+        "Series and cinematic projects",
+        "Product and fashion spots",
+        "Aerial drone filming",
+        "Event coverage",
+        "Music videos"
+      ]),
+      key: "production"
+    }),
+    Object.freeze({
+      title: "Photography",
+      services: Object.freeze([
+        "Fashion and editorial campaigns",
+        "Corporate and artistic portraits",
+        "Advertising photography",
+        "Event photo coverage",
+        "Product photography",
+        "Film and video stills"
 
-  const ServiceColumn = ({ 
-    title, 
-    services, 
-    delay = 0.2,
-    serviceKey 
-  }) => (
-    <motion.div 
-      className="text-center min-w-0"
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay }}
-    >
+      ]),
+      key: "photography"
+    }),
+    Object.freeze({
+      title: "Live Events & Broadcasts",
+      services: Object.freeze([
+        "Live graphics integration (visuals and overlays)",
+        "Multicam closed-circuit operation (CCTV)",
+        "Event recording and post-event recap videos",
+        "Technical and creative coordination",
+        "Live event production and coverage",
+        "Real-time multiplatform streaming",
+        "Screen setup and AV equipment"
+      ]),
+      key: "liveEvents"
+    }),
+    Object.freeze({
+      title: "Equipment Rental",
+      services: Object.freeze([
+        "Monitors, transmitters, and on-set accessories",
+        "Grip gear, tripods, C-stands, and rigging",
+        "Professional audio and microphones",
+        "Cinema lenses and accessories",
+        "Fully equipped soundstage",
+        "Digital cinema cameras",
+        "Professional lighting"
+      ]),
+      key: "equipment"
+    })
+  ]);
+
+  const ServiceColumn = ({ title, services, delay = 0.2, serviceKey }) => (
+    <motion.div className="text-center min-w-0" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay }}>
       <div className="bg-black-pure p-6 lg:p-8 h-full">
-        <h3 className="text-white-pure text-sm sm:text-base uppercase tracking-[0.3em] mb-4 font-gotham font-bold">
-          {title}
-        </h3>
+        <h3 className="text-white-pure text-sm sm:text-base uppercase tracking-[0.3em] mb-4 font-gotham font-bold">{title}</h3>
         <ul className="space-y-2">
           {services.map((service, index) => (
-            <motion.li 
-              key={index} 
+            <motion.li
+              key={index}
               className="text-white-pure text-xs sm:text-sm tracking-wide font-gotham font-light leading-relaxed break-words"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -43,54 +86,21 @@ const ServicesSection = () => {
       <div className="min-h-[90vh] bg-black-pure text-white-pure flex items-center py-12">
         <div className="px-4 sm:px-6 lg:px-8 xl:px-20 w-full">
           <div className="w-full">
-            <motion.p
-              className="text-xs sm:text-sm text-white-pure uppercase tracking-[0.3em] text-left mb-3 font-gotham font-medium"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              OUR CAPABILITIES
-            </motion.p>
+            <motion.p className="text-xs sm:text-sm text-white-pure uppercase tracking-[0.3em] text-left mb-3 font-gotham font-medium" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>OUR CAPABILITIES</motion.p>
 
-            <motion.h2
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-gotham font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              {t("about.servicesTitle")}
-            </motion.h2>
+            <motion.h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-gotham font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>How We Can Help</motion.h2>
 
-            {/* Columnas más anchas con grid template columns personalizado */}
-            <div 
-              className="grid gap-8 lg:gap-12 xl:gap-16"
-              style={{
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))'
-              }}
-            >
-              <ServiceColumn
-                title={t("about.services.production")}
-                services={t("about.serviceItems.production", { returnObjects: true })}
-                delay={0.2}
-              />
-              
-              <ServiceColumn
-                title={t("about.services.photography")}
-                services={t("about.serviceItems.photography", { returnObjects: true })}
-                delay={0.3}
-              />
-              
-              <ServiceColumn
-                title={t("about.services.liveEvents")}
-                services={t("about.serviceItems.liveEvents", { returnObjects: true })}
-                delay={0.4}
-              />
-              
-              <ServiceColumn
-                title={t("about.services.equipment")}
-                services={t("about.serviceItems.equipment", { returnObjects: true })}
-                delay={0.5}
-              />
+            {/* Grid de 4 columnas fijas */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 lg:gap-12 xl:gap-16">
+              {serviceColumns.map((column, index) => (
+                <ServiceColumn
+                  key={column.key}
+                  title={column.title}
+                  services={column.services}
+                  delay={0.2 + index * 0.1}
+                  serviceKey={column.key}
+                />
+              ))}
             </div>
           </div>
         </div>
