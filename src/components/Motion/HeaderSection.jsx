@@ -17,16 +17,6 @@ const HeaderSection = ({ projects }) => {
           {t("motion.title")}
         </motion.h1>
         
-        <motion.div
-          className="lg:text-right"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <p className="text-white text-base lg:max-w-xs leading-relaxed font-gotham font-light">
-            {t("motion.description")}
-          </p>
-        </motion.div>
       </div>
     </div>
   );

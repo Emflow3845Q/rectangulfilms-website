@@ -13,7 +13,7 @@ const ProjectsSection = ({
     {
       id: 10, // AHORA ES ID 10 EN LA POSICIÓN DEL ID 1
       client: "Rolex",
-      title: "Rolex",
+      title: "Product",
       category: "Commercial / Branding",
       video: "/videos/rolex.mp4",
       thumbnail: "/thumbnails/Portada GIF ROLEX VERTICAL.jpg",
@@ -28,8 +28,8 @@ const ProjectsSection = ({
     {
       id: 4,
       client: "Showreel Fernanda",
-      title: "Showreel Fernanda", 
-      category: "Medical / Event",
+      title: "Actriz reel", 
+      category: "Actress Reel",
       video: "/videos/DAC 2025 - Recap.mp4",
       thumbnail: "/thumbnails/Portada GIF Showreel Fernanda.jpg",
       hoverVideo: "/gifs/GIF_Showreel Fernanda.gif",
@@ -45,7 +45,7 @@ const ProjectsSection = ({
     {
       id: 5,
       client: "Guerza",
-      title: "Frente al mar",
+      title: "Music video",
       category: "Music Video",
       video: "/videos/Guerza - Frente al mar.mp4", 
       thumbnail: "/thumbnails/Portada GIF Guerza.jpg",
@@ -60,7 +60,7 @@ const ProjectsSection = ({
     {
       id: 2,
       client: "DAC",
-      title: "Derma Aesthetics Congress",
+      title: "Recap 2025",
       category: "Medical / Event",
       video: "/videos/dac-dermaaestheticscongress.mp4",
       thumbnail: "/thumbnails/Portada Gif_Dac 2025 Recap Vertical.jpg",
@@ -77,7 +77,7 @@ const ProjectsSection = ({
     {
       id: 3,
       client: "Don Ricardo",
-      title: "El afilador",
+      title: "Documental",
       category: "Documentary / Short Film",
       video: "/videos/El afilador .mp4",
       thumbnail: "/thumbnails/Portada Gif_Don Ricardo Afilador.jpg",
@@ -91,8 +91,8 @@ const ProjectsSection = ({
     },
     {
       id: 6,
-      client: "Encore",
-      title: "Encore",
+      client: "Encoré",
+      title: "Event",
       category: "Educational / STEAM",
       video: "/videos/Recrea STEAM - 2024.mp4",
       thumbnail: "/thumbnails/Portada Gif_GNP Encore.jpg",
@@ -106,8 +106,8 @@ const ProjectsSection = ({
     },
     {
       id: 7,
-      client: "Bomberos Guadalajara",
-      title: "1 Corte",
+      client: "Bomberos",
+      title: "Documental",
       category: "Documentary / Corporate",
       video: "/videos/Bomberos Guadalajara - 1 Corte .mp4",
       thumbnail: "/thumbnails/Portada Gif_Bomberos.jpg",
@@ -123,9 +123,9 @@ const ProjectsSection = ({
     // COLUMNA 4
     {
       id: 8,
-      client: "Fiel Music",
-      title: "Promocional foro Off Screen", 
-      category: "Promotional / Event",
+      client: "Fiel",
+      title: "Music video", 
+      category: "Music Video",
       video: "/videos/promocionalforo offscreen.mov",
       thumbnail: "/thumbnails/Portada Gif_FIEL Music Video.jpg",
       hoverVideo: "/gifs/Gif_Fiel Music Video.gif",
@@ -139,7 +139,7 @@ const ProjectsSection = ({
     {
       id: 9,
       client: "Rosk",
-      title: "Rosk",
+      title: "Comercial",
       category: "Commercial / Branding",
       video: "/videos/rosk.mp4",
       thumbnail: "/thumbnails/Portada Gif_Rosk.jpg",
@@ -153,8 +153,8 @@ const ProjectsSection = ({
     },
     {
       id: 1,
-      client: "Oh la lashes",
-      title: "Camilo Regresa Oh la lashes",
+      client: "Oh la Lashes",
+      title: "Comercial",
       category: "Beauty / Commercial",
       video: "/videos/camilo-regresa.mp4",
       thumbnail: "/thumbnails/Portada GIF Camilo Regresa.jpg",
