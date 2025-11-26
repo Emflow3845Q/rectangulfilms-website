@@ -36,10 +36,10 @@ const ServicesSection = () => {
       title: "Live Events & Broadcasts",
       services: Object.freeze([
         "Live graphics integration (visuals and overlays)",
-        "Multicam closed-circuit operation (CCTV)",
         "Event recording and post-event recap videos",
-        "Technical and creative coordination",
+        "Multicam closed-circuit operation (CCTV)",
         "Live event production and coverage",
+        "Technical and creative coordination",
         "Real-time multiplatform streaming",
         "Screen setup and AV equipment"
       ]),
@@ -63,12 +63,13 @@ const ServicesSection = () => {
   const ServiceColumn = ({ title, services, delay = 0.2, serviceKey }) => (
     <motion.div className="text-center min-w-0" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay }}>
       <div className="bg-black-pure p-6 lg:p-8 h-full">
-        <h3 className="text-white-pure text-sm sm:text-base uppercase tracking-[0.3em] mb-4 font-gotham font-bold">{title}</h3>
+        {/* Títulos de columnas más pequeños */}
+        <h3 className="text-white-pure text-xs uppercase tracking-[0.3em] mb-4 font-gotham font-bold">{title}</h3>
         <ul className="space-y-2">
           {services.map((service, index) => (
             <motion.li
               key={index}
-              className="text-white-pure text-xs sm:text-sm tracking-wide font-gotham font-light leading-relaxed break-words"
+              className="text-white-pure text-[11px] tracking-wide font-gotham font-light leading-tight break-words whitespace-nowrap"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: delay + 0.2 + index * 0.05 }}
@@ -86,12 +87,14 @@ const ServicesSection = () => {
       <div className="min-h-[90vh] bg-black-pure text-white-pure flex items-center py-12">
         <div className="px-4 sm:px-6 lg:px-8 xl:px-20 w-full">
           <div className="w-full">
-            <motion.p className="text-xs sm:text-sm text-white-pure uppercase tracking-[0.3em] text-left mb-3 font-gotham font-medium" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>OUR CAPABILITIES</motion.p>
+            {/* Texto "OUR CAPABILITIES" más pequeño */}
+            <motion.p className="text-[11px] text-white-pure uppercase tracking-[0.3em] text-left mb-3 font-gotham font-medium" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>OUR CAPABILITIES</motion.p>
 
-            <motion.h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-gotham font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>How We Can Help</motion.h2>
+            {/* Título principal más pequeño */}
+            <motion.h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-gotham font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>How We Can Help</motion.h2>
 
-            {/* Grid de 4 columnas fijas */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 lg:gap-12 xl:gap-16">
+            {/* Grid de 4 columnas fijas - CENTRADO */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8 lg:gap-12 xl:gap-16 justify-items-center">
               {serviceColumns.map((column, index) => (
                 <ServiceColumn
                   key={column.key}
