@@ -129,7 +129,7 @@ const MotionPage = () => {
     },
     {
       id: 15,
-      client: "Práctica América",
+      client: "Práctica Médica",
       title: "Fosa Temporal",
       category: "Education",
       thumbnail: "/motion/fosa-temporal.webp",
