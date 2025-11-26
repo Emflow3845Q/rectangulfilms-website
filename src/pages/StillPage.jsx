@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 import gsap from "gsap";
 // Importar todas las imágenes de stills
@@ -11,9 +11,11 @@ const StillPage = () => {
   const [width, setWidth] = useState(0);
   const [isInView, setIsInView] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const [dragProgress, setDragProgress] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Estados para el modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Referencias para GSAP
   const projectRefs = useRef([]);
@@ -24,7 +26,7 @@ const StillPage = () => {
     const checkMobile = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      
+
       // Resetear estados cuando cambia a móvil
       if (mobile) {
         setIsHovering(false);
@@ -33,132 +35,196 @@ const StillPage = () => {
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Función para actualizar el parallax de las imágenes basado en el drag
-  const updateImageParallax = () => {
-    if (!carouselRef.current || isMobile) return;
+  // Función para abrir el modal
+  const openModal = (index) => {
+    setCurrentImageIndex(index);
+    setIsModalOpen(true);
+    // Bloquear scroll del body cuando el modal está abierto
+    document.body.style.overflow = 'hidden';
 
-    const carousel = carouselRef.current;
-    const scrollLeft = -carousel.scrollLeft || 0;
-    const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-    const progress = maxScroll > 0 ? scrollLeft / maxScroll : 0;
+    // Ocultar el header cuando se abre el modal
+    const header = document.querySelector('header');
+    if (header) {
+      header.style.display = 'none';
+    }
+  };
 
-    setDragProgress(progress);
+  // Función para cerrar el modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    // Restaurar scroll del body
+    document.body.style.overflow = 'auto';
 
-    // Aplicar transformación a cada imagen
+    // Mostrar el header cuando se cierra el modal
+    const header = document.querySelector('header');
+    if (header) {
+      header.style.display = 'block';
+    }
+  };
+
+  // Navegación entre imágenes
+  const goToNext = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === projects.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const goToPrevious = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? projects.length - 1 : prevIndex - 1
+    );
+  };
+
+  // Manejar eventos de teclado
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!isModalOpen) return;
+
+      switch (e.key) {
+        case 'Escape':
+          closeModal();
+          break;
+        case 'ArrowRight':
+          goToNext();
+          break;
+        case 'ArrowLeft':
+          goToPrevious();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModalOpen]);
+
+  // Prevenir scroll del body cuando el modal está abierto
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+      // Ocultar header
+      const header = document.querySelector('header');
+      if (header) {
+        header.style.display = 'none';
+      }
+    } else {
+      document.body.style.overflow = 'auto';
+      // Mostrar header
+      const header = document.querySelector('header');
+      if (header) {
+        header.style.display = 'block';
+      }
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      const header = document.querySelector('header');
+      if (header) {
+        header.style.display = 'block';
+      }
+    };
+  }, [isModalOpen]);
+
+  // Función para mover las imágenes dentro de sus contenedores
+  const moveImagesWithinContainers = (scrollPosition) => {
+    if (isMobile) return;
+
+    // Calcular el progreso del scroll (0 a 1)
+    const maxScroll = carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
+    const progress = maxScroll > 0 ? scrollPosition / maxScroll : 0;
+
+    // Aplicar transformación a todas las imágenes
     imageRefs.current.forEach((imgRef, index) => {
       if (!imgRef) return;
 
       const element = imgRef;
-      const elementRect = element.getBoundingClientRect();
-      const containerRect = carousel.getBoundingClientRect();
-      
-      // Calcular posición relativa del elemento en el viewport
-      const elementCenter = elementRect.left + elementRect.width / 2;
-      const containerCenter = containerRect.left + containerRect.width / 2;
-      const distanceFromCenter = elementCenter - containerCenter;
-      
-      // Calcular intensidad del efecto parallax (reducido en móvil)
-      const parallaxIntensity = isMobile ? 0.1 : 0.3;
-      const parallaxX = distanceFromCenter * parallaxIntensity;
-      
-      // Aplicar transformación
+
+      // Calcular cuánto puede moverse la imagen (20% del ancho de la imagen)
+      const imageMovementRange = element.naturalWidth * 0.2;
+
+      // Mover la imagen basado en el progreso del scroll
+      // Las imágenes se mueven en direcciones opuestas para crear variedad
+      const movementDirection = index % 2 === 0 ? 1 : -1;
+      const imageOffset = progress * imageMovementRange * movementDirection;
+
       gsap.to(element, {
-        x: -parallaxX,
-        duration: 0.1,
-        ease: "power1.out"
+        x: -imageOffset,
+        duration: 0.8,
+        ease: "power2.out"
       });
     });
   };
 
-  // Efecto para actualizar parallax cuando se mueve el drag
+  // Efecto para actualizar el movimiento de imágenes cuando se hace scroll
   useEffect(() => {
-    if (carouselRef.current && isHovering && !isMobile) {
+    if (carouselRef.current && !isMobile) {
       const carousel = carouselRef.current;
       const handleScroll = () => {
-        updateImageParallax();
+        moveImagesWithinContainers(carousel.scrollLeft);
       };
 
       carousel.addEventListener('scroll', handleScroll);
       return () => carousel.removeEventListener('scroll', handleScroll);
     }
-  }, [isHovering, isMobile]);
+  }, [isMobile]);
 
-  // Función para resetear a estado inicial
+  // Función para resetear a estado inicial - SIMPLIFICADA
   const resetToInitialState = (index) => {
     if (isMobile) return;
-    
+
     const projectElement = projectRefs.current[index];
     if (!projectElement) return;
 
-    const imgWrapper = projectElement.querySelector(".js-project-thumbnail-img-wrapper");
-    const hoverImage = projectElement.querySelector(".js-project-thumbnail-image-hover");
-    
-    if (!imgWrapper) return;
+    const imageElement = projectElement.querySelector(".js-project-image");
 
-    gsap.killTweensOf(imgWrapper);
-    gsap.killTweensOf(hoverImage);
+    if (!imageElement) return;
 
-    gsap.set(imgWrapper, {
-      "--first-top": "0%",
-      "--second-top": "33.3333%",
-      "--third-top": "66.6666%"
+    gsap.killTweensOf(imageElement);
+
+    // Resetear el zoom
+    gsap.to(imageElement, {
+      scale: 1,
+      duration: 0.6,
+      ease: "power2.out"
     });
-
-    if (hoverImage) {
-      gsap.set(hoverImage, {
-        scale: 1.2
-      });
-    }
   };
 
-  // Función de animación al hacer hover
+  // Función de animación al hacer hover - SIMPLIFICADA: SOLO ZOOM SUTIL
   const handleProjectHover = (index) => {
     if (isMobile) return;
 
     const projectElement = projectRefs.current[index];
     if (!projectElement) return;
 
-    const imgWrapper = projectElement.querySelector(".js-project-thumbnail-img-wrapper");
-    const hoverImage = projectElement.querySelector(".js-project-thumbnail-image-hover");
-    
-    if (!imgWrapper) return;
+    const imageElement = projectElement.querySelector(".js-project-image");
 
-    gsap.killTweensOf(imgWrapper);
-    
-    const timeline = gsap.timeline();
-    
-    timeline.fromTo(imgWrapper, {
-      "--first-top": "0%",
-      "--second-top": "33.3333%", 
-      "--third-top": "66.6666%"
-    }, {
-      "--first-top": "33.3333%",
-      "--second-top": "66.6666%",
-      "--third-top": "100%",
-      ease: "power3.out",
-      duration: 1.5
+    if (!imageElement) return;
+
+    gsap.killTweensOf(imageElement);
+
+    // Zoom sutil sin cambiar el tamaño del contenedor
+    gsap.to(imageElement, {
+      scale: 1.05,
+      duration: 0.8,
+      ease: "power2.out"
     });
-
-    if (hoverImage) {
-      gsap.killTweensOf(hoverImage);
-      gsap.set(hoverImage, { scale: 1.2 });
-    }
   };
 
-  // Inicializar event listeners
+  // Inicializar event listeners - SIMPLIFICADA
   const initializeHoverEffects = () => {
     if (isMobile) return;
-    
+
     projectRefs.current.forEach((projectEl, index) => {
       if (projectEl) {
         projectEl.addEventListener("mouseleave", () => {
           resetToInitialState(index);
         });
-        
+
         projectEl.addEventListener("mouseenter", () => {
           handleProjectHover(index);
         });
@@ -217,426 +283,101 @@ const StillPage = () => {
     })
   };
 
-  // Variantes para el cursor de drag
-  const dragCursorVariants = {
+  // Variantes para el modal
+  const modalVariants = {
     hidden: {
-      scale: 0,
-      opacity: 0
+      opacity: 0,
+      scale: 0.8
     },
     visible: {
-      scale: 1,
       opacity: 1,
+      scale: 1,
       transition: {
         duration: 0.3,
         ease: "easeOut"
       }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      transition: {
+        duration: 0.2,
+        ease: "easeIn"
+      }
     }
   };
 
-  // Manejar el movimiento del mouse
-  const handleMouseMove = (e) => {
-    if (carouselRef.current && !isMobile) {
-      const rect = carouselRef.current.getBoundingClientRect();
-      setCursorPosition({
-        x: e.clientX,
-        y: e.clientY
-      });
+  // Variantes para la imagen del modal
+  const modalImageVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.9
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.4,
+        ease: "easeOut"
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 1.1,
+      transition: {
+        duration: 0.3
+      }
     }
   };
 
-  // Deshabilitar el cursor personalizado cuando estamos sobre el carrusel
-  useEffect(() => {
-    if (isHovering && !isMobile) {
-      const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
-      if (customCursor) {
-        customCursor.style.display = 'none';
-      }
-      document.body.style.cursor = 'none';
-    } else {
-      const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
-      if (customCursor) {
-        customCursor.style.display = 'block';
-      }
-      document.body.style.cursor = 'auto';
-    }
-
-    return () => {
-      document.body.style.cursor = 'auto';
-      const customCursor = document.querySelector('.fixed.pointer-events-none.z-\\[99999\\]');
-      if (customCursor) {
-        customCursor.style.display = 'block';
-      }
-    };
-  }, [isHovering, isMobile]);
-
-  // ... (tu array de projects permanece igual)
-    const projects = [
-    {
-      id: 1,
-      title: t("stillProjects.project1.title"),
-      category: t("stillProjects.project1.category"),
-      image: stills.still1,
-    },
-    {
-      id: 2,
-      title: t("stillProjects.project2.title"),
-      category: t("stillProjects.project2.category"),
-      image: stills.still2,
-    },
-    {
-      id: 3,
-      title: t("stillProjects.project3.title"),
-      category: t("stillProjects.project3.category"),
-      image: stills.still3,
-    },
-    {
-      id: 4,
-      title: t("stillProjects.project4.title"),
-      category: t("stillProjects.project4.category"),
-      image: stills.still4,
-    },
-    {
-      id: 5,
-      title: t("stillProjects.project5.title"),
-      category: t("stillProjects.project5.category"),
-      image: stills.still5,
-    },
-    {
-      id: 6,
-      title: t("stillProjects.project6.title"),
-      category: t("stillProjects.project6.category"),
-      image: stills.still6,
-    },
-    {
-      id: 7,
-      title: t("stillProjects.project7.title"),
-      category: t("stillProjects.project7.category"),
-      image: stills.still7,
-    },
-    {
-      id: 8,
-      title: t("stillProjects.project8.title"),
-      category: t("stillProjects.project8.category"),
-      image: stills.still8,
-    },
-    {
-      id: 9,
-      title: t("stillProjects.project9.title"),
-      category: t("stillProjects.project9.category"),
-      image: stills.still9,
-    },
-    {
-      id: 10,
-      title: t("stillProjects.project10.title"),
-      category: t("stillProjects.project10.category"),
-      image: stills.still10,
-    },
-    {
-      id: 11,
-      title: t("stillProjects.project11.title"),
-      category: t("stillProjects.project11.category"),
-      image: stills.still11,
-    },
-    {
-      id: 12,
-      title: t("stillProjects.project12.title"),
-      category: t("stillProjects.project12.category"),
-      image: stills.still12,
-    },
-    {
-      id: 13,
-      title: t("stillProjects.project13.title"),
-      category: t("stillProjects.project13.category"),
-      image: stills.still13,
-    },
-    {
-      id: 14,
-      title: t("stillProjects.project14.title"),
-      category: t("stillProjects.project14.category"),
-      image: stills.still14,
-    },
-    {
-      id: 15,
-      title: t("stillProjects.project15.title"),
-      category: t("stillProjects.project15.category"),
-      image: stills.still15,
-    },
-    {
-      id: 16,
-      title: t("stillProjects.project16.title"),
-      category: t("stillProjects.project16.category"),
-      image: stills.still16,
-    },
-    {
-      id: 17,
-      title: t("stillProjects.project17.title"),
-      category: t("stillProjects.project17.category"),
-      image: stills.still17,
-    },
-    {
-      id: 18,
-      title: t("stillProjects.project18.title"),
-      category: t("stillProjects.project18.category"),
-      image: stills.still18,
-    },
-    {
-      id: 19,
-      title: t("stillProjects.project19.title"),
-      category: t("stillProjects.project19.category"),
-      image: stills.still19,
-    },
-    {
-      id: 20,
-      title: t("stillProjects.project20.title"),
-      category: t("stillProjects.project20.category"),
-      image: stills.still20,
-    },
-    {
-      id: 21,
-      title: t("stillProjects.project21.title"),
-      category: t("stillProjects.project21.category"),
-      image: stills.still21,
-    },
-    {
-      id: 22,
-      title: t("stillProjects.project22.title"),
-      category: t("stillProjects.project22.category"),
-      image: stills.still22,
-    },
-    {
-      id: 23,
-      title: t("stillProjects.project23.title"),
-      category: t("stillProjects.project23.category"),
-      image: stills.still23,
-    },
-    {
-      id: 24,
-      title: t("stillProjects.project24.title"),
-      category: t("stillProjects.project24.category"),
-      image: stills.still24,
-    },
-    {
-      id: 25,
-      title: t("stillProjects.project25.title"),
-      category: t("stillProjects.project25.category"),
-      image: stills.still25,
-    },
-    {
-      id: 26,
-      title: t("stillProjects.project26.title"),
-      category: t("stillProjects.project26.category"),
-      image: stills.still26,
-    },
-    {
-      id: 27,
-      title: t("stillProjects.project27.title"),
-      category: t("stillProjects.project27.category"),
-      image: stills.still27,
-    },
-    {
-      id: 28,
-      title: t("stillProjects.project28.title"),
-      category: t("stillProjects.project28.category"),
-      image: stills.still28,
-    },
-    {
-      id: 29,
-      title: t("stillProjects.project29.title"),
-      category: t("stillProjects.project29.category"),
-      image: stills.still29,
-    },
-    {
-      id: 30,
-      title: t("stillProjects.project30.title"),
-      category: t("stillProjects.project30.category"),
-      image: stills.still30,
-    },
-    {
-      id: 31,
-      title: t("stillProjects.project31.title"),
-      category: t("stillProjects.project31.category"),
-      image: stills.still31,
-    },
-    {
-      id: 32,
-      title: t("stillProjects.project32.title"),
-      category: t("stillProjects.project32.category"),
-      image: stills.still32,
-    },
-    {
-      id: 33,
-      title: t("stillProjects.project33.title"),
-      category: t("stillProjects.project33.category"),
-      image: stills.still33,
-    },
-    {
-      id: 34,
-      title: t("stillProjects.project34.title"),
-      category: t("stillProjects.project34.category"),
-      image: stills.still34,
-    },
-    {
-      id: 35,
-      title: t("stillProjects.project35.title"),
-      category: t("stillProjects.project35.category"),
-      image: stills.still35,
-    },
-    {
-      id: 36,
-      title: t("stillProjects.project36.title"),
-      category: t("stillProjects.project36.category"),
-      image: stills.still36,
-    },
-    {
-      id: 37,
-      title: t("stillProjects.project37.title"),
-      category: t("stillProjects.project37.category"),
-      image: stills.still37,
-    },
-    {
-      id: 38,
-      title: t("stillProjects.project38.title"),
-      category: t("stillProjects.project38.category"),
-      image: stills.still38,
-    },
-    {
-      id: 39,
-      title: t("stillProjects.project39.title"),
-      category: t("stillProjects.project39.category"),
-      image: stills.still39,
-    },
-    {
-      id: 40,
-      title: t("stillProjects.project40.title"),
-      category: t("stillProjects.project40.category"),
-      image: stills.still40,
-    },
-    {
-      id: 41,
-      title: t("stillProjects.project41.title"),
-      category: t("stillProjects.project41.category"),
-      image: stills.still41,
-    },
-    {
-      id: 42,
-      title: t("stillProjects.project42.title"),
-      category: t("stillProjects.project42.category"),
-      image: stills.still42,
-    },
-    {
-      id: 43,
-      title: t("stillProjects.project43.title"),
-      category: t("stillProjects.project43.category"),
-      image: stills.still43,
-    },
-    {
-      id: 44,
-      title: t("stillProjects.project44.title"),
-      category: t("stillProjects.project44.category"),
-      image: stills.still44,
-    },
-    {
-      id: 45,
-      title: t("stillProjects.project45.title"),
-      category: t("stillProjects.project45.category"),
-      image: stills.still45,
-    },
-    {
-      id: 46,
-      title: t("stillProjects.project46.title"),
-      category: t("stillProjects.project46.category"),
-      image: stills.still46,
-    },
-    {
-      id: 47,
-      title: t("stillProjects.project47.title"),
-      category: t("stillProjects.project47.category"),
-      image: stills.still47,
-    },
-    {
-      id: 48,
-      title: t("stillProjects.project48.title"),
-      category: t("stillProjects.project48.category"),
-      image: stills.still48,
-    },
-    {
-      id: 49,
-      title: t("stillProjects.project49.title"),
-      category: t("stillProjects.project49.category"),
-      image: stills.still49,
-    },
-    {
-      id: 50,
-      title: t("stillProjects.project50.title"),
-      category: t("stillProjects.project50.category"),
-      image: stills.still50,
-    },
-    {
-      id: 51,
-      title: t("stillProjects.project51.title"),
-      category: t("stillProjects.project51.category"),
-      image: stills.still51,
-    },
-    {
-      id: 52,
-      title: t("stillProjects.project52.title"),
-      category: t("stillProjects.project52.category"),
-      image: stills.still52,
-    },
-    {
-      id: 53,
-      title: t("stillProjects.project53.title"),
-      category: t("stillProjects.project53.category"),
-      image: stills.still53,
-    },
-    {
-      id: 54,
-      title: t("stillProjects.project54.title"),
-      category: t("stillProjects.project54.category"),
-      image: stills.still54,
-    },
-    {
-      id: 55,
-      title: t("stillProjects.project55.title"),
-      category: t("stillProjects.project55.category"),
-      image: stills.still55,
-    },
-    {
-      id: 56,
-      title: t("stillProjects.project56.title"),
-      category: t("stillProjects.project56.category"),
-      image: stills.still56,
-    },
-    {
-      id: 57,
-      title: t("stillProjects.project57.title"),
-      category: t("stillProjects.project57.category"),
-      image: stills.still57,
-    },
-    {
-      id: 58,
-      title: t("stillProjects.project58.title"),
-      category: t("stillProjects.project58.category"),
-      image: stills.still58,
-    },
-    {
-      id: 59,
-      title: t("stillProjects.project59.title"),
-      category: t("stillProjects.project59.category"),
-      image: stills.still59,
-    },
-    {
-      id: 60,
-      title: t("stillProjects.project60.title"),
-      category: t("stillProjects.project60.category"),
-      image: stills.still60,
-    },
-    {
-      id: 61,
-      title: t("stillProjects.project61.title"),
-      category: t("stillProjects.project61.category"),
-      image: stills.still61,
-    }
+  const projects = [
+    { id: 3, image: stills.still3 },
+    { id: 4, image: stills.still4 },
+    { id: 5, image: stills.still5 },
+    { id: 6, image: stills.still6 },
+    { id: 8, image: stills.still8 },
+    { id: 9, image: stills.still9 },
+    { id: 12, image: stills.still12 },
+    { id: 13, image: stills.still13 },
+    { id: 14, image: stills.still14 },
+    { id: 15, image: stills.still15 },
+    { id: 17, image: stills.still17 },
+    { id: 18, image: stills.still18 },
+    { id: 19, image: stills.still19 },
+    { id: 20, image: stills.still20 },
+    { id: 21, image: stills.still21 },
+    { id: 22, image: stills.still22 },
+    { id: 23, image: stills.still23 },
+    { id: 24, image: stills.still24 },
+    { id: 25, image: stills.still25 },
+    { id: 27, image: stills.still27 },
+    { id: 28, image: stills.still28 },
+    { id: 29, image: stills.still29 },
+    { id: 30, image: stills.still30 },
+    { id: 31, image: stills.still31 },
+    { id: 32, image: stills.still32 },
+    { id: 33, image: stills.still33 },
+    { id: 34, image: stills.still34 },
+    { id: 35, image: stills.still35 },
+    { id: 36, image: stills.still36 },
+    { id: 37, image: stills.still37 },
+    { id: 38, image: stills.still38 },
+    { id: 39, image: stills.still39 },
+    { id: 40, image: stills.still40 },
+    { id: 41, image: stills.still41 },
+    { id: 42, image: stills.still42 },
+    { id: 43, image: stills.still43 },
+    { id: 45, image: stills.still45 },
+    { id: 48, image: stills.still48 },
+    { id: 49, image: stills.still49 },
+    { id: 51, image: stills.still51 },
+    { id: 52, image: stills.still52 },
+    { id: 53, image: stills.still53 },
+    { id: 54, image: stills.still54 },
+    { id: 56, image: stills.still56 },
+    { id: 57, image: stills.still57 },
+    { id: 58, image: stills.still58 },
+    { id: 60, image: stills.still60 }
   ];
 
   // Medir ancho total para calcular drag constraints - MEJORADO
@@ -686,7 +427,7 @@ const StillPage = () => {
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      
+
       if (!mobile) {
         initializeHoverEffects();
       }
@@ -696,276 +437,317 @@ const StillPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Tamaños responsive para las tarjetas - MEJORADO
+  // Tamaños responsive para las tarjetas - MÁS ANCHAS
   const getCardWidth = () => {
-    if (typeof window === 'undefined') return '24vw';
-    
+    if (typeof window === 'undefined') return '28vw'; // Aumentado de 24vw a 28vw
+
     const width = window.innerWidth;
-    if (width < 640) return '85vw'; // Mobile
-    if (width < 768) return '70vw'; // Tablet pequeña
-    if (width < 1024) return '45vw'; // Tablet
-    if (width < 1280) return '32vw'; // Laptop pequeña
-    return '24vw'; // Desktop
+    if (width < 640) return '90vw'; // Aumentado de 85vw a 90vw (Mobile)
+    if (width < 768) return '75vw'; // Aumentado de 70vw a 75vw (Tablet pequeña)
+    if (width < 1024) return '50vw'; // Aumentado de 45vw a 50vw (Tablet)
+    if (width < 1280) return '35vw'; // Aumentado de 32vw a 35vw (Laptop pequeña)
+    return '28vw'; // Aumentado de 24vw a 28vw (Desktop)
   };
 
   return (
-    <section className="w-full bg-black-pure text-white-pure py-10 md:py-20 overflow-hidden relative">
+    <>
+      <section className="w-full bg-black-pure text-white-pure py-10 md:py-20 overflow-hidden relative">
 
-      {/* HEADER */}
-      <motion.div 
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 md:mb-10 px-4 sm:px-6 max-w-[1800px] mx-auto"
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans uppercase tracking-tight text-white-pure font-black mb-4 sm:mb-0">
-          {t("still.title") || "Our Work"}
-        </h2>
-
-        <button className="text-xs uppercase tracking-[0.3em] border-b border-white-pure pb-1 text-white-pure hover:text-red-primary hover:border-red-primary transition-colors duration-300 font-gotham font-medium self-start sm:self-auto">
-          ALL PROJECTS
-        </button>
-      </motion.div>
-
-      {/* CARRUSEL - CORREGIDO PARA MÓVIL */}
-      <motion.div
-        ref={carouselRef}
-        className={`pl-4 sm:pl-6 relative ${
-          isMobile 
-            ? "overflow-x-auto overflow-y-hidden scrollbar-hide" 
-            : "overflow-hidden"
-        }`}
-        style={{ 
-          WebkitOverflowScrolling: 'touch', // Scroll suave en iOS
-          cursor: isMobile ? 'grab' : 'none'
-        }}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        onMouseEnter={() => !isMobile && setIsHovering(true)}
-        onMouseLeave={() => !isMobile && setIsHovering(false)}
-        onMouseMove={handleMouseMove}
-      >
-        {/* CURSOR PERSONALIZADO DRAG - Solo en desktop */}
-        {!isMobile && (
-          <motion.div
-            className="fixed pointer-events-none z-[999999] flex items-center justify-center"
-            style={{
-              left: cursorPosition.x - 40,
-              top: cursorPosition.y - 40,
-            }}
-            variants={dragCursorVariants}
-            initial="hidden"
-            animate={isHovering ? "visible" : "hidden"}
-          >
-            <div className="w-20 h-20 rounded-full flex items-center justify-center border-2 border-white/80 backdrop-blur-md bg-red-primary/20 shadow-lg">
-              <span className="text-white text-xs font-gotham font-bold uppercase tracking-wider drop-shadow-sm">
-                DRAG
-              </span>
-            </div>
-          </motion.div>
-        )}
-
+        {/* HEADER */}
         <motion.div
-          drag={!isMobile ? "x" : false}
-          dragConstraints={{ right: 0, left: -width }}
-          dragElastic={0.1}
-          className={`flex gap-3 sm:gap-4 ${
-            !isMobile ? 'cursor-none' : 'cursor-grab active:cursor-grabbing'
-          }`}
-          onDrag={(event, info) => {
-            !isMobile && updateImageParallax();
-          }}
-          onDragEnd={(event, info) => {
-            !isMobile && updateImageParallax();
-          }}
-          style={{
-            // En móvil, asegurar que el contenido sea lo suficientemente ancho
-            width: isMobile ? 'max-content' : 'auto'
-          }}
+          className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 md:mb-10 px-4 sm:px-6 max-w-[1800px] mx-auto"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              ref={el => projectRefs.current[index] = el}
-              className="flex-shrink-0 group project-thumbnail"
-              style={{
-                minWidth: getCardWidth(),
-                maxWidth: getCardWidth()
-              }}
-              custom={index}
-              variants={cardVariants}
-              whileTap={isMobile ? { scale: 0.98 } : {}}
-            >
-              {/* CONTENEDOR PRINCIPAL DE LA IMAGEN */}
-              <div className="project-thumbnail__img relative overflow-hidden">
-                
-                {/* IMAGEN BASE - siempre visible */}
-                <motion.div
-                  className="w-full h-full absolute inset-0"
-                  variants={curtainVariants}
-                  initial="hidden"
-                  animate={isInView ? "visible" : "hidden"}
-                  transition={{
-                    duration: 0.8,
-                    delay: index * 0.05,
-                    ease: [0.25, 0.1, 0.25, 1]
-                  }}
-                >
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans uppercase tracking-tight text-white-pure font-black mb-4 sm:mb-0">
+            {t("still.title") || "Our Work"}
+          </h2>
+
+          <button className="text-xs uppercase tracking-[0.3em] border-b border-white-pure pb-1 text-white-pure hover:text-red-primary hover:border-red-primary transition-colors duration-300 font-gotham font-medium self-start sm:self-auto">
+            ALL PROJECTS
+          </button>
+        </motion.div>
+
+        {/* CARRUSEL - IMÁGENES QUE SE MUEVEN DENTRO DE CONTENEDORES FIJOS */}
+        <motion.div
+          ref={carouselRef}
+          className={`relative ${isMobile
+              ? "overflow-x-auto overflow-y-hidden scrollbar-hide"
+              : "overflow-hidden"
+            }`}
+          style={{
+            WebkitOverflowScrolling: 'touch', // Scroll suave en iOS
+            cursor: isMobile ? 'grab' : 'grab'
+          }}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          onMouseEnter={() => !isMobile && setIsHovering(true)}
+          onMouseLeave={() => !isMobile && setIsHovering(false)}
+        >
+          <motion.div
+            drag={!isMobile ? "x" : false}
+            dragConstraints={{ right: 0, left: -width }}
+            dragElastic={0.1}
+            className={`flex ${!isMobile ? 'cursor-grab active:cursor-grabbing' : 'cursor-grab active:cursor-grabbing'
+              }`}
+            style={{
+              // SIN PADDING - solo gap uniforme
+              width: isMobile ? 'max-content' : 'auto',
+              // Gap uniforme usando padding en el primer y último elemento
+              paddingLeft: '1rem',
+              paddingRight: '1rem'
+            }}
+            onDrag={(event, info) => {
+              if (!isMobile && carouselRef.current) {
+                const scrollLeft = -info.offset.x;
+                moveImagesWithinContainers(scrollLeft);
+              }
+            }}
+            onDragEnd={(event, info) => {
+              if (!isMobile && carouselRef.current) {
+                const scrollLeft = -info.offset.x;
+                moveImagesWithinContainers(scrollLeft);
+              }
+            }}
+          >
+            {projects.map((project, index) => (
+              <motion.div
+                key={project.id}
+                ref={el => projectRefs.current[index] = el}
+                className="flex-shrink-0 group project-thumbnail cursor-pointer"
+                style={{
+                  minWidth: getCardWidth(),
+                  maxWidth: getCardWidth(),
+                  // MARGEN UNIFORME PARA TODAS LAS IMÁGENES
+                  marginRight: '0.75rem', // gap-3 equivalente para todas
+                }}
+                custom={index}
+                variants={cardVariants}
+                whileTap={isMobile ? { scale: 0.98 } : {}}
+                onClick={() => openModal(index)}
+              >
+                {/* CONTENEDOR PRINCIPAL DE LA IMAGEN - TAMAÑO FIJO */}
+                <div className="project-thumbnail__img relative overflow-hidden">
+
+                  {/* IMAGEN ÚNICA - más ancha que el contenedor para permitir movimiento */}
                   <motion.div
+                    className="w-full h-full absolute inset-0"
+                    variants={curtainVariants}
                     initial="hidden"
                     animate={isInView ? "visible" : "hidden"}
-                    variants={contentVariants}
-                    transition={{ delay: index * 0.05 + 0.3 }}
-                    className="w-full h-full overflow-hidden absolute inset-0"
-                  >
-                    <img
-                      ref={el => imageRefs.current[index] = el}
-                      src={project.image}
-                      alt={project.title}
-                      className="img w-full h-full object-cover"
-                      style={{ 
-                        transformOrigin: 'center center', 
-                        willChange: 'transform' 
-                      }}
-                      draggable="false"
-                      loading="lazy"
-                    />
-                  </motion.div>
-                </motion.div>
-
-                {/* WRAPPER CON CLIP-PATH PARA EL EFECTO HOVER - Solo en desktop */}
-                {!isMobile && (
-                  <div 
-                    className="project-thumbnail__img-wrapper js-project-thumbnail-img-wrapper absolute inset-0 overflow-hidden"
-                    style={{
-                      "--first-top": "0%",
-                      "--second-top": "33.3333%", 
-                      "--third-top": "66.6666%",
-                      "--first-bottom": "33.3333%",
-                      "--second-bottom": "66.6666%", 
-                      "--third-bottom": "100%"
+                    transition={{
+                      duration: 0.8,
+                      delay: index * 0.05,
+                      ease: [0.25, 0.1, 0.25, 1]
                     }}
                   >
-                    <img
-                      ref={el => imageRefs.current[index + 100] = el}
-                      src={project.image}
-                      alt={project.title}
-                      className="img project-thumbnail__img-hover js-project-thumbnail-image-hover w-full h-full object-cover"
-                      style={{ 
-                        transform: 'scale(1.2)',
-                        transformOrigin: 'center center',
-                        willChange: 'transform'
-                      }}
-                      draggable="false"
-                      loading="lazy"
-                    />
-                  </div>
-                )}
+                    <motion.div
+                      initial="hidden"
+                      animate={isInView ? "visible" : "hidden"}
+                      variants={contentVariants}
+                      transition={{ delay: index * 0.05 + 0.3 }}
+                      className="w-full h-full overflow-hidden absolute inset-0"
+                    >
+                      <img
+                        ref={el => {
+                          imageRefs.current[index] = el;
+                          // También asignamos la misma referencia para el hover
+                          if (projectRefs.current[index]) {
+                            const projectEl = projectRefs.current[index];
+                            if (projectEl && !projectEl.querySelector(".js-project-image")) {
+                              el.classList.add("js-project-image");
+                            }
+                          }
+                        }}
+                        src={project.image}
+                        alt={`Still ${project.id}`}
+                        className="img js-project-image w-full h-full object-cover transition-transform duration-800 ease-out"
+                        style={{
+                          transformOrigin: 'center center',
+                          willChange: 'transform',
+                          // La imagen es más ancha para permitir movimiento horizontal
+                          minWidth: '120%',
+                          width: '120%',
+                          left: '-10%',
+                          transform: 'scale(1)' // Estado inicial
+                        }}
+                        draggable="false"
+                        loading="lazy"
+                        onLoad={(e) => {
+                          // Una vez cargada la imagen, podemos usar sus dimensiones reales
+                          const img = e.target;
+                          if (img.naturalWidth > 0) {
+                            // Ajustar el movimiento basado en el tamaño real de la imagen
+                          }
+                        }}
+                      />
+                    </motion.div>
+                  </motion.div>
 
-              </div>
-
-              {/* TEXTO que aparece después */}
-              <motion.div
-                initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
-                variants={contentVariants}
-                transition={{ delay: index * 0.05 + 0.4 }}
-                className="mt-3 sm:mt-4"
-              >
-                <h3 className="text-base sm:text-lg font-gotham font-medium text-white-pure line-clamp-2">
-                  {project.title}
-                </h3>
-
-                <p className="text-xs uppercase tracking-[0.2em] text-red-primary font-gotham font-light mt-1">
-                  {project.category}
-                </p>
+                </div>
               </motion.div>
-            </motion.div>
-          ))}
+            ))}
+            {/* ELEMENTO FANTASMA PARA ESPACIO FINAL */}
+            <div
+              className="flex-shrink-0"
+              style={{
+                width: '1rem', // Mismo que el paddingRight
+                minWidth: '1rem'
+              }}
+            />
+          </motion.div>
         </motion.div>
-      </motion.div>
 
-      {/* ESTILOS CSS PARA EL EFECTO */}
-      <style jsx>{`
-        .project-thumbnail {
-          display: inline-block;
-          width: 100%;
-        }
-
-        .project-thumbnail__img {
-          position: relative;
-          overflow: hidden;
-          z-index: 1;
-          aspect-ratio: 0.76;
-        }
-
-        .project-thumbnail__img-wrapper {
-          --first-top: 0%;
-          --first-bottom: 33.3333%;
-          --second-top: 33.3333%;
-          --second-bottom: 66.6666%;
-          --third-top: 66.6666%;
-          --third-bottom: 100%;
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          clip-path: polygon(
-            0% var(--first-top), 100% var(--first-top), 
-            100% var(--first-bottom), 0% var(--first-bottom),
-            0% var(--second-top), 100% var(--second-top), 
-            100% var(--second-bottom), 0% var(--second-bottom),
-            0% var(--third-top), 100% var(--third-top), 
-            100% var(--third-bottom), 0% var(--third-bottom)
-          );
-          pointer-events: none;
-        }
-
-        .img {
-          height: 100%;
-          object-fit: cover;
-          position: absolute;
-        }
-
-        /* La imagen principal es visible por defecto */
-        .project-thumbnail__img > div:first-child {
-          position: relative;
-          z-index: 1;
-        }
-
-        /* El wrapper con clip-path se superpone */
-        .project-thumbnail__img-wrapper {
-          z-index: 2;
-        }
-
-        /* Utilidades para texto */
-        .line-clamp-2 {
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        /* Scrollbar personalizada para móvil */
-        .scrollbar-hide {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
-        }
-        
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none; /* Chrome, Safari and Opera */
-        }
-
-        /* Scrollbar personalizada para móvil */
-        @media (max-width: 768px) {
-          .project-thumbnail__img {
-            border-radius: 8px;
+        {/* ESTILOS CSS PARA EL EFECTO - SIMPLIFICADOS */}
+        <style jsx>{`
+          .project-thumbnail {
+            display: inline-block;
+            width: 100%;
           }
-        }
-      `}</style>
 
-    </section>
+          .project-thumbnail__img {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            aspect-ratio: 0.76;
+            /* CONTENEDOR CON TAMAÑO FIJO - NO CAMBIA */
+          }
+
+          .img {
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            /* IMAGEN MÁS ANCHA QUE EL CONTENEDOR PARA PERMITIR MOVIMIENTO */
+            transition: transform 0.8s ease-out !important;
+          }
+
+          /* Utilidades para texto */
+          .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
+          /* Scrollbar personalizada para móvil */
+          .scrollbar-hide {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+          }
+          
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+          }
+
+          /* Scrollbar personalizada para móvil */
+          @media (max-width: 768px) {
+            .project-thumbnail__img {
+              border-radius: 8px;
+            }
+          }
+        `}</style>
+
+      </section>
+
+      {/* MODAL - se mantiene igual */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            className="fixed inset-0 z-[999999] flex items-center justify-center bg-black/95 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeModal}
+          >
+            {/* Botón cerrar con animación igual al header */}
+            <button
+              className="fixed top-4 right-4 sm:top-6 sm:right-6 z-10 flex items-center justify-center w-auto h-10 sm:h-12 px-4 sm:px-6 group"
+              onClick={closeModal}
+              aria-label="Close modal"
+            >
+              <div className="relative h-6 overflow-hidden">
+                <div className="flex flex-col transition-all duration-300 group-hover:-translate-y-6">
+                  {/* "CLOSE" normal - sube con animación */}
+                  <span
+                    className="text-white text-sm sm:text-base uppercase tracking-tighter font-gotham font-bold h-6 flex items-center justify-center"
+                    style={{ letterSpacing: '-0.05em' }}
+                  >
+                    CLOSE
+                  </span>
+                  {/* "CLOSE" rojo que aparece desde abajo */}
+                  <span
+                    className="text-red-600 text-sm sm:text-base uppercase tracking-tighter font-gotham font-bold h-6 flex items-center justify-center"
+                    style={{ letterSpacing: '-0.05em' }}
+                  >
+                    CLOSE
+                  </span>
+                </div>
+              </div>
+            </button>
+
+            {/* Botón anterior */}
+            <button
+              className="absolute left-4 sm:left-6 top-1/2 transform -translate-y-1/2 z-10 text-white hover:text-red-primary transition-colors duration-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                goToPrevious();
+              }}
+            >
+              <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Botón siguiente */}
+            <button
+              className="absolute right-4 sm:right-6 top-1/2 transform -translate-y-1/2 z-10 text-white hover:text-red-primary transition-colors duration-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                goToNext();
+              }}
+            >
+              <svg className="w-8 h-8 sm:w-10 sm:h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Contenedor de la imagen */}
+            <motion.div
+              className="relative max-w-90vw max-h-90vh mx-4"
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <motion.img
+                key={currentImageIndex} // Important para la animación entre imágenes
+                src={projects[currentImageIndex].image}
+                alt={`Still ${projects[currentImageIndex].id}`}
+                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                variants={modalImageVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              />
+
+              {/* Contador de imágenes */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-gotham">
+                {currentImageIndex + 1} / {projects.length}
+              </div>
+            </motion.div>
+
+            {/* Instrucciones de teclado (solo desktop) */}
+            {!isMobile && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white/60 text-xs font-gotham text-center">
+                Usa las flechas del teclado para navegar • ESC para cerrar
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

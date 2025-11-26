@@ -16,15 +16,10 @@ const BtsGallery = () => {
     { id: 2, image: photography.photography2, alt: "Photography production 2" },
     { id: 3, image: photography.photography3, alt: "Photography production 3" },
     { id: 4, image: photography.photography4, alt: "Photography production 4" },
-    { id: 5, image: photography.photography5, alt: "Photography production 5" },
     { id: 6, image: photography.photography6, alt: "Photography production 6" },
-    { id: 7, image: photography.photography7, alt: "Photography production 7" },
-    { id: 8, image: photography.photography8, alt: "Photography production 8" },
     { id: 9, image: photography.photography9, alt: "Photography production 9" },
     { id: 10, image: photography.photography10, alt: "Photography production 10" },
-    { id: 11, image: photography.photography11, alt: "Photography production 11" },
     { id: 12, image: photography.photography12, alt: "Photography production 12" },
-    { id: 13, image: photography.photography13, alt: "Photography production 13" },
     { id: 14, image: photography.photography14, alt: "Photography production 14" },
     { id: 15, image: photography.photography15, alt: "Photography production 15" },
     { id: 16, image: photography.photography16, alt: "Photography production 16" },
@@ -34,12 +29,10 @@ const BtsGallery = () => {
     { id: 20, image: photography.photography20, alt: "Photography production 20" },
     { id: 21, image: photography.photography21, alt: "Photography production 21" },
     { id: 22, image: photography.photography22, alt: "Photography production 22" },
-    { id: 23, image: photography.photography23, alt: "Photography production 23" },
     { id: 24, image: photography.photography24, alt: "Photography production 24" },
     { id: 25, image: photography.photography25, alt: "Photography production 25" },
     { id: 26, image: photography.photography26, alt: "Photography production 26" },
     { id: 27, image: photography.photography27, alt: "Photography production 27" },
-    { id: 28, image: photography.photography28, alt: "Photography production 28" },
     { id: 29, image: photography.photography29, alt: "Photography production 29" },
     { id: 30, image: photography.photography30, alt: "Photography production 30" },
     { id: 31, image: photography.photography31, alt: "Photography production 31" },
@@ -52,15 +45,12 @@ const BtsGallery = () => {
     { id: 38, image: photography.photography38, alt: "Photography production 38" },
     { id: 39, image: photography.photography39, alt: "Photography production 39" },
     { id: 40, image: photography.photography40, alt: "Photography production 40" },
-    { id: 41, image: photography.photography41, alt: "Photography production 41" },
     { id: 42, image: photography.photography42, alt: "Photography production 42" },
     { id: 43, image: photography.photography43, alt: "Photography production 43" },
     { id: 44, image: photography.photography44, alt: "Photography production 44" },
     { id: 45, image: photography.photography45, alt: "Photography production 45" },
-    { id: 46, image: photography.photography46, alt: "Photography production 46" },
     { id: 47, image: photography.photography47, alt: "Photography production 47" },
-    { id: 48, image: photography.photography48, alt: "Photography production 48" },
-    { id: 49, image: photography.photography49, alt: "Photography production 49" }
+    { id: 48, image: photography.photography48, alt: "Photography production 48" }
   ];
 
   const duplicatedImages = [...btsImages, ...btsImages, ...btsImages];
@@ -96,7 +86,7 @@ const BtsGallery = () => {
 
   useEffect(() => {
     animationRef.current = requestAnimationFrame(animateSlider);
-    
+
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -111,7 +101,7 @@ const BtsGallery = () => {
         <div className="absolute left-0 top-0 w-24 h-full bg-gradient-to-r from-black via-black to-transparent z-10 pointer-events-none"></div>
         <div className="absolute right-0 top-0 w-24 h-full bg-gradient-to-l from-black via-black to-transparent z-10 pointer-events-none"></div>
 
-        <motion.div 
+        <motion.div
           className="relative h-80 sm:h-96 lg:h-[28rem] flex items-center perspective"
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
@@ -119,7 +109,7 @@ const BtsGallery = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <div 
+          <div
             ref={sliderRef}
             className="flex gap-0 absolute left-0 h-full"
             style={{ willChange: 'transform' }}
@@ -127,14 +117,14 @@ const BtsGallery = () => {
             {duplicatedImages.map((image, index) => {
               const angles = [-8, 5, -6, 7, -5, 6, -8, 5, -7, 6, -8, 5, -6, 7, -5, 6];
               const angle = angles[index % angles.length];
-              
+
               return (
                 <div
                   key={`${image.id}-${index}`}
                   className="flex-shrink-0 h-full group"
                   style={{ width: '420px', marginLeft: '-8px' }}
                 >
-                  <div 
+                  <div
                     className="relative w-full h-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-500"
                     style={{
                       transformStyle: 'preserve-3d',
@@ -147,7 +137,7 @@ const BtsGallery = () => {
                       alt={image.alt}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    
+
                     {/* Overlay sutil */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
                   </div>
