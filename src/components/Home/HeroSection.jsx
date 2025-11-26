@@ -205,12 +205,13 @@ const HeroSection = ({
       tempSpan.style.letterSpacing = '-0.05em';
       tempSpan.style.lineHeight = '0.95';
       
+      // Tamaños de texto reducidos un poquito
       if (isMobile) {
-        tempSpan.style.fontSize = '3.2rem';
+        tempSpan.style.fontSize = '3rem'; // Reducido de 3.2rem
       } else if (isTablet) {
-        tempSpan.style.fontSize = '4.5rem';
+        tempSpan.style.fontSize = '4.2rem'; // Reducido de 4.5rem
       } else {
-        tempSpan.style.fontSize = '5.8rem';
+        tempSpan.style.fontSize = '5.4rem'; // Reducido de 5.8rem
       }
       
       tempSpan.textContent = longestText;
@@ -250,7 +251,7 @@ const HeroSection = ({
           <h1 className="text-white uppercase flex flex-col xs:flex-row items-start xs:items-end justify-start flex-nowrap gap-1 xs:gap-2 sm:gap-2 md:gap-2 w-full leading-none overflow-hidden">
             <span 
               ref={weAreRef}
-              className="block flex-shrink-0 whitespace-nowrap font-accent font-normal text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl pb-0"
+              className="block flex-shrink-0 whitespace-nowrap font-accent font-normal text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl pb-0" // Reducido un poquito
               style={{ lineHeight: '0.95' }}
             >
               we are
@@ -261,7 +262,8 @@ const HeroSection = ({
               className="inline-block relative flex-shrink-0 pointer-events-none min-w-0 font-gotham font-bold text-left overflow-visible tracking-tighter leading-none"
               style={{ 
                 minHeight: '0.95em',
-                fontSize: isMobile ? '3.2rem' : isTablet ? '4.5rem' : '5.8rem',
+                // Tamaños de texto reducidos un poquito
+                fontSize: isMobile ? '3rem' : isTablet ? '4.2rem' : '5.4rem', // Reducidos
                 letterSpacing: '-0.05em',
                 lineHeight: '0.95',
                 marginTop: '-0.02em'
