@@ -59,8 +59,8 @@ const ProjectsSection = ({
     },
     {
       id: 2,
-      client: "DAC",
-      title: "Recap 2025",
+      client: "DAC Recap 2025 ",
+      title: "Event",
       category: "Medical / Event",
       video: "/videos/dac-dermaaestheticscongress.mp4",
       thumbnail: "/thumbnails/Portada Gif_Dac 2025 Recap Vertical.jpg",
