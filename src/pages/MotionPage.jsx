@@ -266,7 +266,7 @@ const MotionPage = () => {
     {
       id: 32,
       client: "Guerza",
-      title: "frente al mar",
+      title: "Frente al mar",
       category: "Music video",
       thumbnail: "/motion/guerra-frente-mar.webp",
       video: "/videos/GuerraFrenteAlMar.mp4",
