@@ -169,7 +169,7 @@ const MotionPage = () => {
     },
     {
       id: 20,
-      client: "Symetri Academy",
+      client: "Symetria Academy",
       title: "Motion Graphics",
       category: "Motion Graphics",
       thumbnail: "/motion/motion-graphics.webp",
@@ -265,8 +265,8 @@ const MotionPage = () => {
     },
     {
       id: 32,
-      client: "Guerza - frente al mar",
-      title: "Sesión Acústica",
+      client: "Guerza",
+      title: "frente al mar",
       category: "Music video",
       thumbnail: "/motion/guerra-frente-mar.webp",
       video: "/videos/GuerraFrenteAlMar.mp4",
