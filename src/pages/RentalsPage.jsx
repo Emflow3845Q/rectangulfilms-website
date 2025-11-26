@@ -22,7 +22,7 @@ const RentalsPage = () => {
         {/* Full-bleed background alta - MEJORADO RESPONSIVE */}
         <div
           className="absolute inset-0 bg-cover bg-center h-[480px] xs:h-[520px] sm:h-[580px] md:h-[640px] lg:h-[760px] xl:h-[800px]"
-          style={{ backgroundImage: "url('https://res.cloudinary.com/dhoyps3vk/image/upload/1_Rentals_brbljw.png')" }}
+          style={{ backgroundImage: "url('https://res.cloudinary.com/dhoyps3vk/image/upload/v1764193074/2_Rentals_tsb3kl.png')" }}
           aria-hidden
         />
 
