@@ -5,21 +5,6 @@ const ServicesSection = () => {
   // Versión ULTRA FORZADA - arrays congelados
   const serviceColumns = Object.freeze([
     Object.freeze({
-      title: "Production",
-      services: Object.freeze([
-        "Corporate and institutional productions",
-        "Testimonial capsules and interviews",
-        "Advertising and commercial videos",
-        "High-end social media content",
-        "Series and cinematic projects",
-        "Product and fashion spots",
-        "Aerial drone filming",
-        "Event coverage",
-        "Music videos"
-      ]),
-      key: "production"
-    }),
-    Object.freeze({
       title: "Photography",
       services: Object.freeze([
         "Fashion and editorial campaigns",
@@ -28,22 +13,9 @@ const ServicesSection = () => {
         "Event photo coverage",
         "Product photography",
         "Film and video stills"
-
       ]),
-      key: "photography"
-    }),
-    Object.freeze({
-      title: "Live Events & Broadcasts",
-      services: Object.freeze([
-        "Live graphics integration (visuals and overlays)",
-        "Event recording and post-event recap videos",
-        "Multicam closed-circuit operation (CCTV)",
-        "Live event production and coverage",
-        "Technical and creative coordination",
-        "Real-time multiplatform streaming",
-        "Screen setup and AV equipment"
-      ]),
-      key: "liveEvents"
+      key: "photography",
+      itemCount: 6 // Menor cantidad
     }),
     Object.freeze({
       title: "Equipment Rental",
@@ -56,15 +28,51 @@ const ServicesSection = () => {
         "Digital cinema cameras",
         "Professional lighting"
       ]),
-      key: "equipment"
+      key: "equipment",
+      itemCount: 7
+    }),
+    Object.freeze({
+      title: "Live Events & Broadcasts",
+      services: Object.freeze([
+        "Live graphics integration (visuals and overlays)",
+        "Event recording and post-event recap videos",
+        "Multicam closed-circuit operation (CCTV)",
+        "Live event production and coverage",
+        "Technical and creative coordination",
+        "Real-time multiplatform streaming",
+        "Screen setup and AV equipment"
+      ]),
+      key: "liveEvents",
+      itemCount: 7
+    }),
+    Object.freeze({
+      title: "Production",
+      services: Object.freeze([
+        "Corporate and institutional productions",
+        "Testimonial capsules and interviews",
+        "Advertising and commercial videos",
+        "High-end social media content",
+        "Series and cinematic projects",
+        "Product and fashion spots",
+        "Aerial drone filming",
+        "Event coverage",
+        "Music videos"
+      ]),
+      key: "production",
+      itemCount: 9 // Mayor cantidad
     })
   ]);
+
+  // Ordenar las columnas por cantidad de servicios (de menor a mayor)
+  const sortedColumns = [...serviceColumns].sort((a, b) => a.itemCount - b.itemCount);
 
   const ServiceColumn = ({ title, services, delay = 0.2, serviceKey }) => (
     <motion.div className="text-center min-w-0" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay }}>
       <div className="bg-black-pure p-6 lg:p-8 h-full">
-        {/* Títulos de columnas un poquito más grandes */}
-        <h3 className="text-white-pure text-[13px] uppercase tracking-[0.3em] mb-4 font-gotham font-bold">{title}</h3>
+        {/* Títulos de columnas - AJUSTADO para mantener en una línea */}
+        <h3 className="text-white-pure text-[13px] uppercase tracking-[0.3em] mb-4 font-gotham font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+          {title}
+        </h3>
         <ul className="space-y-2">
           {services.map((service, index) => (
             <motion.li
@@ -95,7 +103,7 @@ const ServicesSection = () => {
 
             {/* Grid de 4 columnas fijas - MÁS ESPACIO ENTRE COLUMNAS */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 lg:gap-16 xl:gap-20 justify-items-center">
-              {serviceColumns.map((column, index) => (
+              {sortedColumns.map((column, index) => (
                 <ServiceColumn
                   key={column.key}
                   title={column.title}
