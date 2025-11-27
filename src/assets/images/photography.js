@@ -24,7 +24,6 @@ export const photographyImages = {
   photography29: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762560/photography29_eeg4ei.jpg",
   photography30: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762560/photography30_t8ydvd.jpg",
   photography31: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762568/photography31_tw6uwu.jpg",
-  photography32: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762593/photography32_gp6jlo.jpg",
   photography33: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762568/photography33_vgsbgz.jpg",
   photography34: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762569/photography34_rstse2.jpg",
   photography35: "https://res.cloudinary.com/dhoyps3vk/image/upload/v1763762568/photography35_n4sytz.jpg",

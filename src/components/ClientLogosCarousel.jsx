@@ -22,7 +22,8 @@ const ClientLogosCarousel = () => {
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/Odella-logo_kakrzy.webp",
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/logo_en_blanco_bl1hsj.png",
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/grupo_galenum_tskdaq.png",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/dermaherilen_n5pvqj.png"
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/dermaherilen_n5pvqj.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764273412/UNIAT_mma3kb.png"
   ];
 
   // Duplicar logos para loop infinito

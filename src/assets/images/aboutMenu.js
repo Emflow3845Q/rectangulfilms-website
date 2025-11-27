@@ -1,5 +1,4 @@
 export const aboutMenuImages = {
-    aboutMenuImages1: 'https://res.cloudinary.com/dhoyps3vk/image/upload/v1764225446/Encore_AMCO-3_mhgxug.jpg',
     aboutMenuImages2: 'https://res.cloudinary.com/dhoyps3vk/image/upload/v1764225445/P1518997_hhzkk5.jpg',
     aboutMenuImages3: 'https://res.cloudinary.com/dhoyps3vk/image/upload/v1764225440/PTFA3850_vk1hqr.jpg',
     aboutMenuImages4: 'https://res.cloudinary.com/dhoyps3vk/image/upload/v1764225439/PTFA3841_udav1v.jpg',

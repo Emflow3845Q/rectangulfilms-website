@@ -38,7 +38,6 @@ const BtsGallery = () => {
     { id: 29, image: photography.photography29, alt: "Photography production 29" },
     { id: 30, image: photography.photography30, alt: "Photography production 30" },
     { id: 31, image: photography.photography31, alt: "Photography production 31" },
-    { id: 32, image: photography.photography32, alt: "Photography production 32" },
     { id: 33, image: photography.photography33, alt: "Photography production 33" },
     { id: 34, image: photography.photography34, alt: "Photography production 34" },
     { id: 35, image: photography.photography35, alt: "Photography production 35" },
