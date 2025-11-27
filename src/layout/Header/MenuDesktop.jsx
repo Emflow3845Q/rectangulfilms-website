@@ -13,7 +13,7 @@ const MenuDesktop = ({
   return (
     <>
       <div className="w-full md:w-1/2 relative z-10 flex flex-col justify-center pl-12 xl:pl-24">
-        {/* LOGO EN DESKTOP - VISIBLE INMEDIATAMENTE */}
+        {/* LOGO EN DESKTOP - MISMO TAMAÑO QUE HEADERNAV */}
         <div 
           ref={menuLogoRef}
           className="absolute top-8 left-12"
@@ -21,7 +21,8 @@ const MenuDesktop = ({
           <img
             src="/logo.png"
             alt="Rectángulo Films"
-            className="h-16 w-auto"
+            // MISMO TAMAÑO QUE HEADERNAV
+            className="h-7 sm:h-8 lg:h-10 w-auto"
           />
         </div>
 

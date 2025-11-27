@@ -100,7 +100,7 @@ const HeroSection = () => {
               <p 
                 className="text-white-pure font-gotham font-medium leading-relaxed"
                 style={{
-                  fontSize: 'clamp(1rem, 2.5vw, 1.875rem)',
+                  fontSize: 'clamp(1rem, 2.3vw, 1.7rem)',
                   lineHeight: 1.4
                 }}
               >

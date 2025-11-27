@@ -156,7 +156,10 @@ const BtsGallery = () => {
     const progressIncrement = (currentSpeed * deltaTime) / 1000;
     progressRef.current += progressIncrement;
 
-    const totalWidth = duplicatedImages.length * (420 + 52);
+    // ACTUALIZADO: Incluir el padding en el cálculo del ancho total
+    const imageWidth = 420;
+    const padding = 8; // Padding pequeño entre imágenes
+    const totalWidth = duplicatedImages.length * (imageWidth + padding);
     const viewportWidth = sliderRef.current?.parentElement?.offsetWidth || 1200;
 
     if (progressRef.current >= totalWidth - viewportWidth) {
@@ -245,14 +248,18 @@ const BtsGallery = () => {
           >
             <div
               ref={sliderRef}
-              className="flex gap-0 absolute left-0 h-full"
+              className="flex absolute left-0 h-full"
               style={{ willChange: 'transform' }}
             >
               {duplicatedImages.map((image, index) => (
                 <div
                   key={`${image.id}-${index}`}
                   className="flex-shrink-0 h-full group cursor-pointer"
-                  style={{ width: '420px', marginLeft: '-8px' }}
+                  style={{ 
+                    width: '420px', 
+                    // Padding pequeño entre imágenes
+                    marginRight: '8px'
+                  }}
                   onClick={() => openModal(index % btsImages.length)}
                 >
                   <div
@@ -264,7 +271,8 @@ const BtsGallery = () => {
                     <img
                       src={image.image}
                       alt={image.alt}
-                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter grayscale group-hover:grayscale-0"
+                      // MODIFICADO: Siempre en blanco y negro, sin cambio en hover
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter grayscale"
                     />
 
                     {/* Overlay sutil */}
