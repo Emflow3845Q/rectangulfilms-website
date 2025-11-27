@@ -560,8 +560,8 @@ const StillPage = () => {
                 style={{
                   minWidth: getCardWidth(),
                   maxWidth: getCardWidth(),
-                  // MARGEN UNIFORME PARA TODAS LAS IMÁGENES
-                  marginRight: '0.75rem', // gap-3 equivalente para todas
+                  // ACTUALIZADO: Mismo espacio que BtsGallery (8px = 0.5rem)
+                  marginRight: '0.5rem', // Igual que el BtsGallery
                 }}
                 custom={index}
                 variants={cardVariants}
