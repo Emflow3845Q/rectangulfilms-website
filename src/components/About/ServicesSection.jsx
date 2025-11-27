@@ -68,7 +68,8 @@ const ServicesSection = () => {
 
   const ServiceColumn = ({ title, services, delay = 0.2, serviceKey }) => (
     <motion.div className="text-center min-w-0" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay }}>
-      <div className="bg-black-pure p-6 lg:p-8 h-full">
+      {/* ELIMINADO: bg-black-pure ya no es necesario si el padre es negro */}
+      <div className="p-6 lg:p-8 h-full">
         {/* Títulos de columnas - AJUSTADO para mantener en una línea */}
         <h3 className="text-white-pure text-[13px] uppercase tracking-[0.3em] mb-4 font-gotham font-bold whitespace-nowrap overflow-hidden text-ellipsis">
           {title}
@@ -92,17 +93,20 @@ const ServicesSection = () => {
 
   return (
     <div className="section">
-      <div className="min-h-[90vh] bg-black-pure text-white-pure flex items-center py-12">
-        <div className="px-4 sm:px-6 lg:px-8 xl:px-20 w-full">
+      {/* AGREGADO: overflow-hidden y eliminado py-12 */}
+      <div className="min-h-[90vh] bg-black-pure text-white-pure flex items-center overflow-hidden  pb-0 ">
+        {/* AGREGADO: border-0 y eliminado padding horizontal excesivo */}
+        <div className="w-full border-0">
           <div className="w-full">
             {/* Texto "OUR CAPABILITIES" un poquito más grande */}
-            <motion.p className="text-[12px] text-white-pure uppercase tracking-[0.3em] text-left mb-3 font-gotham font-medium" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>OUR CAPABILITIES</motion.p>
+            <motion.p className="text-[12px] text-white-pure uppercase tracking-[0.3em] text-left mb-3 font-gotham font-medium px-4 sm:px-6 lg:px-8 xl:px-20" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>OUR CAPABILITIES</motion.p>
 
             {/* Título principal UN POQUITO MÁS GRANDE */}
-            <motion.h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-gotham font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>How We Can Help</motion.h2>
+            <motion.h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-gotham font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-6 lg:px-8 xl:px-20" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>How We Can Help</motion.h2>
 
             {/* Grid de 4 columnas fijas - MÁS ESPACIO ENTRE COLUMNAS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 lg:gap-16 xl:gap-20 justify-items-center">
+            {/* AGREGADO: px-0 para eliminar padding horizontal */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 lg:gap-16 xl:gap-20 justify-items-center px-0">
               {sortedColumns.map((column, index) => (
                 <ServiceColumn
                   key={column.key}

@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 // Importar todas las imágenes de photography
 import { photographyImages as photography } from "../../assets/images/photography";
-import FluidDistortionVideo from "../Background/RedDistortionBackground";
 
 const BtsGallery = () => {
   const [isHovering, setIsHovering] = useState(false);
@@ -59,20 +58,6 @@ const BtsGallery = () => {
 
   const NORMAL_SPEED = 50;
   const HOVER_SPEED = 20;
-
-  // Configuración responsive centralizada (igual que en HeroSection)
-  const responsiveConfig = {
-    padding: {
-      mobile: "px-4",
-      tablet: "sm:px-6", 
-      desktop: "lg:px-12 xl:px-16 2xl:px-20"
-    },
-    overlay: {
-      mobile: "bg-opacity-30",
-      tablet: "xs:bg-opacity-25 sm:bg-opacity-20",
-      desktop: "md:bg-opacity-15 lg:bg-opacity-10"
-    }
-  };
 
   // Función para abrir el modal
   const openModal = (index) => {
@@ -247,77 +232,58 @@ const BtsGallery = () => {
 
   return (
     <>
-      {/* Sección principal con el mismo fondo que HeroSection */}
-      <section className="relative w-full bg-black-pure text-white-pure overflow-hidden">
-        {/* Fondo con efecto de distorsión (igual que HeroSection) */}
-        <div className="absolute inset-0 w-full h-full">
-          <FluidDistortionVideo 
-            videoUrl="/leeroy-background.mp4"
-            displacementStrength={0.03}
-            className="w-full h-full object-cover"
-          />
-          
-          {/* Overlay responsive (igual que HeroSection) */}
-          <div 
-            className={`absolute inset-0 bg-black pointer-events-none transition-opacity duration-500 ${responsiveConfig.overlay.mobile} ${responsiveConfig.overlay.tablet} ${responsiveConfig.overlay.desktop}`}
-            aria-hidden="true"
-          />
-        </div>
-        
-        {/* Contenido de la galería */}
-        <div className="relative z-10 w-full">
-          <div className="py-8 sm:py-12 lg:py-16 overflow-hidden">
-            {/* Gradientes laterales sutiles */}
-            <div className="absolute left-0 top-0 w-24 h-full bg-gradient-to-r from-black via-black to-transparent z-10 pointer-events-none"></div>
-            <div className="absolute right-0 top-0 w-24 h-full bg-gradient-to-l from-black via-black to-transparent z-10 pointer-events-none"></div>
+      <div className="w-full bg-black">
+        <div className="py-8 sm:py-12 lg:py-16 overflow-hidden">
+          {/* Gradientes laterales sutiles */}
+          <div className="absolute left-0 top-0 w-24 h-full bg-gradient-to-r from-black via-black to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute right-0 top-0 w-24 h-full bg-gradient-to-l from-black via-black to-transparent z-10 pointer-events-none"></div>
 
-            <motion.div
-              className="relative h-80 sm:h-96 lg:h-[28rem] flex items-center perspective"
-              onMouseEnter={() => setIsHovering(true)}
-              onMouseLeave={() => setIsHovering(false)}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
+          <motion.div
+            className="relative h-80 sm:h-96 lg:h-[28rem] flex items-center perspective"
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <div
+              ref={sliderRef}
+              className="flex absolute left-0 h-full"
+              style={{ willChange: 'transform' }}
             >
-              <div
-                ref={sliderRef}
-                className="flex absolute left-0 h-full"
-                style={{ willChange: 'transform' }}
-              >
-                {duplicatedImages.map((image, index) => (
+              {duplicatedImages.map((image, index) => (
+                <div
+                  key={`${image.id}-${index}`}
+                  className="flex-shrink-0 h-full group cursor-pointer"
+                  style={{ 
+                    width: '420px', 
+                    // Padding pequeño entre imágenes
+                    marginRight: '8px'
+                  }}
+                  onClick={() => openModal(index % btsImages.length)}
+                >
                   <div
-                    key={`${image.id}-${index}`}
-                    className="flex-shrink-0 h-full group cursor-pointer"
-                    style={{ 
-                      width: '420px', 
-                      // Padding pequeño entre imágenes
-                      marginRight: '8px'
+                    className="relative w-full h-full overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500"
+                    style={{
+                      transition: 'transform 0.6s ease-out, filter 0.6s ease-out'
                     }}
-                    onClick={() => openModal(index % btsImages.length)}
                   >
-                    <div
-                      className="relative w-full h-full overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500"
-                      style={{
-                        transition: 'transform 0.6s ease-out, filter 0.6s ease-out'
-                      }}
-                    >
-                      <img
-                        src={image.image}
-                        alt={image.alt}
-                        // MODIFICADO: Siempre en blanco y negro, sin cambio en hover
-                        className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter grayscale"
-                      />
+                    <img
+                      src={image.image}
+                      alt={image.alt}
+                      // MODIFICADO: Siempre en blanco y negro, sin cambio en hover
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 filter grayscale"
+                    />
 
-                      {/* Overlay sutil */}
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-                    </div>
+                    {/* Overlay sutil */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
                   </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
-      </section>
+      </div>
 
       {/* MODAL */}
       <AnimatePresence>

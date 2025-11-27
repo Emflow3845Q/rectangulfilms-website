@@ -19,16 +19,10 @@ const AboutPage = ({ fullpageApi }) => {
         <BtsGallery />
       </section>
       
-      {/* Línea divisora entre secciones */}
-      <div className="divider-line w-full h-px bg-white/10" aria-hidden="true"></div>
-      
       {/* Services Section */}
       <section className="services-section w-full">
         <ServicesSection />
       </section>
-      
-      {/* Línea divisora antes del contacto */}
-      <div className="divider-line w-full h-px bg-white/10" aria-hidden="true"></div>
       
       {/* Contact Section */}
       <section className="contact-section w-full">
