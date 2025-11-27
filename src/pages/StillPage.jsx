@@ -17,6 +17,9 @@ const StillPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  // Nuevo estado para controlar el doble clic
+  const [clickTimers, setClickTimers] = useState({});
+
   // Referencias para GSAP
   const projectRefs = useRef([]);
   const imageRefs = useRef([]);
@@ -38,6 +41,35 @@ const StillPage = () => {
 
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Función para manejar el clic en las imágenes
+  const handleImageClick = (index) => {
+    // Si ya hay un timer para este índice, es un doble clic
+    if (clickTimers[index]) {
+      clearTimeout(clickTimers[index]);
+      setClickTimers(prev => {
+        const newTimers = { ...prev };
+        delete newTimers[index];
+        return newTimers;
+      });
+      openModal(index);
+    } else {
+      // Primer clic - establecer timer
+      const timer = setTimeout(() => {
+        // Si el timer expira, limpiarlo (fue un clic simple)
+        setClickTimers(prev => {
+          const newTimers = { ...prev };
+          delete newTimers[index];
+          return newTimers;
+        });
+      }, 300); // 300ms para detectar doble clic
+
+      setClickTimers(prev => ({
+        ...prev,
+        [index]: timer
+      }));
+    }
+  };
 
   // Función para abrir el modal
   const openModal = (index) => {
@@ -437,6 +469,15 @@ const StillPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Limpiar timers cuando el componente se desmonta
+  useEffect(() => {
+    return () => {
+      Object.values(clickTimers).forEach(timer => {
+        if (timer) clearTimeout(timer);
+      });
+    };
+  }, [clickTimers]);
+
   // Tamaños responsive para las tarjetas - MÁS ANCHAS
   const getCardWidth = () => {
     if (typeof window === 'undefined') return '28vw'; // Aumentado de 24vw a 28vw
@@ -525,7 +566,7 @@ const StillPage = () => {
                 custom={index}
                 variants={cardVariants}
                 whileTap={isMobile ? { scale: 0.98 } : {}}
-                onClick={() => openModal(index)}
+                onClick={() => handleImageClick(index)}
               >
                 {/* CONTENEDOR PRINCIPAL DE LA IMAGEN - TAMAÑO FIJO */}
                 <div className="project-thumbnail__img relative overflow-hidden">

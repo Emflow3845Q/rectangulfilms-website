@@ -6,14 +6,23 @@ const ClientLogosCarousel = () => {
 
   // Logos de clientes - URLs de Cloudinary
   const clientLogos = [
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo1_iiuzmj.png",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo2_rygji4.png",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo3_g1cdwp.png",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo4_chferx.png",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo5_z3c2jp.png",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo6_o4kusm.png",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo7_b0dyvb.png",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/logo9_ll8teo.png"
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764260001/DAC_-_Logotipo_Oficial_-_2025_hkp6ag.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764260000/Symetria_White_y3nstp.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259999/Grupo_aeroportuario_logo_pxqyad.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259998/La_perla_logo_iqxwj6.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259998/Encore_Logo_qyrcxk.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259997/2_lj2rzx.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259998/Rosk_logo_x6jeiz.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259998/Casa_ideas_Logo_jh9lu6.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259997/Oh_la_Lashes_Logo_gnujtc.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259997/LOGO_BILLIONS_qdtexz.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259997/soriano_academy_uaduua.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259997/Celiona.m._ywi4b8.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259997/681188c0d323346f55c4907b_AC_Horizontal_blanco-p-1600_xso6cl.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/Odella-logo_kakrzy.webp",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/logo_en_blanco_bl1hsj.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/grupo_galenum_tskdaq.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/dermaherilen_n5pvqj.png"
   ];
 
   // Duplicar logos para loop infinito

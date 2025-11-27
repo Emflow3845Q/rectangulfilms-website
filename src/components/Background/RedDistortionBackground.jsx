@@ -19,7 +19,7 @@ const VideoBackground = () => {
       containerRef.current.removeChild(containerRef.current.firstChild);
     }
 
-    // 1. CREAR ELEMENTO DE VIDEO CON MEJORES CONFIGURACIONES
+    // 1. CREAR ELEMENTO DE VIDEO
     video.current = document.createElement('video');
     video.current.src = '/leeroy-background.mp4';
     video.current.loop = true;
@@ -29,7 +29,6 @@ const VideoBackground = () => {
     video.current.crossOrigin = 'anonymous';
     video.current.style.display = 'none';
 
-    // Configurar calidad de video
     video.current.setAttribute('webkit-playsinline', 'true');
     video.current.setAttribute('playsinline', 'true');
 
@@ -50,17 +49,14 @@ const VideoBackground = () => {
     const width = container.clientWidth;
     const height = container.clientHeight;
     
-    // Configurar renderer con corrección de color
     renderer.current.setSize(width, height);
     renderer.current.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.current.setClearColor(0x000000, 0);
     
-    // CORRECCIÓN CRÍTICA: Configuración de color space
+    // Configuración de color space
     if (THREE.SRGBColorSpace) {
-      // Three.js r152+
       renderer.current.outputColorSpace = THREE.SRGBColorSpace;
     } else {
-      // Versiones anteriores
       renderer.current.outputEncoding = THREE.sRGBEncoding;
     }
     
@@ -72,21 +68,18 @@ const VideoBackground = () => {
     
     containerRef.current.appendChild(canvas);
 
-    // 3. CONFIGURACIÓN MEJORADA DE TEXTURA DE VIDEO CON CORRECCIÓN DE COLOR
+    // 3. CONFIGURACIÓN DE TEXTURA DE VIDEO CON CORRECCIÓN DE COLOR
     const initVideoTexture = () => {
       videoTexture.current = new THREE.VideoTexture(video.current);
       
-      // CONFIGURACIÓN CORREGIDA PARA COLOR
       videoTexture.current.minFilter = THREE.LinearFilter;
       videoTexture.current.magFilter = THREE.LinearFilter;
       videoTexture.current.format = THREE.RGBAFormat;
       
-      // CORRECCIÓN MÁS IMPORTANTE: Color space de la textura
+      // Color space de la textura
       if (THREE.SRGBColorSpace) {
-        // Three.js r152+
         videoTexture.current.colorSpace = THREE.SRGBColorSpace;
       } else {
-        // Versiones anteriores
         videoTexture.current.encoding = THREE.sRGBEncoding;
       }
       
@@ -99,7 +92,7 @@ const VideoBackground = () => {
         map: videoTexture.current,
         transparent: true,
         opacity: 1,
-        toneMapped: false // Importante para mantener colores fieles al video original
+        toneMapped: false
       });
 
       const geometry = new THREE.PlaneGeometry(2, 2);
@@ -107,62 +100,22 @@ const VideoBackground = () => {
       scene.current.add(mesh);
 
       video.current.addEventListener('loadeddata', () => {
-        console.log('✅ Video cargado - Dimensiones:', 
-          video.current.videoWidth, 'x', video.current.videoHeight);
-        
-        // Verificar metadata de color
-        console.log('🎨 Configuración de color aplicada:');
-        if (THREE.SRGBColorSpace) {
-          console.log('- Color Space:', videoTexture.current.colorSpace);
-          console.log('- Output Color Space:', renderer.current.outputColorSpace);
-        } else {
-          console.log('- Encoding:', videoTexture.current.encoding);
-          console.log('- Output Encoding:', renderer.current.outputEncoding);
-        }
-        
         playVideo();
       });
 
-      // Manejar errores de video
       video.current.addEventListener('error', (e) => {
-        console.error('❌ Error de video:', e);
-        console.error('Detalles del error:', video.current.error);
-      });
-
-      // Cuando el video puede reproducirse completamente
-      video.current.addEventListener('canplaythrough', () => {
-        console.log('🎬 Video listo para reproducirse sin interrupciones');
-      });
-
-      // Evento para cuando el video realmente comienza a reproducirse
-      video.current.addEventListener('playing', () => {
-        console.log('🔊 Video reproduciéndose correctamente');
+        console.error('Error de video:', e);
       });
 
       const playVideo = () => {
-        console.log('🔄 Intentando reproducir video...');
         const playPromise = video.current.play();
         
         if (playPromise !== undefined) {
           playPromise
-            .then(() => {
-              console.log('▶️ Video reproduciéndose correctamente');
-              console.log('📊 Estado del video:', {
-                duración: video.current.duration,
-                estado: video.current.readyState,
-                pausado: video.current.paused,
-                acabado: video.current.ended
-              });
-            })
+            .then(() => {})
             .catch(error => {
-              console.log('⚠️ Esperando interacción del usuario:', error);
-              
               const handleUserInteraction = () => {
-                video.current.play().then(() => {
-                  console.log('🎮 Video iniciado por interacción del usuario');
-                }).catch(e => {
-                  console.error('❌ Error al reproducir después de interacción:', e);
-                });
+                video.current.play().catch(console.error);
                 document.removeEventListener('click', handleUserInteraction);
                 document.removeEventListener('touchstart', handleUserInteraction);
               };
@@ -178,7 +131,7 @@ const VideoBackground = () => {
 
     initVideoTexture();
 
-    // 4. ANIMACIÓN OPTIMIZADA
+    // 4. ANIMACIÓN
     const animate = () => {
       animationIdRef.current = requestAnimationFrame(animate);
       
@@ -191,7 +144,7 @@ const VideoBackground = () => {
 
     animate();
 
-    // 5. MANEJAR RESIZE MÁS PRECISO
+    // 5. MANEJAR RESIZE
     const handleResize = () => {
       const container = containerRef.current;
       if (!container) return;
@@ -201,22 +154,18 @@ const VideoBackground = () => {
       
       renderer.current.setSize(width, height);
       
-      // Forzar actualización de textura después del resize
       if (videoTexture.current) {
         videoTexture.current.needsUpdate = true;
       }
     };
 
-    // Usar ResizeObserver para cambios más precisos
     const resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(containerRef.current);
 
     window.addEventListener('resize', handleResize);
 
-    // 6. CLEANUP MEJORADO
+    // 6. CLEANUP
     return () => {
-      console.log('🧹 Limpiando recursos del video...');
-      
       if (animationIdRef.current) {
         cancelAnimationFrame(animationIdRef.current);
       }
@@ -233,8 +182,8 @@ const VideoBackground = () => {
       
       if (video.current) {
         video.current.pause();
-        video.current.src = ''; // Limpiar source
-        video.current.load(); // Reiniciar
+        video.current.src = '';
+        video.current.load();
         if (video.current.parentNode) {
           video.current.parentNode.removeChild(video.current);
         }
@@ -244,7 +193,6 @@ const VideoBackground = () => {
         videoTexture.current.dispose();
       }
       
-      // Limpiar materiales y geometrías
       if (scene.current) {
         scene.current.traverse((object) => {
           if (object.isMesh) {

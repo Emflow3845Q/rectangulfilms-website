@@ -71,7 +71,7 @@ const RentalsPage = () => {
         <div className="absolute bottom-0 left-0 right-0 h-8 xs:h-12 bg-gradient-to-t from-black/100 via-black/60 to-transparent pointer-events-none" />
       </section>
 
-      {/* ================= CONTACT SECTION - MEJORADO RESPONSIVE ================= */}
+      {/* ================= CONTACT SECTION - MÁRGENES REDUCIDOS ================= */}
       <section className="relative bg-black py-12 xs:py-14 sm:py-16 md:py-20 lg:py-24">
         {/* Línea separadora de ancho reducido */}
         <div className="flex justify-center mb-10 xs:mb-12 sm:mb-14 md:mb-16">
@@ -79,7 +79,7 @@ const RentalsPage = () => {
         </div>
         
         <motion.div
-          className="max-w-[280px] xs:max-w-xs sm:max-w-sm md:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto px-4 xs:px-6 sm:px-8 text-center"
+          className="w-full max-w-[320px] xs:max-w-md sm:max-w-lg md:max-w-3xl lg:max-w-4xl xl:max-w-5xl mx-auto px-3 xs:px-4 sm:px-6 md:px-8 text-center"
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
