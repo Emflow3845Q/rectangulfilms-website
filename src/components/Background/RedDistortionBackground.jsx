@@ -8,11 +8,12 @@ const VideoBackground = forwardRef((props, ref) => {
   const rendererRef = useRef(null);
   const animationIdRef = useRef(null);
   
-  // Referencias para el mouse con suavizado
+  // Referencias para el mouse
   const mousePosition = useRef({ x: 0.5, y: 0.5 });
   const targetMousePosition = useRef({ x: 0.5, y: 0.5 });
   const prevMousePosition = useRef({ x: 0.5, y: 0.5 });
   const easeFactor = useRef(0.02);
+  const aberrationIntensity = useRef(0.0);
 
   // Exponer métodos al padre
   useImperativeHandle(ref, () => ({
@@ -44,7 +45,7 @@ const VideoBackground = forwardRef((props, ref) => {
     videoRef.current = video;
     document.body.appendChild(video);
 
-    // Shaders
+    // Shaders - Con grid visible
     const vertexShader = `
       varying vec2 vUv;
       void main() {
@@ -58,44 +59,71 @@ const VideoBackground = forwardRef((props, ref) => {
       uniform sampler2D u_texture;    
       uniform vec2 u_mouse;
       uniform vec2 u_prevMouse;
-      uniform vec2 u_resolution;
+      uniform float u_aberrationIntensity;
+      uniform float u_time;
 
       void main() {
-        vec2 gridUV = floor(vUv * vec2(25.0, 25.0)) / vec2(25.0, 25.0);
-        vec2 centerOfPixel = gridUV + vec2(1.0/50.0, 1.0/50.0);
+        // Grid de 30x30 (más cuadritos)
+        float gridSize = 30.0;
+        vec2 gridUV = floor(vUv * gridSize) / gridSize;
+        vec2 centerOfPixel = gridUV + vec2(1.0/(gridSize * 2.0), 1.0/(gridSize * 2.0));
         
+        // Dirección del movimiento del mouse
         vec2 mouseDirection = u_mouse - u_prevMouse;
-        float mouseSpeed = length(mouseDirection);
         
-        vec4 baseColor = texture2D(u_texture, vUv);
+        // Distancia lineal desde el pixel al mouse
+        vec2 pixelToMouseDirection = centerOfPixel - u_mouse;
+        float pixelDistanceToMouse = length(pixelToMouseDirection);
         
-        if (mouseSpeed > 0.0001) {
-          mouseDirection = normalize(mouseDirection) * min(mouseSpeed * 10.0, 1.0);
-          
-          // Ajustar por aspect ratio para que el círculo sea circular
-          vec2 aspectRatio = vec2(u_resolution.x / u_resolution.y, 1.0);
-          vec2 mouseAdjusted = u_mouse * aspectRatio;
-          vec2 pixelAdjusted = centerOfPixel * aspectRatio;
-          
-          vec2 pixelToMouseDirection = pixelAdjusted - mouseAdjusted;
-          float pixelDistanceToMouse = length(pixelToMouseDirection);
-          
-          float strength = 1.0 - smoothstep(0.0, 0.4, pixelDistanceToMouse);
-          strength = pow(strength, 0.5);
-          
-          vec2 uvOffset = strength * -mouseDirection * 0.8;
-          vec2 distortedUV = vUv + uvOffset;
-          
-          vec4 colorR = texture2D(u_texture, distortedUV + vec2(strength * 0.02, 0.0));
-          vec4 colorG = texture2D(u_texture, distortedUV);
-          vec4 colorB = texture2D(u_texture, distortedUV - vec2(strength * 0.02, 0.0));
-          
-          vec4 distortedColor = vec4(colorR.r, colorG.g, colorB.b, 1.0);
-          
-          gl_FragColor = mix(baseColor, distortedColor, strength);
-        } else {
-          gl_FragColor = baseColor;
+        // Fuerza basada en distancia lineal
+        float strength = smoothstep(0.2, 0.0, pixelDistanceToMouse);
+        
+        // Offset basado en la dirección del mouse
+        vec2 uvOffset = strength * -mouseDirection * 0.25;
+        vec2 uv = vUv - uvOffset;
+
+        // Aberración cromática (separación de colores RGB)
+        vec4 colorR = texture2D(u_texture, uv + vec2(strength * u_aberrationIntensity * 0.015, 0.0));
+        vec4 colorG = texture2D(u_texture, uv);
+        vec4 colorB = texture2D(u_texture, uv - vec2(strength * u_aberrationIntensity * 0.015, 0.0));
+
+        vec4 distortedColor = vec4(colorR.r, colorG.g, colorB.b, 1.0);
+        
+        // DIBUJAR EL GRID - Líneas transparentes blancas
+        vec2 gridPos = vUv * gridSize;
+        vec2 gridCell = floor(gridPos);
+        vec2 gridFract = fract(gridPos);
+        
+        // Grosor de las líneas del grid (entre 0.01 y 0.03 para líneas finas)
+        float gridLineWidth = 0.015;
+        
+        // Calcular distancia a las líneas verticales y horizontales
+        float verticalLine = smoothstep(gridLineWidth, 0.0, gridFract.x) + 
+                           smoothstep(1.0 - gridLineWidth, 1.0, gridFract.x);
+        float horizontalLine = smoothstep(gridLineWidth, 0.0, gridFract.y) + 
+                              smoothstep(1.0 - gridLineWidth, 1.0, gridFract.y);
+        
+        // Intensidad del grid (0.3 = 30% de opacidad)
+        float gridIntensity = 0.3;
+        
+        // Crear el color del grid (blanco semi-transparente)
+        vec4 gridColor = vec4(1.0, 1.0, 1.0, gridIntensity);
+        
+        // Mezclar el color del video con el grid
+        // Si hay una línea (vertical u horizontal), mezclamos con gridColor
+        float hasGridLine = clamp(verticalLine + horizontalLine, 0.0, 1.0);
+        vec4 finalColor = mix(distortedColor, gridColor, hasGridLine * 0.5);
+        
+        // Alternativa: Añadir brillo a las líneas del grid cerca del mouse
+        float gridGlow = smoothstep(0.15, 0.0, pixelDistanceToMouse);
+        float glowIntensity = gridGlow * 0.3;
+        
+        // Añadir brillo a las líneas cerca del mouse
+        if (hasGridLine > 0.0) {
+          finalColor.rgb += glowIntensity;
         }
+
+        gl_FragColor = finalColor;
       }
     `;
 
@@ -110,15 +138,16 @@ const VideoBackground = forwardRef((props, ref) => {
       scene = new THREE.Scene();
       sceneRef.current = scene;
 
-      // Camera setup - Usar OrthographicCamera para cubrir toda la pantalla
+      // Camera setup - OrthographicCamera para cubrir toda la pantalla
       camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
       // Uniforms
       let shaderUniforms = {
         u_mouse: { value: new THREE.Vector2(0.5, 0.5) },
         u_prevMouse: { value: new THREE.Vector2(0.5, 0.5) },
-        u_texture: { value: videoTexture },
-        u_resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+        u_aberrationIntensity: { value: 0.0 },
+        u_time: { value: 0.0 },
+        u_texture: { value: videoTexture }
       };
 
       // Creating a plane mesh with materials
@@ -137,7 +166,7 @@ const VideoBackground = forwardRef((props, ref) => {
       // Render
       renderer = new THREE.WebGLRenderer({ 
         alpha: false,
-        antialias: false,
+        antialias: true, // Cambiado a true para ver mejor las líneas
         powerPreference: "high-performance"
       });
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -154,6 +183,8 @@ const VideoBackground = forwardRef((props, ref) => {
       animate();
     }
 
+    let startTime = Date.now();
+    
     function animate() {
       animationIdRef.current = requestAnimationFrame(animate);
 
@@ -161,18 +192,30 @@ const VideoBackground = forwardRef((props, ref) => {
       mousePosition.current.x += (targetMousePosition.current.x - mousePosition.current.x) * easeFactor.current;
       mousePosition.current.y += (targetMousePosition.current.y - mousePosition.current.y) * easeFactor.current;
 
+      // Reducir la aberración cromática gradualmente
+      aberrationIntensity.current = Math.max(0.0, aberrationIntensity.current - 0.05);
+
       // Actualizar uniforms
-      planeMesh.material.uniforms.u_mouse.value.set(
-        mousePosition.current.x,
-        mousePosition.current.y
-      );
+      if (planeMesh && planeMesh.material) {
+        planeMesh.material.uniforms.u_mouse.value.set(
+          mousePosition.current.x,
+          mousePosition.current.y
+        );
 
-      planeMesh.material.uniforms.u_prevMouse.value.set(
-        prevMousePosition.current.x,
-        prevMousePosition.current.y
-      );
+        planeMesh.material.uniforms.u_prevMouse.value.set(
+          prevMousePosition.current.x,
+          prevMousePosition.current.y
+        );
 
-      renderer.render(scene, camera);
+        planeMesh.material.uniforms.u_aberrationIntensity.value = aberrationIntensity.current;
+        
+        // Actualizar tiempo para efectos dinámicos
+        planeMesh.material.uniforms.u_time.value = (Date.now() - startTime) * 0.001;
+      }
+
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
     }
 
     // Event listeners
@@ -182,21 +225,37 @@ const VideoBackground = forwardRef((props, ref) => {
       
       const rect = canvas.getBoundingClientRect();
       
+      // Guardar posición anterior
       prevMousePosition.current.x = targetMousePosition.current.x;
       prevMousePosition.current.y = targetMousePosition.current.y;
       
+      // Actualizar posición objetivo
       targetMousePosition.current.x = (event.clientX - rect.left) / rect.width;
       targetMousePosition.current.y = 1.0 - (event.clientY - rect.top) / rect.height;
       
+      // Aumentar velocidad de seguimiento
       easeFactor.current = 0.08;
+      
+      // Activar aberración cromática
+      aberrationIntensity.current = 1.0;
     };
 
-    const handleMouseEnter = () => {
+    const handleMouseEnter = (event) => {
+      const canvas = renderer?.domElement;
+      if (!canvas) return;
+      
+      const rect = canvas.getBoundingClientRect();
+      
       easeFactor.current = 0.08;
+      
+      // Posicionar el mouse donde entra
+      mousePosition.current.x = targetMousePosition.current.x = (event.clientX - rect.left) / rect.width;
+      mousePosition.current.y = targetMousePosition.current.y = 1.0 - (event.clientY - rect.top) / rect.height;
     };
 
     const handleMouseLeave = () => {
       easeFactor.current = 0.02;
+      // Regresar al centro cuando el mouse sale
       targetMousePosition.current = { x: 0.5, y: 0.5 };
     };
 
@@ -238,11 +297,8 @@ const VideoBackground = forwardRef((props, ref) => {
 
     // Handle window resize
     const handleResize = () => {
-      if (renderer && planeMesh) {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        renderer.setSize(width, height);
-        planeMesh.material.uniforms.u_resolution.value.set(width, height);
+      if (renderer) {
+        renderer.setSize(window.innerWidth, window.innerHeight);
       }
     };
     window.addEventListener('resize', handleResize);
@@ -307,7 +363,7 @@ const VideoBackground = forwardRef((props, ref) => {
         overflow: 'hidden',
         backgroundColor: '#000'
       }}
-      title="Video background con efecto de distorsión"
+      title="Video background con efecto de distorsión y grid visible"
     />
   );
 });
