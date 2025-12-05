@@ -4,6 +4,11 @@
 
 /* === ESTRATEGIA OPTIMIZADA PARA CARGAR FUENTES === */
 
+.text-justify {
+  text-align: justify !important;
+  text-justify: inter-word !important;
+}
+
 /* 1. Variables CSS para familias de fuentes con fallback */
 :root {
   --font-rodina: 'Rodina-Regular', 'Georgia', 'Times New Roman', serif;
@@ -161,6 +166,14 @@ body {
   font-family: 'BBH_Sans_Bartle';
   src: url('/fonts/BBH_Sans_Bartle/BBHSansBartle-Regular.ttf') format('truetype');
   font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BBH_Sans_Bartle';
+  src: url('/fonts/BBH_Sans_Bartle/BBHSansBartle-Bold.ttf') format('truetype');
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }

@@ -27,6 +27,7 @@ const TheStage = () => {
 
   const imageRefs = useRef([]);
   const containerRefs = useRef([]);
+  const paragraphRef = useRef(null);
 
   useEffect(() => {
     // Animación de entrada para todas las imágenes
@@ -101,39 +102,45 @@ const TheStage = () => {
     <section className="w-full bg-black text-white py-8 md:py-12">
       {/* Header Section */}
       <div className="w-full px-4 md:px-8 lg:px-16 mb-6 md:mb-8">
-        {/* Title - Usando SplitType normal */}
-        <h2 className="font-accent text-white text-5xl md:text-7xl lg:text-8xl font-bold mb-2 tracking-tight uppercase leading-none">
-          <RevealText as="span" splitLines={true}>
-            THE STAGE
-          </RevealText>
-        </h2>
+        {/* Contenedor principal con ancho fijo */}
+        <div className="w-full max-w-4xl">
+          {/* Title - Alineado con el párrafo */}
+          <h2 className="font-accent text-white text-5xl md:text-7xl lg:text-[5.5rem] mb-2 tracking-tight uppercase leading-none whitespace-nowrap">
+            <RevealText as="span" splitLines={true}>
+              THE STAGE
+            </RevealText>
+          </h2>
 
-        {/* Subtitle - Usando SplitType normal */}
-        <h3 className="font-gotham font-bold text-base md:text-xl lg:text-2xl mb-3 md:mb-4">
-          <RevealText as="span" splitLines={true}>
-            A space ready for any project
-          </RevealText>
-        </h3>
+          {/* Subtitle */}
+          <h3 className="font-gotham font-bold text-xl md:text-3xl lg:text-4xl mb-3 md:mb-4">
+            <RevealText as="span" splitLines={true}>
+              A space ready for any project
+            </RevealText>
+          </h3>
 
-        {/* Description - Usando animación simple para párrafo */}
-        <div className="max-w-3xl">
-          <RevealText 
-            as="p"
-            className="font-gotham font-medium text-xs md:text-sm lg:text-base text-white leading-relaxed mb-4 md:mb-6"
-            splitLines={false} // IMPORTANTE: Desactivar SplitType para párrafos
-          >
-            We have our own soundstage designed for high-level audiovisual productions. It's a versatile space
-            equipped with professional lighting, 3 cycloramas, essential sound tools, and a controlled environment that
-            includes air conditioning. This stage also has a variety of video production cameras, lenses, drones, stabilizers,
-            and audiovisual equipment available to production companies, brands, and creators who need a
-            reliable, fully prepared space for filming.
-          </RevealText>
+          {/* Description - Alineado verticalmente con el título */}
+          <div className="text-justify">
+            <p 
+              ref={paragraphRef}
+              className="font-gotham font-medium text-xs md:text-sm lg:text-base text-white leading-relaxed mb-4 md:mb-6"
+              style={{
+                textAlign: 'justify',
+                textJustify: 'inter-word'
+              }}
+            >
+              We have our own soundstage designed for high-level audiovisual productions. It's a versatile space
+              equipped with professional lighting, 3 cycloramas, essential sound tools, and a controlled environment that
+              includes air conditioning. This stage also has a variety of video production cameras, lenses, drones, stabilizers,
+              and audiovisual equipment available to production companies, brands, and creators who need a
+              reliable, fully prepared space for filming.
+            </p>
+          </div>
+
+          {/* CTA Button */}
+          <button className="font-accent bg-transparent border-2 border-white text-white px-5 py-2 text-sm md:text-base hover:bg-white hover:text-black transition-all duration-300 uppercase">
+            RESERVE ONLINE
+          </button>
         </div>
-
-        {/* CTA Button - Sin animación */}
-        <button className="font-accent bg-transparent border-2 border-white text-white px-5 py-2 text-sm md:text-base font-bold hover:bg-white hover:text-black transition-all duration-300 uppercase">
-          RESERVE ONLINE
-        </button>
       </div>
 
       {/* Main Content Grid */}

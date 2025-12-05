@@ -18,9 +18,9 @@ const ClientLogosCarousel = () => {
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259997/LOGO_BILLIONS_qdtexz.png",
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259997/soriano_academy_uaduua.png",
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764540119/Celiona.m._ywi4b8.png",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259997/681188c0d323346f55c4907b_AC_Horizontal_blanco-p-1600_xso6cl.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764963492/Dise%C3%B1o_sin_t%C3%ADtulo_26_ouyz0m.png",
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/Odella-logo_kakrzy.webp",
-    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764540232/logo_en_blanco_bl1hsj.png",
+    "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764963745/logo_en_blanco_bl1hsj.png",
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/grupo_galenum_tskdaq.png",
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764259996/dermaherilen_n5pvqj.png",
     "https://res.cloudinary.com/dhoyps3vk/image/upload/v1764273412/UNIAT_mma3kb.png"

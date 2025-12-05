@@ -1,5 +1,4 @@
 export const rentalsMenuImages = {
-    rentalsMenuImages1: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789047/P1069563_rqaija.jpg',
     rentalsMenuImages2: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789048/P1069746_fiqpso.jpg',
     rentalsMenuImages3: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789048/_3711347_b7fplt.jpg',
     rentalsMenuImages4: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789050/_0019673_tgadok.jpg',

@@ -10,10 +10,15 @@ gsap.registerPlugin(ScrollTrigger, CustomEase);
 
 const BtsGallery = () => {
   const carouselRef = useRef(null);
+  const autoScrollTweenRef = useRef(null);
+  const contentRef = useRef(null);
   const [width, setWidth] = useState(0);
   const [isInView, setIsInView] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const dragStartScrollRef = useRef(0);
+  const dragStartMouseRef = useRef(0);
 
   // Estados para el modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,11 +37,6 @@ const BtsGallery = () => {
     const checkMobile = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-
-      // Resetear estados cuando cambia a móvil
-      if (mobile) {
-        setIsHovering(false);
-      }
     };
 
     checkMobile();
@@ -45,8 +45,7 @@ const BtsGallery = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Array de imágenes de photography (1-82)
-  const btsImages = [
+ const btsImages = [
     { id: 1, image: photography.photography1, alt: "Photography production 1" },
     { id: 2, image: photography.photography2, alt: "Photography production 2" },
     { id: 3, image: photography.photography3, alt: "Photography production 3" },
@@ -131,9 +130,186 @@ const BtsGallery = () => {
     { id: 82, image: photography.photography82, alt: "Photography production 82" }
   ];
 
+
+  // Función para ajustar la velocidad del auto-scroll
+  const adjustAutoScrollSpeed = () => {
+    if (!autoScrollTweenRef.current || isMobile || !carouselRef.current) return;
+
+    const carousel = carouselRef.current;
+    const totalWidth = carousel.scrollWidth - carousel.clientWidth;
+    
+    if (totalWidth <= 0) return;
+
+    let baseDuration = 180; // 3 minutos base
+    
+    // Si está haciendo hover, reducir velocidad aún más (50% más lento)
+    if (isHovering) {
+      baseDuration = 360; // 6 minutos cuando hay hover
+    }
+    
+    // Si está arrastrando, pausar completamente
+    if (isDragging) {
+      autoScrollTweenRef.current.pause();
+      return;
+    }
+
+    // Calcular nueva velocidad basada en la posición actual
+    const currentScroll = carousel.scrollLeft;
+    const progress = currentScroll / totalWidth;
+    const remainingDistance = totalWidth - currentScroll;
+    
+    // Ajustar tiempo restante basado en la nueva velocidad
+    const timeScale = isHovering ? 2 : 1;
+    const remainingTime = (remainingDistance / totalWidth) * baseDuration * timeScale;
+    
+    // Actualizar la animación con nueva velocidad
+    autoScrollTweenRef.current.duration(baseDuration * timeScale);
+    autoScrollTweenRef.current.timeScale(1);
+    
+    // Si estaba pausado, reanudar
+    if (autoScrollTweenRef.current.paused()) {
+      autoScrollTweenRef.current.play();
+    }
+  };
+
+  // Función para iniciar el auto-scroll
+  const startSuperSlowAutoScroll = () => {
+    if (isMobile || !carouselRef.current || isModalOpen) return;
+
+    // Limpiar animación existente
+    if (autoScrollTweenRef.current) {
+      autoScrollTweenRef.current.kill();
+    }
+
+    const carousel = carouselRef.current;
+    
+    // Calcular el ancho total del contenido
+    const totalWidth = carousel.scrollWidth - carousel.clientWidth;
+    
+    // Si no hay suficiente contenido para hacer scroll, no hacer nada
+    if (totalWidth <= 0) return;
+
+    // Configurar animación
+    let baseDuration = 180;
+    
+    autoScrollTweenRef.current = gsap.to(carousel, {
+      scrollLeft: totalWidth,
+      duration: baseDuration,
+      ease: "linear",
+      repeat: -1,
+      onUpdate: () => {
+        if (isDragging) return;
+        
+        const scrollPos = carousel.scrollLeft;
+        moveImagesWithinContainers(scrollPos);
+        
+        // Si llegamos al final, reiniciar suavemente
+        if (scrollPos >= totalWidth - 1) {
+          gsap.set(carousel, { scrollLeft: 0 });
+          autoScrollTweenRef.current.restart();
+          
+          if (isHovering) {
+            autoScrollTweenRef.current.timeScale(0.5);
+          } else {
+            autoScrollTweenRef.current.timeScale(1);
+          }
+        }
+      },
+      onRepeat: () => {
+        adjustAutoScrollSpeed();
+      }
+    });
+
+    if (isHovering) {
+      autoScrollTweenRef.current.timeScale(0.5);
+    }
+  };
+
+  // Función para detener el auto-scroll
+  const stopAutoScroll = () => {
+    if (autoScrollTweenRef.current) {
+      autoScrollTweenRef.current.kill();
+      autoScrollTweenRef.current = null;
+    }
+  };
+
+  // Pausar auto-scroll temporalmente
+  const pauseAutoScroll = () => {
+    if (autoScrollTweenRef.current) {
+      autoScrollTweenRef.current.pause();
+    }
+  };
+
+  // Reanudar auto-scroll
+  const resumeAutoScroll = () => {
+    if (autoScrollTweenRef.current && !isDragging && !isModalOpen) {
+      autoScrollTweenRef.current.play();
+      adjustAutoScrollSpeed();
+    }
+  };
+
+  // Iniciar auto-scroll cuando el componente está en vista
+  useEffect(() => {
+    if (isInView && !isMobile && !isModalOpen) {
+      const timeoutId = setTimeout(() => {
+        startSuperSlowAutoScroll();
+      }, 2000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isInView, isMobile, isModalOpen]);
+
+  // Ajustar velocidad cuando cambia el hover
+  useEffect(() => {
+    if (autoScrollTweenRef.current && !isMobile && !isModalOpen && !isDragging) {
+      adjustAutoScrollSpeed();
+    }
+  }, [isHovering]);
+
+  // Manejar cambios en el modal
+  useEffect(() => {
+    if (isModalOpen) {
+      pauseAutoScroll();
+    } else if (isInView && !isMobile && !isDragging) {
+      setTimeout(() => {
+        resumeAutoScroll();
+      }, 500);
+    }
+  }, [isModalOpen]);
+
+  // Reanudar auto-scroll cuando cambia el tamaño de la ventana
+  useEffect(() => {
+    if (isInView && !isMobile && !isModalOpen) {
+      const timeoutId = setTimeout(() => {
+        startSuperSlowAutoScroll();
+      }, 500);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [width, isMobile, isModalOpen]);
+
+  // Limpiar animación al desmontar
+  useEffect(() => {
+    return () => {
+      stopAutoScroll();
+    };
+  }, []);
+
+  // Manejar hover en el carrusel
+  const handleMouseEnter = () => {
+    if (!isMobile) {
+      setIsHovering(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (!isMobile) {
+      setIsHovering(false);
+    }
+  };
+
   // Función para manejar el clic en las imágenes
   const handleImageClick = (index) => {
-    // Si ya hay un timer para este índice, es un doble clic
     if (clickTimers[index]) {
       clearTimeout(clickTimers[index]);
       setClickTimers(prev => {
@@ -143,15 +319,13 @@ const BtsGallery = () => {
       });
       openModal(index);
     } else {
-      // Primer clic - establecer timer
       const timer = setTimeout(() => {
-        // Si el timer expira, limpiarlo (fue un clic simple)
         setClickTimers(prev => {
           const newTimers = { ...prev };
           delete newTimers[index];
           return newTimers;
         });
-      }, 300); // 300ms para detectar doble clic
+      }, 300);
 
       setClickTimers(prev => ({
         ...prev,
@@ -164,10 +338,8 @@ const BtsGallery = () => {
   const openModal = (index) => {
     setCurrentImageIndex(index);
     setIsModalOpen(true);
-    // Bloquear scroll del body cuando el modal está abierto
     document.body.style.overflow = 'hidden';
 
-    // Ocultar el header cuando se abre el modal
     const header = document.querySelector('header');
     if (header) {
       header.style.display = 'none';
@@ -177,10 +349,8 @@ const BtsGallery = () => {
   // Función para cerrar el modal
   const closeModal = () => {
     setIsModalOpen(false);
-    // Restaurar scroll del body
     document.body.style.overflow = 'auto';
 
-    // Mostrar el header cuando se cierra el modal
     const header = document.querySelector('header');
     if (header) {
       header.style.display = 'block';
@@ -228,14 +398,12 @@ const BtsGallery = () => {
   useEffect(() => {
     if (isModalOpen) {
       document.body.style.overflow = 'hidden';
-      // Ocultar header
       const header = document.querySelector('header');
       if (header) {
         header.style.display = 'none';
       }
     } else {
       document.body.style.overflow = 'auto';
-      // Mostrar header
       const header = document.querySelector('header');
       if (header) {
         header.style.display = 'block';
@@ -255,21 +423,14 @@ const BtsGallery = () => {
   const moveImagesWithinContainers = (scrollPosition) => {
     if (isMobile) return;
 
-    // Calcular el progreso del scroll (0 a 1)
     const maxScroll = carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
     const progress = maxScroll > 0 ? scrollPosition / maxScroll : 0;
 
-    // Aplicar transformación a todas las imágenes
     imageRefs.current.forEach((imgRef, index) => {
       if (!imgRef) return;
 
       const element = imgRef;
-
-      // Calcular cuánto puede moverse la imagen (20% del ancho de la imagen)
       const imageMovementRange = element.naturalWidth * 0.2;
-
-      // Mover la imagen basado en el progreso del scroll
-      // Las imágenes se mueven en direcciones opuestas para crear variedad
       const movementDirection = index % 2 === 0 ? 1 : -1;
       const imageOffset = progress * imageMovementRange * movementDirection;
 
@@ -307,7 +468,6 @@ const BtsGallery = () => {
 
     gsap.killTweensOf(imageElement);
 
-    // Resetear el zoom
     gsap.to(imageElement, {
       scale: 1,
       duration: 0.6,
@@ -328,7 +488,6 @@ const BtsGallery = () => {
 
     gsap.killTweensOf(imageElement);
 
-    // Zoom sutil sin cambiar el tamaño del contenedor
     gsap.to(imageElement, {
       scale: 1.05,
       duration: 0.8,
@@ -353,7 +512,7 @@ const BtsGallery = () => {
     });
   };
 
-  // Animación de entrada de thumbnails - MODIFICADO: Configuración inicial correcta
+  // Animación de entrada de thumbnails
   const revealThumbnails = () => {
     if (!carouselRef.current) return;
     
@@ -364,40 +523,32 @@ const BtsGallery = () => {
 
     if (!thumbnails.length) return;
 
-    // IMPORTANTE: Configurar estado inicial oculto
-    // Las imágenes comienzan con clip-path que las oculta completamente
     gsap.set(thumbnails, { 
       "--reveal-height": "0%",
       clipPath: "inset(0 0 calc(100% - var(--reveal-height, 0%)) 0)",
-      visibility: "visible" // Pero visibles para la animación
+      visibility: "visible"
     });
     
-    // Las imágenes comienzan escaladas
     gsap.set(images, { 
       scale: 1.2,
-      opacity: 0 // Comienzan invisibles
+      opacity: 0
     });
 
-    // ScrollTrigger para revelar
     ScrollTrigger.batch(thumbnails, {
       start: "top 90%",
       onEnter: (elements) => {
-        // timeline de entrada
         let tl = gsap.timeline();
 
-        // Primero hacemos que las imágenes sean visibles
         tl.to(elements, {
           opacity: 1,
           duration: 0.1,
           onComplete: () => {
-            // Luego aplicamos la animación de clip-path
             tl.to(elements, {
               "--reveal-height": "100%",
               duration: 1,
               ease: CustomEase.create("easeOutCubic", ".4,.17,.53,1"),
               stagger: 0.15,
               onUpdate: function() {
-                // Actualizar el clip-path dinámicamente
                 elements.forEach(el => {
                   const height = getComputedStyle(el).getPropertyValue('--reveal-height');
                   el.style.clipPath = `inset(0 0 calc(100% - ${height}) 0)`;
@@ -406,7 +557,6 @@ const BtsGallery = () => {
               onComplete: () => {
                 elements.forEach(el => {
                   el.classList.add("is-shown");
-                  // Remover clip-path cuando la animación está completa
                   el.style.clipPath = "none";
                 });
               }
@@ -417,18 +567,17 @@ const BtsGallery = () => {
       once: true
     });
 
-    // Animación de escala de imágenes
     ScrollTrigger.batch(images, {
       start: "top 100%",
       onEnter: (elements) => {
         gsap.fromTo(elements,
           { 
             scale: 1.2,
-            opacity: 0 // Comienzan invisibles
+            opacity: 0
           },
           { 
             scale: 1, 
-            opacity: 1, // Terminan visibles
+            opacity: 1,
             ease: CustomEase.create("easeOutExpo", "0.16, 1, 0.3, 1"), 
             duration: 1.8, 
             stagger: 0.15 
@@ -460,6 +609,9 @@ const BtsGallery = () => {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsInView(true);
+        } else {
+          setIsInView(false);
+          pauseAutoScroll();
         }
       },
       { threshold: 0.1 }
@@ -496,14 +648,19 @@ const BtsGallery = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
 
-      if (!mobile) {
+      if (!mobile && isInView && !isModalOpen) {
         initializeHoverEffects();
+        setTimeout(() => {
+          startSuperSlowAutoScroll();
+        }, 300);
+      } else if (mobile) {
+        stopAutoScroll();
       }
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [isInView, isModalOpen]);
 
   // Limpiar timers cuando el componente se desmonta
   useEffect(() => {
@@ -511,10 +668,11 @@ const BtsGallery = () => {
       Object.values(clickTimers).forEach(timer => {
         if (timer) clearTimeout(timer);
       });
+      stopAutoScroll();
     };
   }, [clickTimers]);
 
-  // Tamaños responsive para las tarjetas - IDÉNTICO A STILLS
+  // Tamaños responsive para las tarjetas
   const getCardWidth = () => {
     if (typeof window === 'undefined') return '28vw';
 
@@ -524,6 +682,47 @@ const BtsGallery = () => {
     if (width < 1024) return '50vw';
     if (width < 1280) return '35vw';
     return '28vw';
+  };
+
+  // Manejar drag - ARREGLADO para control preciso
+  const handleDragStart = (event, info) => {
+    setIsDragging(true);
+    pauseAutoScroll();
+    
+    // Guardar posición inicial del scroll y del mouse
+    dragStartScrollRef.current = carouselRef.current.scrollLeft;
+    dragStartMouseRef.current = info.point.x;
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+    
+    // Reanudar auto-scroll después de un momento
+    setTimeout(() => {
+      if (!isModalOpen && !isMobile) {
+        resumeAutoScroll();
+      }
+    }, 300);
+  };
+
+  const handleDrag = (event, info) => {
+    if (carouselRef.current && dragStartMouseRef.current !== null) {
+      // Calcular el desplazamiento relativo desde el inicio del drag
+      const mouseDelta = dragStartMouseRef.current - info.point.x;
+      
+      // Calcular nueva posición del scroll basada en el desplazamiento del mouse
+      const newScrollLeft = dragStartScrollRef.current + mouseDelta;
+      
+      // Limitar el scroll a los límites válidos
+      const maxScroll = carouselRef.current.scrollWidth - carouselRef.current.clientWidth;
+      const clampedScroll = Math.max(0, Math.min(newScrollLeft, maxScroll));
+      
+      // Aplicar el scroll directamente
+      carouselRef.current.scrollLeft = clampedScroll;
+      
+      // Actualizar las imágenes internas
+      moveImagesWithinContainers(clampedScroll);
+    }
   };
 
   return (
@@ -536,7 +735,7 @@ const BtsGallery = () => {
 
           <motion.div
             ref={carouselRef}
-            className={`relative h-80 sm:h-96 lg:h-[28rem] flex items-center ${isMobile
+            className={`relative h-80 sm:h-96 lg:h-[28rem] flex items-start pt-2 ${isMobile
                 ? "overflow-x-auto overflow-y-hidden scrollbar-hide"
                 : "overflow-hidden"
               }`}
@@ -544,35 +743,27 @@ const BtsGallery = () => {
               WebkitOverflowScrolling: 'touch',
               cursor: isMobile ? 'grab' : 'grab'
             }}
-            onMouseEnter={() => !isMobile && setIsHovering(true)}
-            onMouseLeave={() => !isMobile && setIsHovering(false)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
           >
             <motion.div
-              drag={!isMobile ? "x" : false}
+              ref={contentRef}
+              drag="x"
               dragConstraints={{ right: 0, left: -width }}
-              dragElastic={0.1}
-              className={`flex ${!isMobile ? 'cursor-grab active:cursor-grabbing' : 'cursor-grab active:cursor-grabbing'
-                }`}
+              dragElastic={0} // SIN elasticidad para control preciso
+              dragMomentum={false} // SIN momentum para que no se siga moviendo
+              className={`flex ${isMobile ? 'cursor-grab active:cursor-grabbing' : 'cursor-grab active:cursor-grabbing'}`}
               style={{
                 width: isMobile ? 'max-content' : 'auto',
                 paddingLeft: '1rem',
                 paddingRight: '1rem'
               }}
-              onDrag={(event, info) => {
-                if (!isMobile && carouselRef.current) {
-                  const scrollLeft = -info.offset.x;
-                  moveImagesWithinContainers(scrollLeft);
-                }
-              }}
-              onDragEnd={(event, info) => {
-                if (!isMobile && carouselRef.current) {
-                  const scrollLeft = -info.offset.x;
-                  moveImagesWithinContainers(scrollLeft);
-                }
-              }}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+              onDrag={handleDrag}
             >
               {btsImages.map((project, index) => (
                 <div
@@ -593,8 +784,8 @@ const BtsGallery = () => {
                   <div 
                     className="project-thumbnail__img relative overflow-hidden js-project-thumbnail-img"
                     style={{
-                      opacity: 0, // Inicialmente invisible
-                      clipPath: "inset(0 0 100% 0)" // Completamente oculto
+                      opacity: 0,
+                      clipPath: "inset(0 0 100% 0)"
                     }}
                   >
                     {/* IMAGEN ÚNICA */}
@@ -618,8 +809,9 @@ const BtsGallery = () => {
                           minWidth: '120%',
                           width: '120%',
                           left: '-10%',
+                          top: '-3%',
                           transform: 'scale(1.2)',
-                          opacity: 0 // Inicialmente invisible
+                          opacity: 0
                         }}
                         draggable="false"
                         loading="lazy"
@@ -638,6 +830,7 @@ const BtsGallery = () => {
               />
             </motion.div>
           </motion.div>
+          {/* REMOVIDO: Indicador de velocidad */}
         </div>
       </div>
 
@@ -653,17 +846,22 @@ const BtsGallery = () => {
           overflow: hidden;
           z-index: 1;
           aspect-ratio: 0.76;
+          margin-top: -0.5rem;
         }
 
         .thumbnail-clip {
           will-change: clip-path;
+          height: 103%;
+          top: -1.5%;
+          position: relative;
         }
 
         .img {
-          height: 100%;
+          height: 103%;
           object-fit: cover;
           position: absolute;
           transition: transform 0.8s ease-out !important;
+          object-position: center 45%;
         }
 
         .js-project-thumbnail-img.is-shown {
