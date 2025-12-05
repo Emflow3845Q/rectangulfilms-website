@@ -1,5 +1,5 @@
 // src/layout/Header/HeaderNav.jsx
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import useBackgroundColor from './hooks/useBackgroundColor';
@@ -49,7 +49,7 @@ const HeaderNav = ({
   t 
 }) => {
   const logoRef = useRef(null);
-  const { isLightBg, backgroundColor } = useBackgroundColor();
+  const { useBlackLogo } = useBackgroundColor();
   
   // Efecto para aplicar el filtro correcto al logo
   useEffect(() => {
@@ -57,30 +57,48 @@ const HeaderNav = ({
     
     const logo = logoRef.current;
     
+    // Transición suave del filtro
     if (isMenuOpen) {
-      // En menú abierto, mantener logo blanco (sin filtro)
+      // Menú abierto: logo blanco siempre
       logo.style.filter = 'none';
       logo.style.opacity = '1';
-    } else if (isLightBg) {
-      // En fondo claro, convertir logo blanco a negro
+    } else if (useBlackLogo) {
+      // Fondo claro: logo negro
       logo.style.filter = 'brightness(0) saturate(100%)';
       logo.style.opacity = '1';
     } else {
-      // En fondo oscuro, mantener logo blanco original
+      // Fondo oscuro/rojo: logo blanco
       logo.style.filter = 'none';
       logo.style.opacity = '1';
     }
     
-    // Transición suave
-    logo.style.transition = 'filter 0.3s ease, opacity 0.3s ease';
-  }, [isLightBg, isMenuOpen]);
+    // Aplicar transición suave
+    logo.style.transition = 'filter 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease';
+    
+  }, [useBlackLogo, isMenuOpen]);
+
+  // Determinar estilos del header
+  const getHeaderStyles = () => {
+    const styles = {
+      backgroundColor: 'transparent',
+      transition: 'all 0.4s ease'
+    };
+    
+    if (isMenuOpen) {
+      styles.mixBlendMode = 'normal';
+    } else {
+      styles.mixBlendMode = useBlackLogo ? 'normal' : 'difference';
+    }
+    
+    return styles;
+  };
 
   // Determinar color del texto
   const getTextColor = () => {
     if (isMenuOpen) {
       return 'text-white';
     }
-    return isLightBg ? 'text-black' : 'text-white';
+    return useBlackLogo ? 'text-black' : 'text-white';
   };
 
   // Determinar color de las líneas del menú
@@ -88,7 +106,7 @@ const HeaderNav = ({
     if (isMenuOpen) {
       return 'bg-white';
     }
-    return isLightBg ? 'bg-black' : 'bg-white';
+    return useBlackLogo ? 'bg-black' : 'bg-white';
   };
 
   // Animación de zoom al pasar el cursor
@@ -133,12 +151,10 @@ const HeaderNav = ({
 
   return (
     <header 
-      className={`fixed top-0 left-0 w-full z-[100] py-2 md:py-3 bg-transparent transition-all duration-500 ${
+      className={`fixed top-0 left-0 w-full z-[100] py-2 md:py-3 ${
         isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
       }`}
-      style={{ 
-        mixBlendMode: isLightBg && !isMenuOpen ? 'normal' : 'difference'
-      }}
+      style={getHeaderStyles()}
     >
       <nav className="w-full px-4 sm:px-6 relative">
         <div className="flex justify-between items-center">
@@ -165,8 +181,7 @@ const HeaderNav = ({
                   className="h-7 sm:h-8 lg:h-10 w-auto cursor-pointer"
                   style={{
                     transformOrigin: 'center',
-                    willChange: 'transform, filter',
-                    display: 'block'
+                    willChange: 'transform, filter'
                   }}
                 />
               </div>

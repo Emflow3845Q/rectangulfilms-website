@@ -2,27 +2,9 @@
 import { useState, useEffect, useRef } from 'react';
 
 const useBackgroundColor = () => {
-  const [useBlackLogo, setUseBlackLogo] = useState(true); // Por defecto negro
+  const [useBlackLogo, setUseBlackLogo] = useState(false); // Por defecto usar logo blanco
   const checkIntervalRef = useRef(null);
-
-  const isWhiteBackground = (bgColor) => {
-    if (!bgColor || bgColor === 'transparent' || bgColor === 'rgba(0, 0, 0, 0)') {
-      return false; // Transparente NO es blanco, usar negro
-    }
-
-    // Extraer valores RGB
-    const rgb = bgColor.match(/\d+/g);
-    if (rgb && rgb.length >= 3) {
-      const [r, g, b] = rgb.map(Number);
-      
-      // Verificar si es BLANCO puro o casi blanco
-      // Si todos los canales están cerca de 255, es blanco
-      const isWhite = r > 240 && g > 240 && b > 240;
-      return isWhite;
-    }
-    
-    return false; // Por defecto NO es blanco, usar negro
-  };
+  const lastCheckRef = useRef(0);
 
   const checkBackgroundAtPosition = (x, y) => {
     try {
@@ -37,57 +19,87 @@ const useBackgroundColor = () => {
           continue;
         }
         
+        // DETECCIÓN DIRECTA DEL CANVAS DE THREE.JS
+        // Verificar por clase
+        if (element.classList.contains('threejs-background') ||
+            element.classList.contains('threejs-red-distortion') ||
+            element.classList.contains('threejs-canvas')) {
+          return false; // false = usar logo BLANCO sobre fondo Three.js
+        }
+        
+        // Verificar por tag y z-index
+        if (element.tagName.toLowerCase() === 'canvas') {
+          const style = window.getComputedStyle(element);
+          const zIndex = style.zIndex;
+          // Si es un canvas con z-index bajo (probablemente fondo)
+          if (zIndex === '0' || zIndex === '-1' || zIndex === '') {
+            return false; // Usar logo BLANCO
+          }
+        }
+        
         const style = window.getComputedStyle(element);
         const bgColor = style.backgroundColor;
-        const opacity = style.opacity;
+        const opacity = parseFloat(style.opacity);
+        const display = style.display;
+        const visibility = style.visibility;
         
         // Si el elemento es visible
-        if (opacity > 0 && style.display !== 'none' && style.visibility !== 'hidden') {
-          // Si encuentra un fondo BLANCO, NO usar logo negro
-          if (isWhiteBackground(bgColor)) {
-            return false; // false = NO usar negro (usar blanco)
+        if (opacity > 0 && display !== 'none' && visibility !== 'hidden') {
+          if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
+            const rgb = bgColor.match(/\d+/g);
+            if (rgb && rgb.length >= 3) {
+              const [r, g, b] = rgb.map(Number);
+              
+              // Detectar si es blanco o muy claro
+              const isWhite = r > 240 && g > 240 && b > 240;
+              const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+              const isLight = luminance > 0.7;
+              
+              if (isWhite || isLight) {
+                return true; // true = usar logo NEGRO en fondos claros
+              }
+              
+              // Para cualquier otro color (incluido rojo), usar logo blanco
+              return false;
+            }
           }
-          // Cualquier otro color: usar negro
-          return true;
         }
       }
+      
+      // Si llegamos aquí, no encontramos ningún elemento con fondo claro
+      return false; // Usar logo BLANCO por defecto
+      
     } catch (error) {
       console.error('Error checking background:', error);
+      return false; // En caso de error, usar logo blanco (más seguro)
     }
-    
-    return true; // Por defecto usar negro
   };
 
   useEffect(() => {
     const checkBackground = () => {
       if (document.readyState !== 'complete') return;
       
-      // Verificar en múltiples puntos cerca del logo
-      const checkPoints = [
-        { x: 60, y: 30 }, // Izquierda del logo
-        { x: 100, y: 30 }, // Centro del logo
-        { x: 140, y: 30 }, // Derecha del logo
-      ];
+      const now = Date.now();
+      // Evitar checks demasiado frecuentes
+      if (now - lastCheckRef.current < 200) return;
+      lastCheckRef.current = now;
       
-      let useBlackCount = 0;
-      let totalChecks = 0;
+      // Verificar solo en un punto central (donde está el logo)
+      const shouldUseBlack = checkBackgroundAtPosition(100, 30);
       
-      checkPoints.forEach(point => {
-        const shouldUseBlack = checkBackgroundAtPosition(point.x, point.y);
-        if (shouldUseBlack) useBlackCount++;
-        totalChecks++;
+      setUseBlackLogo(prev => {
+        if (prev !== shouldUseBlack) {
+          return shouldUseBlack;
+        }
+        return prev;
       });
-      
-      // Si la mayoría de los puntos indica usar negro
-      const shouldUseBlackLogo = useBlackCount > totalChecks / 2;
-      setUseBlackLogo(shouldUseBlackLogo);
     };
 
-    // Verificar inmediatamente
-    checkBackground();
+    // Verificar inmediatamente con delay para que Three.js se renderice
+    setTimeout(checkBackground, 500);
     
     // Configurar intervalo para verificar periódicamente
-    checkIntervalRef.current = setInterval(checkBackground, 500);
+    checkIntervalRef.current = setInterval(checkBackground, 1000);
     
     // Verificar en eventos importantes
     const events = ['scroll', 'resize', 'load', 'DOMContentLoaded'];

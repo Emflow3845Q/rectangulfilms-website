@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import * as THREE from 'three';
 
-const RedDistortionBackground = () => {
+const RedDistortionBackground = forwardRef((props, ref) => {
   const containerRef = useRef(null);
+  const canvasRef = useRef(null);
   const animationIdRef = useRef(null);
   
   // Referencias para el mouse con suavizado
@@ -12,6 +13,13 @@ const RedDistortionBackground = () => {
   const easeFactor = useRef(0.08);
   const mouseTrail = useRef([]);
   const lastMouseTime = useRef(Date.now());
+
+  // Exponer métodos al padre
+  useImperativeHandle(ref, () => ({
+    getCanvas: () => canvasRef.current,
+    isThreeJsBackground: () => true,
+    forceWhiteHeader: () => true
+  }));
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -34,7 +42,12 @@ const RedDistortionBackground = () => {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setClearColor(0x000000, 1);
     
-    containerRef.current.appendChild(renderer.domElement);
+    const canvas = renderer.domElement;
+    canvasRef.current = canvas; // Guardar referencia al canvas
+    canvas.classList.add('threejs-background', 'threejs-red-distortion', 'threejs-canvas');
+    canvas.style.zIndex = '0';
+    
+    containerRef.current.appendChild(canvas);
 
     const vertexShader = `
       varying vec2 vUv;
@@ -358,6 +371,7 @@ const RedDistortionBackground = () => {
   return (
     <div 
       ref={containerRef}
+      className="threejs-background-container"
       style={{
         position: 'absolute', 
         top: 0,
@@ -369,6 +383,6 @@ const RedDistortionBackground = () => {
       }}
     />
   );
-};
+});
 
 export default RedDistortionBackground;

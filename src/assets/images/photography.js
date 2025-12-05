@@ -1,7 +1,7 @@
 export const photographyImages = {
   photography1: "https://res.cloudinary.com/dl416umfa/image/upload/v1764785829/_0010042_xtjamr.jpg",
   photography2: "https://res.cloudinary.com/dl416umfa/image/upload/v1764785829/_0010100_souoqr.jpg",
-  photography3: "https://res.cloudinary.com/dl416umfa/image/upload/v1764785829/_0010100_souoqr.jpg",
+  photography3: "https://res.cloudinary.com/dl416umfa/image/upload/v1764785830/_0017775_seakpv.jpg",
   photography4: "https://res.cloudinary.com/dl416umfa/image/upload/v1764785830/_0017674_xtqyr6.jpg",
   photography5: "https://res.cloudinary.com/dl416umfa/image/upload/v1764785830/_0019094_cqep0w.jpg",
   photography6: "https://res.cloudinary.com/dl416umfa/image/upload/v1764785830/_0017606_o6fxcb.jpg",
