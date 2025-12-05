@@ -63,7 +63,7 @@ const VideoBackground = forwardRef((props, ref) => {
 
       void main() {
         // Grid de 40x40 (ajustable)
-        vec2 gridUV = floor(vUv * vec2(30.0, 40.0)) / vec2(30.0, 40.0);
+        vec2 gridUV = floor(vUv * vec2(25.0, 25.0)) / vec2(25.0, 25.0);
         vec2 centerOfPixel = gridUV + vec2(1.0/80.0, 1.0/80.0);
         
         // Dirección del movimiento del mouse
