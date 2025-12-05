@@ -1,53 +1,49 @@
 import React from "react";
-import { motion } from "framer-motion";
+import RevealText from "../RevealText"; // importa tu componente
 
 const ServicesSection = () => {
-  // Versión ULTRA FORZADA - arrays congelados
-  const serviceColumns = Object.freeze([
-    Object.freeze({
+  const serviceColumns = [
+    {
       title: "Photography",
-      services: Object.freeze([
+      services: [
         "Fashion and editorial campaigns",
         "Corporate and artistic portraits",
         "Advertising photography",
         "Event photo coverage",
         "Product photography",
-        "Film and video stills"
-      ]),
+        "Film and video stills",
+      ],
       key: "photography",
-      itemCount: 6 // Menor cantidad
-    }),
-    Object.freeze({
+    },
+    {
       title: "Equipment Rental",
-      services: Object.freeze([
+      services: [
         "Monitors, transmitters, and on-set accessories",
         "Grip gear, tripods, C-stands, and rigging",
         "Professional audio and microphones",
         "Cinema lenses and accessories",
         "Fully equipped soundstage",
         "Digital cinema cameras",
-        "Professional lighting"
-      ]),
+        "Professional lighting",
+      ],
       key: "equipment",
-      itemCount: 7
-    }),
-    Object.freeze({
+    },
+    {
       title: "Live Events & Broadcasts",
-      services: Object.freeze([
+      services: [
         "Live graphics integration (visuals and overlays)",
         "Event recording and post-event recap videos",
         "Multicam closed-circuit operation (CCTV)",
         "Live event production and coverage",
         "Technical and creative coordination",
         "Real-time multiplatform streaming",
-        "Screen setup and AV equipment"
-      ]),
+        "Screen setup and AV equipment",
+      ],
       key: "liveEvents",
-      itemCount: 7
-    }),
-    Object.freeze({
+    },
+    {
       title: "Production",
-      services: Object.freeze([
+      services: [
         "Corporate and institutional productions",
         "Testimonial capsules and interviews",
         "Advertising and commercial videos",
@@ -56,65 +52,55 @@ const ServicesSection = () => {
         "Product and fashion spots",
         "Aerial drone filming",
         "Event coverage",
-        "Music videos"
-      ]),
+        "Music videos",
+      ],
       key: "production",
-      itemCount: 9 // Mayor cantidad
-    })
-  ]);
-
-  // Ordenar las columnas por cantidad de servicios (de menor a mayor)
-  const sortedColumns = [...serviceColumns].sort((a, b) => a.itemCount - b.itemCount);
-
-  const ServiceColumn = ({ title, services, delay = 0.2, serviceKey }) => (
-    <motion.div className="text-center min-w-0" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay }}>
-      {/* ELIMINADO: bg-black-pure ya no es necesario si el padre es negro */}
-      <div className="p-6 lg:p-8 h-full">
-        {/* Títulos de columnas - AJUSTADO para mantener en una línea */}
-        <h3 className="text-white-pure text-[13px] uppercase tracking-[0.3em] mb-4 font-gotham font-bold whitespace-nowrap overflow-hidden text-ellipsis">
-          {title}
-        </h3>
-        <ul className="space-y-2">
-          {services.map((service, index) => (
-            <motion.li
-              key={index}
-              className="text-white-pure text-[12px] tracking-wide font-gotham font-light leading-tight break-keep whitespace-nowrap overflow-hidden text-ellipsis"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: delay + 0.2 + index * 0.05 }}
-            >
-              {service}
-            </motion.li>
-          ))}
-        </ul>
-      </div>
-    </motion.div>
-  );
+    },
+  ];
 
   return (
     <div className="section">
-      {/* AGREGADO: overflow-hidden y eliminado py-12 */}
-      <div className="min-h-[90vh] bg-black-pure text-white-pure flex items-center overflow-hidden  pb-0 ">
-        {/* AGREGADO: border-0 y eliminado padding horizontal excesivo */}
+      <div className="min-h-[90vh] bg-black-pure text-white-pure flex items-center overflow-hidden pb-0">
         <div className="w-full border-0">
           <div className="w-full">
-            {/* Texto "OUR CAPABILITIES" un poquito más grande */}
-            <motion.p className="text-[12px] text-white-pure uppercase tracking-[0.3em] text-left mb-3 font-gotham font-medium px-4 sm:px-6 lg:px-8 xl:px-20" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>OUR CAPABILITIES</motion.p>
+            <RevealText
+              as="p"
+              className="text-[12px] text-white-pure uppercase tracking-[0.3em] text-left mb-3 font-gotham font-medium px-4 sm:px-6 lg:px-8 xl:px-20"
+            >
+              OUR CAPABILITIES
+            </RevealText>
 
-            {/* Título principal UN POQUITO MÁS GRANDE */}
-            <motion.h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-gotham font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-6 lg:px-8 xl:px-20" initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>How We Can Help</motion.h2>
+            <RevealText
+              as="h2"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-gotham font-black uppercase tracking-tight text-white-pure text-center mb-12 sm:mb-16 lg:mb-20 px-4 sm:px-6 lg:px-8 xl:px-20"
+            >
+              How We Can Help
+            </RevealText>
 
-            {/* Grid de 4 columnas fijas - MÁS ESPACIO ENTRE COLUMNAS */}
-            {/* AGREGADO: px-0 para eliminar padding horizontal */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-10 lg:gap-16 xl:gap-20 justify-items-center px-0">
-              {sortedColumns.map((column, index) => (
-                <ServiceColumn
+              {serviceColumns.map((column) => (
+                <div
                   key={column.key}
-                  title={column.title}
-                  services={column.services}
-                  delay={0.2 + index * 0.1}
-                  serviceKey={column.key}
-                />
+                  className="text-center min-w-0 p-6 lg:p-8 h-full"
+                >
+                  <RevealText
+                    as="h3"
+                    className="text-white-pure text-[13px] uppercase tracking-[0.3em] mb-4 font-gotham font-bold whitespace-nowrap overflow-hidden text-ellipsis"
+                  >
+                    {column.title}
+                  </RevealText>
+                  <ul className="space-y-2">
+                    {column.services.map((service, index) => (
+                      <RevealText
+                        as="li"
+                        key={index}
+                        className="text-white-pure text-[12px] tracking-wide font-gotham font-light leading-tight break-keep whitespace-nowrap overflow-hidden text-ellipsis"
+                      >
+                        {service}
+                      </RevealText>
+                    ))}
+                  </ul>
+                </div>
               ))}
             </div>
           </div>

@@ -1,5 +1,6 @@
 // src/layout/Header/MenuDesktop.jsx
-import React from 'react';
+import React, { useRef } from 'react';
+import { gsap } from 'gsap';
 
 const MenuDesktop = ({ 
   menuItems, 
@@ -10,6 +11,53 @@ const MenuDesktop = ({
   handleMenuItemHover,
   renderMediaContent 
 }) => {
+  const menuLogoImageRef = useRef(null);
+
+  // Animación de zoom para el logo en el menú
+  const handleMenuLogoMouseEnter = () => {
+    if (menuLogoImageRef.current) {
+      gsap.to(menuLogoImageRef.current, {
+        scale: 1.1,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    }
+  };
+
+  const handleMenuLogoMouseLeave = () => {
+    if (menuLogoImageRef.current) {
+      gsap.to(menuLogoImageRef.current, {
+        scale: 1,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    }
+  };
+
+  // Animación de click para el logo en el menú
+  const handleMenuLogoClick = (e) => {
+    e.preventDefault();
+    
+    if (menuLogoImageRef.current) {
+      // Pequeña animación de feedback al hacer clic
+      gsap.timeline()
+        .to(menuLogoImageRef.current, {
+          scale: 0.95,
+          duration: 0.1,
+          ease: "power2.out"
+        })
+        .to(menuLogoImageRef.current, {
+          scale: 1,
+          duration: 0.2,
+          ease: "elastic.out(1, 0.5)",
+          onComplete: () => {
+            // Navegar a la página de inicio
+            window.location.href = '/';
+          }
+        });
+    }
+  };
+
   return (
     <>
       <div className="w-full md:w-1/2 relative z-10 flex flex-col justify-center pl-12 xl:pl-24">
@@ -19,10 +67,19 @@ const MenuDesktop = ({
           className="absolute top-8 left-12"
         >
           <img
+            ref={menuLogoImageRef}
             src="/logo.png"
             alt="Rectángulo Films"
             // MISMO TAMAÑO QUE HEADERNAV
-            className="h-7 sm:h-8 lg:h-10 w-auto"
+            className="h-7 sm:h-8 lg:h-10 w-auto cursor-pointer transition-transform duration-300"
+            onClick={handleMenuLogoClick}
+            onMouseEnter={handleMenuLogoMouseEnter}
+            onMouseLeave={handleMenuLogoMouseLeave}
+            style={{
+              transformOrigin: 'center',
+              willChange: 'transform',
+              display: 'block'
+            }}
           />
         </div>
 

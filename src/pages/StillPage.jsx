@@ -2,8 +2,13 @@ import React, { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 import gsap from "gsap";
+import { CustomEase, ScrollTrigger } from "gsap/all";
+import RevealText from "../components/RevealText";
 // Importar todas las imágenes de stills
 import { stillImages as stills } from "../assets/images/stills";
+
+// Registrar plugins de GSAP
+gsap.registerPlugin(ScrollTrigger, CustomEase);
 
 const StillPage = () => {
   const { t } = useLanguage();
@@ -23,8 +28,9 @@ const StillPage = () => {
   // Referencias para GSAP
   const projectRefs = useRef([]);
   const imageRefs = useRef([]);
+  const thumbnailRefs = useRef([]);
 
-  // Detectar si es móvil - MEJORADO
+  // Detectar si es móvil
   useEffect(() => {
     const checkMobile = () => {
       const mobile = window.innerWidth <= 768;
@@ -205,7 +211,7 @@ const StillPage = () => {
     }
   }, [isMobile]);
 
-  // Función para resetear a estado inicial - SIMPLIFICADA
+  // Función para resetear a estado inicial
   const resetToInitialState = (index) => {
     if (isMobile) return;
 
@@ -226,7 +232,7 @@ const StillPage = () => {
     });
   };
 
-  // Función de animación al hacer hover - SIMPLIFICADA: SOLO ZOOM SUTIL
+  // Función de animación al hacer hover
   const handleProjectHover = (index) => {
     if (isMobile) return;
 
@@ -247,7 +253,7 @@ const StillPage = () => {
     });
   };
 
-  // Inicializar event listeners - SIMPLIFICADA
+  // Inicializar event listeners
   const initializeHoverEffects = () => {
     if (isMobile) return;
 
@@ -264,127 +270,104 @@ const StillPage = () => {
     });
   };
 
-  // Variantes de animación para el efecto cortina
-  const curtainVariants = {
-    hidden: {
-      height: 0,
-      opacity: 0,
-      y: -50
-    },
-    visible: {
-      height: "100%",
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.1, 0.25, 1],
-        opacity: { duration: 0.4 },
-        height: { duration: 0.7 }
-      }
-    }
-  };
+  // Animación de entrada de thumbnails - CORREGIDO: DE ARRIBA HACIA ABAJO
+  const revealThumbnails = () => {
+    if (!carouselRef.current) return;
+    
+    const thumbnails = Array.from(
+      carouselRef.current.querySelectorAll(".js-project-thumbnail-img:not(.is-shown)")
+    );
+    const images = carouselRef.current.querySelectorAll(".js-project-image");
 
-  // Variantes para el contenido que aparece después
-  const contentVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        delay: 0.3,
-        ease: "easeOut"
-      }
-    }
-  };
+    if (!thumbnails.length) return;
 
-  // Variantes para el contenedor de cada tarjeta
-  const cardVariants = {
-    hidden: {
-      opacity: 0
-    },
-    visible: (i) => ({
-      opacity: 1,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.3
-      }
-    })
-  };
+    // Configuración inicial - CORREGIDO: Comienza con altura 0 desde arriba
+    gsap.set(thumbnails, { 
+      "--reveal-height": "0%",
+      clipPath: "inset(0 0 calc(100% - var(--reveal-height, 0%)) 0)" 
+    });
+    gsap.set(images, { scale: 1.2 });
 
-  // Variantes para el modal
-  const modalVariants = {
-    hidden: {
-      opacity: 0,
-      scale: 0.8
-    },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut"
-      }
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.8,
-      transition: {
-        duration: 0.2,
-        ease: "easeIn"
-      }
-    }
-  };
+    // ScrollTrigger para revelar
+    ScrollTrigger.batch(thumbnails, {
+      start: "top 90%",
+      onEnter: (elements) => {
+        // timeline de entrada
+        let tl = gsap.timeline();
 
-  // Variantes para la imagen del modal
-  const modalImageVariants = {
-    hidden: {
-      opacity: 0,
-      scale: 0.9
-    },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.4,
-        ease: "easeOut"
-      }
-    },
-    exit: {
-      opacity: 0,
-      scale: 1.1,
-      transition: {
-        duration: 0.3
-      }
-    }
+        tl.to(elements, {
+          "--reveal-height": "100%",
+          duration: 1,
+          ease: CustomEase.create("easeOutCubic", ".4,.17,.53,1"),
+          stagger: 0.15,
+          onUpdate: function() {
+            // Actualizar el clip-path dinámicamente
+            elements.forEach(el => {
+              const height = getComputedStyle(el).getPropertyValue('--reveal-height');
+              el.style.clipPath = `inset(0 0 calc(100% - ${height}) 0)`;
+            });
+          },
+          onComplete: () => {
+            elements.forEach(el => {
+              el.classList.add("is-shown");
+              // Remover clip-path cuando la animación está completa
+              el.style.clipPath = "none";
+            });
+          }
+        });
+      },
+      once: true
+    });
+
+    // Animación de escala de imágenes
+    ScrollTrigger.batch(images, {
+      start: "top 100%",
+      onEnter: (elements) => {
+        gsap.fromTo(elements,
+          { scale: 1.2 },
+          { 
+            scale: 1, 
+            ease: CustomEase.create("easeOutExpo", "0.16, 1, 0.3, 1"), 
+            duration: 1.8, 
+            stagger: 0.15 
+          }
+        );
+      },
+      once: true
+    });
   };
 
   const projects = [
+    { id: 1, image: stills.still1 },
+    { id: 2, image: stills.still2 },
     { id: 3, image: stills.still3 },
     { id: 4, image: stills.still4 },
     { id: 5, image: stills.still5 },
     { id: 6, image: stills.still6 },
+    { id: 7, image: stills.still7 },
     { id: 8, image: stills.still8 },
-    { id: 9, image: stills.still9 },
+    // { id: 9, image: stills.still9 }, // FALTA
+    { id: 10, image: stills.still10 },
+    { id: 11, image: stills.still11 },
     { id: 12, image: stills.still12 },
     { id: 13, image: stills.still13 },
     { id: 14, image: stills.still14 },
     { id: 15, image: stills.still15 },
+    { id: 16, image: stills.still16 },
     { id: 17, image: stills.still17 },
     { id: 18, image: stills.still18 },
     { id: 19, image: stills.still19 },
     { id: 20, image: stills.still20 },
     { id: 21, image: stills.still21 },
     { id: 22, image: stills.still22 },
+    { id: 22.5, image: stills.still22_5 },
     { id: 23, image: stills.still23 },
     { id: 24, image: stills.still24 },
     { id: 25, image: stills.still25 },
+    { id: 26, image: stills.still26 },
     { id: 27, image: stills.still27 },
-    { id: 28, image: stills.still28 },
-    { id: 29, image: stills.still29 },
+    // { id: 28, image: stills.still28 }, // FALTA
+    // { id: 29, image: stills.still29 }, // FALTA
     { id: 30, image: stills.still30 },
     { id: 31, image: stills.still31 },
     { id: 32, image: stills.still32 },
@@ -399,20 +382,18 @@ const StillPage = () => {
     { id: 41, image: stills.still41 },
     { id: 42, image: stills.still42 },
     { id: 43, image: stills.still43 },
+    { id: 44, image: stills.still44 },
     { id: 45, image: stills.still45 },
+    { id: 46, image: stills.still46 },
+    { id: 47, image: stills.still47 },
     { id: 48, image: stills.still48 },
     { id: 49, image: stills.still49 },
+    { id: 50, image: stills.still50 },
     { id: 51, image: stills.still51 },
-    { id: 52, image: stills.still52 },
-    { id: 53, image: stills.still53 },
-    { id: 54, image: stills.still54 },
-    { id: 56, image: stills.still56 },
-    { id: 57, image: stills.still57 },
-    { id: 58, image: stills.still58 },
-    { id: 60, image: stills.still60 }
+    // { id: 52, image: stills.still52 } // FALTA
   ];
 
-  // Medir ancho total para calcular drag constraints - MEJORADO
+  // Medir ancho total para calcular drag constraints
   useEffect(() => {
     const updateWidth = () => {
       if (carouselRef.current) {
@@ -425,7 +406,7 @@ const StillPage = () => {
     updateWidth();
     window.addEventListener('resize', updateWidth);
     return () => window.removeEventListener('resize', updateWidth);
-  }, [projects]); // Dependencia añadida
+  }, [projects]);
 
   // Observer para detectar cuando la sección entra en vista
   useEffect(() => {
@@ -454,6 +435,15 @@ const StillPage = () => {
     }
   }, [isInView, isMobile]);
 
+  // Inicializar animaciones de entrada
+  useEffect(() => {
+    if (isInView) {
+      setTimeout(() => {
+        revealThumbnails();
+      }, 300);
+    }
+  }, [isInView]);
+
   // Manejar resize
   useEffect(() => {
     const handleResize = () => {
@@ -478,39 +468,40 @@ const StillPage = () => {
     };
   }, [clickTimers]);
 
-  // Tamaños responsive para las tarjetas - MÁS ANCHAS
+  // Tamaños responsive para las tarjetas
   const getCardWidth = () => {
-    if (typeof window === 'undefined') return '28vw'; // Aumentado de 24vw a 28vw
+    if (typeof window === 'undefined') return '28vw';
 
     const width = window.innerWidth;
-    if (width < 640) return '90vw'; // Aumentado de 85vw a 90vw (Mobile)
-    if (width < 768) return '75vw'; // Aumentado de 70vw a 75vw (Tablet pequeña)
-    if (width < 1024) return '50vw'; // Aumentado de 45vw a 50vw (Tablet)
-    if (width < 1280) return '35vw'; // Aumentado de 32vw a 35vw (Laptop pequeña)
-    return '28vw'; // Aumentado de 24vw a 28vw (Desktop)
+    if (width < 640) return '90vw';
+    if (width < 768) return '75vw';
+    if (width < 1024) return '50vw';
+    if (width < 1280) return '35vw';
+    return '28vw';
   };
 
   return (
     <>
       <section className="w-full bg-black-pure text-white-pure py-10 md:py-20 overflow-hidden relative">
 
-        {/* HEADER */}
-        <motion.div
-          className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 md:mb-10 px-4 sm:px-6 max-w-[1800px] mx-auto"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans uppercase tracking-tight text-white-pure font-black mb-4 sm:mb-0">
+        {/* HEADER - Usando RevealText */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 md:mb-10 px-4 sm:px-6 max-w-[1800px] mx-auto">
+          <RevealText
+            as="h2"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans uppercase tracking-tight text-white-pure font-black mb-4 sm:mb-0"
+          >
             {t("still.title") || "Our Work"}
-          </h2>
+          </RevealText>
 
-          <button className="text-xs uppercase tracking-[0.3em] border-b border-white-pure pb-1 text-white-pure hover:text-red-primary hover:border-red-primary transition-colors duration-300 font-gotham font-medium self-start sm:self-auto">
+          <RevealText
+            as="button"
+            className="text-xs uppercase tracking-[0.3em] border-b border-white-pure pb-1 text-white-pure hover:text-red-primary hover:border-red-primary transition-colors duration-300 font-gotham font-medium self-start sm:self-auto"
+          >
             ALL PROJECTS
-          </button>
-        </motion.div>
+          </RevealText>
+        </div>
 
-        {/* CARRUSEL - IMÁGENES QUE SE MUEVEN DENTRO DE CONTENEDORES FIJOS */}
+        {/* CARRUSEL */}
         <motion.div
           ref={carouselRef}
           className={`relative ${isMobile
@@ -518,11 +509,9 @@ const StillPage = () => {
               : "overflow-hidden"
             }`}
           style={{
-            WebkitOverflowScrolling: 'touch', // Scroll suave en iOS
+            WebkitOverflowScrolling: 'touch',
             cursor: isMobile ? 'grab' : 'grab'
           }}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
           onMouseEnter={() => !isMobile && setIsHovering(true)}
           onMouseLeave={() => !isMobile && setIsHovering(false)}
         >
@@ -533,9 +522,7 @@ const StillPage = () => {
             className={`flex ${!isMobile ? 'cursor-grab active:cursor-grabbing' : 'cursor-grab active:cursor-grabbing'
               }`}
             style={{
-              // SIN PADDING - solo gap uniforme
               width: isMobile ? 'max-content' : 'auto',
-              // Gap uniforme usando padding en el primer y último elemento
               paddingLeft: '1rem',
               paddingRight: '1rem'
             }}
@@ -553,94 +540,64 @@ const StillPage = () => {
             }}
           >
             {projects.map((project, index) => (
-              <motion.div
+              <div
                 key={project.id}
-                ref={el => projectRefs.current[index] = el}
-                className="flex-shrink-0 group project-thumbnail cursor-pointer"
+                ref={el => {
+                  projectRefs.current[index] = el;
+                  thumbnailRefs.current[index] = el?.querySelector('.js-project-thumbnail-img');
+                }}
+                className="flex-shrink-0 group project-thumbnail cursor-pointer js-project-thumbnail"
                 style={{
                   minWidth: getCardWidth(),
                   maxWidth: getCardWidth(),
-                  // ACTUALIZADO: Mismo espacio que BtsGallery (8px = 0.5rem)
-                  marginRight: '0.5rem', // Igual que el BtsGallery
+                  marginRight: '0.5rem',
                 }}
-                custom={index}
-                variants={cardVariants}
-                whileTap={isMobile ? { scale: 0.98 } : {}}
                 onClick={() => handleImageClick(index)}
               >
-                {/* CONTENEDOR PRINCIPAL DE LA IMAGEN - TAMAÑO FIJO */}
-                <div className="project-thumbnail__img relative overflow-hidden">
-
-                  {/* IMAGEN ÚNICA - más ancha que el contenedor para permitir movimiento */}
-                  <motion.div
-                    className="w-full h-full absolute inset-0"
-                    variants={curtainVariants}
-                    initial="hidden"
-                    animate={isInView ? "visible" : "hidden"}
-                    transition={{
-                      duration: 0.8,
-                      delay: index * 0.05,
-                      ease: [0.25, 0.1, 0.25, 1]
-                    }}
-                  >
-                    <motion.div
-                      initial="hidden"
-                      animate={isInView ? "visible" : "hidden"}
-                      variants={contentVariants}
-                      transition={{ delay: index * 0.05 + 0.3 }}
-                      className="w-full h-full overflow-hidden absolute inset-0"
-                    >
-                      <img
-                        ref={el => {
-                          imageRefs.current[index] = el;
-                          // También asignamos la misma referencia para el hover
-                          if (projectRefs.current[index]) {
-                            const projectEl = projectRefs.current[index];
-                            if (projectEl && !projectEl.querySelector(".js-project-image")) {
-                              el.classList.add("js-project-image");
-                            }
+                {/* CONTENEDOR PRINCIPAL DE LA IMAGEN */}
+                <div className="project-thumbnail__img relative overflow-hidden js-project-thumbnail-img">
+                  {/* IMAGEN ÚNICA */}
+                  <div className="w-full h-full overflow-hidden absolute inset-0 thumbnail-clip">
+                    <img
+                      ref={el => {
+                        imageRefs.current[index] = el;
+                        if (projectRefs.current[index]) {
+                          const projectEl = projectRefs.current[index];
+                          if (projectEl && !projectEl.querySelector(".js-project-image")) {
+                            el.classList.add("js-project-image");
                           }
-                        }}
-                        src={project.image}
-                        alt={`Still ${project.id}`}
-                        className="img js-project-image w-full h-full object-cover transition-transform duration-800 ease-out"
-                        style={{
-                          transformOrigin: 'center center',
-                          willChange: 'transform',
-                          // La imagen es más ancha para permitir movimiento horizontal
-                          minWidth: '120%',
-                          width: '120%',
-                          left: '-10%',
-                          transform: 'scale(1)' // Estado inicial
-                        }}
-                        draggable="false"
-                        loading="lazy"
-                        onLoad={(e) => {
-                          // Una vez cargada la imagen, podemos usar sus dimensiones reales
-                          const img = e.target;
-                          if (img.naturalWidth > 0) {
-                            // Ajustar el movimiento basado en el tamaño real de la imagen
-                          }
-                        }}
-                      />
-                    </motion.div>
-                  </motion.div>
-
+                        }
+                      }}
+                      src={project.image}
+                      alt={`Still ${project.id}`}
+                      className="img js-project-image w-full h-full object-cover transition-transform duration-800 ease-out"
+                      style={{
+                        transformOrigin: 'center center',
+                        willChange: 'transform',
+                        minWidth: '120%',
+                        width: '120%',
+                        left: '-10%',
+                        transform: 'scale(1.2)'
+                      }}
+                      draggable="false"
+                      loading="lazy"
+                    />
+                  </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
             {/* ELEMENTO FANTASMA PARA ESPACIO FINAL */}
             <div
               className="flex-shrink-0"
               style={{
-                width: '1rem', // Mismo que el paddingRight
+                width: '1rem',
                 minWidth: '1rem'
               }}
             />
           </motion.div>
         </motion.div>
 
-        {/* ESTILOS CSS PARA EL EFECTO - SIMPLIFICADOS */}
+        {/* ESTILOS CSS - CORREGIDO PARA ANIMACIÓN DE ARRIBA HACIA ABAJO */}
         <style jsx>{`
           .project-thumbnail {
             display: inline-block;
@@ -652,56 +609,51 @@ const StillPage = () => {
             overflow: hidden;
             z-index: 1;
             aspect-ratio: 0.76;
-            /* CONTENEDOR CON TAMAÑO FIJO - NO CAMBIA */
+          }
+
+          .thumbnail-clip {
+            /* La animación se controla mediante JS con clip-path */
+            will-change: clip-path;
           }
 
           .img {
             height: 100%;
             object-fit: cover;
             position: absolute;
-            /* IMAGEN MÁS ANCHA QUE EL CONTENEDOR PARA PERMITIR MOVIMIENTO */
             transition: transform 0.8s ease-out !important;
           }
 
-          /* Utilidades para texto */
-          .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+          .js-project-thumbnail-img.is-shown .thumbnail-clip {
+            clip-path: none !important;
           }
 
           /* Scrollbar personalizada para móvil */
           .scrollbar-hide {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
           }
           
           .scrollbar-hide::-webkit-scrollbar {
-            display: none; /* Chrome, Safari and Opera */
+            display: none;
           }
 
-          /* Scrollbar personalizada para móvil */
           @media (max-width: 768px) {
             .project-thumbnail__img {
               border-radius: 8px;
             }
           }
         `}</style>
-
       </section>
 
-      {/* MODAL - se mantiene igual */}
+      {/* MODAL */}
       <AnimatePresence>
         {isModalOpen && (
-          <motion.div
+          <div
             className="fixed inset-0 z-[999999] flex items-center justify-center bg-black/95 backdrop-blur-md"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             onClick={closeModal}
+            style={{ opacity: 1 }}
           >
-            {/* Botón cerrar con animación igual al header */}
+            {/* Botón cerrar */}
             <button
               className="fixed top-4 right-4 sm:top-6 sm:right-6 z-10 flex items-center justify-center w-auto h-10 sm:h-12 px-4 sm:px-6 group"
               onClick={closeModal}
@@ -709,19 +661,21 @@ const StillPage = () => {
             >
               <div className="relative h-6 overflow-hidden">
                 <div className="flex flex-col transition-all duration-300 group-hover:-translate-y-6">
-                  {/* "CLOSE" normal - sube con animación */}
                   <span
                     className="text-white text-sm sm:text-base uppercase tracking-tighter font-gotham font-bold h-6 flex items-center justify-center"
                     style={{ letterSpacing: '-0.05em' }}
                   >
-                    CLOSE
+                    <RevealText as="span">
+                      CLOSE
+                    </RevealText>
                   </span>
-                  {/* "CLOSE" rojo que aparece desde abajo */}
                   <span
                     className="text-red-600 text-sm sm:text-base uppercase tracking-tighter font-gotham font-bold h-6 flex items-center justify-center"
                     style={{ letterSpacing: '-0.05em' }}
                   >
-                    CLOSE
+                    <RevealText as="span">
+                      CLOSE
+                    </RevealText>
                   </span>
                 </div>
               </div>
@@ -754,38 +708,36 @@ const StillPage = () => {
             </button>
 
             {/* Contenedor de la imagen */}
-            <motion.div
+            <div
               className="relative max-w-90vw max-h-90vh mx-4"
-              variants={modalVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
+              style={{ opacity: 1 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <motion.img
-                key={currentImageIndex} // Important para la animación entre imágenes
+              <img
+                key={currentImageIndex}
                 src={projects[currentImageIndex].image}
                 alt={`Still ${projects[currentImageIndex].id}`}
                 className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-                variants={modalImageVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
+                style={{ opacity: 1 }}
               />
 
               {/* Contador de imágenes */}
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-gotham">
-                {currentImageIndex + 1} / {projects.length}
+                <RevealText as="span">
+                  {currentImageIndex + 1} / {projects.length}
+                </RevealText>
               </div>
-            </motion.div>
+            </div>
 
             {/* Instrucciones de teclado (solo desktop) */}
             {!isMobile && (
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white/60 text-xs font-gotham text-center">
-                Usa las flechas del teclado para navegar • ESC para cerrar
+                <RevealText as="span">
+                  Usa las flechas del teclado para navegar • ESC para cerrar
+                </RevealText>
               </div>
             )}
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </>

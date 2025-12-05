@@ -27,39 +27,6 @@ export default {
           darker: 'rgb(154, 10, 0)'
         }
       },
-      animation: {
-        'film-grain': 'film-grain 0.3s infinite',
-        'scanline': 'scanline 2s linear infinite',
-        'float': 'float 3s ease-in-out infinite',
-        'shift': 'shift 3s ease-in-out infinite',
-      },
-      keyframes: {
-        'film-grain': {
-          '0%': { transform: 'translate(0, 0)' },
-          '10%': { transform: 'translate(-5%, -5%)' },
-          '20%': { transform: 'translate(-10%, 5%)' },
-          '30%': { transform: 'translate(5%, -10%)' },
-          '40%': { transform: 'translate(-5%, 15%)' },
-          '50%': { transform: 'translate(-10%, 5%)' },
-          '60%': { transform: 'translate(15%, 0)' },
-          '70%': { transform: 'translate(0, 10%)' },
-          '80%': { transform: 'translate(-15%, 0)' },
-          '90%': { transform: 'translate(10%, 5%)' },
-          '100%': { transform: 'translate(5%, 0)' },
-        },
-        'scanline': {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(100%)' },
-        },
-        'float': {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
-        'shift': {
-          '0%, 100%': { transform: 'translateX(0%)' },
-          '50%': { transform: 'translateX(10%)' },
-        }
-      },
       fontFamily: {
         'sans': ['GOTHAM'],
         'gotham': ['GOTHAM'],

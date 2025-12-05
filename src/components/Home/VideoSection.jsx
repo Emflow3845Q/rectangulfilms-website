@@ -1,15 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
+import RevealText from "../RevealText"; // Ajusta la ruta según tu estructura
 
 const VideoSection = ({ isMobile, isTablet }) => {
   const sectionRef = useRef(null);
   const marqueeRef = useRef(null);
-  const videoContainerRef = useRef(null);
 
   useEffect(() => {
-    // Inicializar animaciones usando la misma lógica que revealText
-    initVideoAnimations();
-
     if (!marqueeRef.current) return;
 
     const marqueeContent = marqueeRef.current;
@@ -33,87 +30,6 @@ const VideoSection = ({ isMobile, isTablet }) => {
     };
   }, [isMobile, isTablet]);
 
-  // Función que usa la misma lógica que revealText del HomeBanner
-  const initVideoAnimations = () => {
-    // Animación para el contenedor del video
-    if (videoContainerRef.current) {
-      gsap.fromTo(videoContainerRef.current, {
-        y: '100%',
-        opacity: 0,
-        rotationX: 85,
-        transformOrigin: 'bottom center'
-      }, {
-        y: 0,
-        opacity: 1,
-        rotationX: 0,
-        duration: 1.5,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top bottom",
-          end: "top 70%",
-          toggleActions: "play none none reverse"
-        }
-      });
-    }
-
-    // Animación para los elementos del marquee (similar a revealText)
-    if (marqueeRef.current) {
-      const marqueeItems = marqueeRef.current.querySelectorAll('.js-marquee-item');
-      if (marqueeItems.length > 0) {
-        gsap.fromTo(marqueeItems, {
-          y: '115%',
-          opacity: 0,
-          rotationX: 85,
-          transformOrigin: 'bottom center'
-        }, {
-          y: 0,
-          opacity: 0.9,
-          rotationX: 0,
-          duration: 1.2,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: marqueeRef.current,
-            start: "top 85%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse"
-          }
-        });
-      }
-    }
-
-    // Animación para overlays
-    const overlay = sectionRef.current?.querySelector('.bg-overlay');
-    if (overlay) {
-      gsap.fromTo(overlay, {
-        y: '100%',
-        opacity: 0
-      }, {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        delay: 0.3,
-        ease: "power3.out"
-      });
-    }
-
-    // Animación para gradiente
-    const gradient = sectionRef.current?.querySelector('.bg-gradient');
-    if (gradient) {
-      gsap.fromTo(gradient, {
-        y: '100%',
-        opacity: 0
-      }, {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        delay: 0.6,
-        ease: "power3.out"
-      });
-    }
-  };
-
   const count = isMobile ? Math.floor(15 * 0.6) : isTablet ? Math.floor(15 * 0.8) : 15;
 
   return (
@@ -121,13 +37,9 @@ const VideoSection = ({ isMobile, isTablet }) => {
       ref={sectionRef}
       className="h-screen snap-start relative bg-black overflow-hidden"
     >
-      {/* Video de Vimeo como fondo completo - con animación slide-up */}
+      {/* Video de Vimeo como fondo completo */}
       <div 
-        ref={videoContainerRef}
         className="absolute inset-0 z-0 w-full h-full"
-        style={{ 
-          transformOrigin: 'bottom center'
-        }}
       >
         <div style={{
           padding: '56.25% 0 0 0',
@@ -151,9 +63,9 @@ const VideoSection = ({ isMobile, isTablet }) => {
           />
         </div>
         
-        {/* Overlay para mejor contraste - con animación */}
+        {/* Overlay para mejor contraste */}
         <div 
-          className={`absolute inset-0 bg-overlay ${
+          className={`absolute inset-0 ${
             isMobile ? 'bg-black/40' : 
             isTablet ? 'bg-black/30' : 
             'bg-black/20'
@@ -180,9 +92,9 @@ const VideoSection = ({ isMobile, isTablet }) => {
           className="flex whitespace-nowrap"
         >
           {[...Array(count)].map((_, i) => (
-            <span
+            <div
               key={i}
-              className="font-sans text-white uppercase tracking-tighter font-black js-marquee-item"
+              className="font-sans text-white uppercase tracking-tighter font-black"
               style={{
                 textShadow: '5px 5px 15px rgba(0,0,0,1)',
                 fontSize: isMobile 
@@ -195,19 +107,20 @@ const VideoSection = ({ isMobile, isTablet }) => {
                 lineHeight: '0.8',
                 fontWeight: '900',
                 letterSpacing: '-0.03em',
-                display: 'inline-block',
-                transformOrigin: 'bottom center'
+                display: 'inline-block'
               }}
             >
-              everything is a rectangle
-            </span>
+              <RevealText as="span">
+                everything is a rectangle
+              </RevealText>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Gradiente adicional para mejor legibilidad - con animación */}
+      {/* Gradiente adicional para mejor legibilidad */}
       <div 
-        className={`absolute inset-0 bg-gradient-to-t bg-gradient ${
+        className={`absolute inset-0 bg-gradient-to-t ${
           isMobile ? 'from-black/90 via-transparent to-black/90' : 
           isTablet ? 'from-black/80 via-transparent to-black/80' :
           'from-black/70 via-transparent to-black/70'

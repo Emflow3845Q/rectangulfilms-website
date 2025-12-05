@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { gsap } from "gsap";
 import RedDistortionBackground from "../Background/RedDistortionBackground";
+import RevealText from "../RevealText"; // Ajusta la ruta según tu estructura
 
 const ProjectsSection = ({ 
   isMobile, 
@@ -11,13 +12,13 @@ const ProjectsSection = ({
   const featuredProjects = [
     // COLUMNA 1 - INTERCAMBIADOS ID 1 e ID 10
     {
-      id: 10, // AHORA ES ID 10 EN LA POSICIÓN DEL ID 1
+      id: 10,
       client: "Rolex",
       title: "Product",
       category: "Commercial / Branding",
       video: "/videos/rolex.mp4",
       thumbnail: "/thumbnails/Portada GIF ROLEX VERTICAL.jpg",
-      hoverVideo: "/gifs/GIF_Rolex VERTICAL.gif", // CORREGIDO: agregué .gif
+      hoverVideo: "/gifs/GIF_Rolex VERTICAL.gif",
       isGif: true,
       width: "col-span-2 lg:col-span-1",
       height: "row-span-2 lg:row-span-2",
@@ -247,84 +248,6 @@ const ProjectsSection = ({
     }
   }, [hoveredProject]);
 
-  // Animation for responsive projects
-  useEffect(() => {
-    const getAnimationConfig = () => {
-      switch (deviceType) {
-        case 'xs':
-          return { stagger: 0.05, delay: 0.2, duration: 0.6, y: 15, scale: 0.95 };
-        case 'sm':
-          return { stagger: 0.06, delay: 0.25, duration: 0.7, y: 18, scale: 0.94 };
-        case 'md':
-          return { stagger: 0.08, delay: 0.3, duration: 0.8, y: 25, scale: 0.93 };
-        case 'lg':
-          return { stagger: 0.1, delay: 0.4, duration: 0.9, y: 35, scale: 0.92 };
-        case 'xl':
-          return { stagger: 0.12, delay: 0.5, duration: 1.0, y: 45, scale: 0.91 };
-        default:
-          return { stagger: 0.15, delay: 0.6, duration: 1.1, y: 50, scale: 0.9 };
-      }
-    };
-
-    const config = getAnimationConfig();
-
-    gsap.fromTo(".project-card",
-      {
-        opacity: 0,
-        y: config.y,
-        scale: config.scale,
-        rotation: deviceType === 'xs' ? 0 : deviceType === 'sm' ? -1 : deviceType === 'md' ? -2 : -3
-      },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        rotation: 0,
-        duration: config.duration,
-        stagger: config.stagger,
-        ease: "power2.out",
-        delay: config.delay
-      }
-    );
-  }, [deviceType]);
-
-  // Function to get responsive project class
-  const getProjectClass = (project) => {
-    if (deviceType === 'xs' && project.xsWidth) return project.xsWidth;
-    if (deviceType === 'sm' && project.smWidth) return project.smWidth;
-    if (deviceType === 'md' && project.mdWidth) return project.mdWidth;
-    if (deviceType === 'lg' && project.lgWidth) return project.lgWidth;
-    
-    if (isMobile) return project.mobileWidth;
-    if (isTablet) return project.tabletWidth || project.width;
-    return project.width;
-  };
-
-  // Function to get responsive rotation
-  const getRotationClass = (project) => {
-    if (deviceType === 'xs' || deviceType === 'sm') return '';
-    
-    if (deviceType === 'md') {
-      const rotationValue = project.rotation?.replace('rotate-', '');
-      if (!rotationValue) return '';
-      const isNegative = rotationValue.startsWith('-');
-      const numericValue = Math.abs(parseInt(rotationValue));
-      const reducedValue = Math.round(numericValue * 0.25);
-      return reducedValue > 0 ? (isNegative ? `-rotate-${reducedValue}` : `rotate-${reducedValue}`) : '';
-    }
-    
-    if (deviceType === 'lg') {
-      const rotationValue = project.rotation?.replace('rotate-', '');
-      if (!rotationValue) return '';
-      const isNegative = rotationValue.startsWith('-');
-      const numericValue = Math.abs(parseInt(rotationValue));
-      const reducedValue = Math.round(numericValue * 0.5);
-      return reducedValue > 0 ? (isNegative ? `-rotate-${reducedValue}` : `rotate-${reducedValue}`) : '';
-    }
-    
-    return project.rotation || '';
-  };
-
   // Get grid configuration
   const getGridConfig = () => {
     switch (deviceType) {
@@ -428,6 +351,43 @@ const ProjectsSection = ({
     onProjectClick(project);
   };
 
+  // Function to get responsive project class
+  const getProjectClass = (project) => {
+    if (deviceType === 'xs' && project.xsWidth) return project.xsWidth;
+    if (deviceType === 'sm' && project.smWidth) return project.smWidth;
+    if (deviceType === 'md' && project.mdWidth) return project.mdWidth;
+    if (deviceType === 'lg' && project.lgWidth) return project.lgWidth;
+    
+    if (isMobile) return project.mobileWidth;
+    if (isTablet) return project.tabletWidth || project.width;
+    return project.width;
+  };
+
+  // Function to get responsive rotation
+  const getRotationClass = (project) => {
+    if (deviceType === 'xs' || deviceType === 'sm') return '';
+    
+    if (deviceType === 'md') {
+      const rotationValue = project.rotation?.replace('rotate-', '');
+      if (!rotationValue) return '';
+      const isNegative = rotationValue.startsWith('-');
+      const numericValue = Math.abs(parseInt(rotationValue));
+      const reducedValue = Math.round(numericValue * 0.25);
+      return reducedValue > 0 ? (isNegative ? `-rotate-${reducedValue}` : `rotate-${reducedValue}`) : '';
+    }
+    
+    if (deviceType === 'lg') {
+      const rotationValue = project.rotation?.replace('rotate-', '');
+      if (!rotationValue) return '';
+      const isNegative = rotationValue.startsWith('-');
+      const numericValue = Math.abs(parseInt(rotationValue));
+      const reducedValue = Math.round(numericValue * 0.5);
+      return reducedValue > 0 ? (isNegative ? `-rotate-${reducedValue}` : `rotate-${reducedValue}`) : '';
+    }
+    
+    return project.rotation || '';
+  };
+
   const gridConfig = getGridConfig();
   const textSizes = getTextSizes();
 
@@ -437,7 +397,7 @@ const ProjectsSection = ({
       
       <div className={`w-full h-full relative z-10 ${gridConfig.padding}`}>
         <div className={`grid ${gridConfig.grid} ${gridConfig.gap} w-full h-full`}>
-          {featuredProjects.map((project) => (
+          {featuredProjects.map((project, index) => (
             <div
               key={project.id}
               className={`project-card group cursor-pointer bg-black overflow-hidden relative ${
@@ -519,19 +479,36 @@ const ProjectsSection = ({
                 {/* Overlay con información */}
                 <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/10 to-black/70 sm:via-black/20 sm:to-black/80">
                   <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 md:p-4">
-                    <h3 className={`text-white font-gotham font-bold uppercase mb-1 truncate ${textSizes.client}`}>
+                    {/* Client con RevealText */}
+                    <RevealText
+                      as="h3"
+                      className={`text-white font-gotham font-bold uppercase mb-1 truncate ${textSizes.client}`}
+                      style={{ animationDelay: `${index * 0.05}s` }}
+                    >
                       {project.client}
-                    </h3>
-                    <p className={`text-white/95 font-gotham font-medium leading-tight line-clamp-2 ${textSizes.title}`}>
+                    </RevealText>
+                    
+                    {/* Title con RevealText */}
+                    <RevealText
+                      as="p"
+                      className={`text-white/95 font-gotham font-medium leading-tight line-clamp-2 ${textSizes.title}`}
+                      style={{ animationDelay: `${index * 0.05 + 0.02}s` }}
+                    >
                       {project.title}
-                    </p>
-                    <div className={`${textSizes.line} bg-red-600 transition-all duration-300 group-hover:w-full group-hover:bg-red-500`} />
+                    </RevealText>
+                    
+                    {/* Línea roja */}
+                    <div 
+                      className={`${textSizes.line} bg-red-600 transition-all duration-300 group-hover:w-full group-hover:bg-red-500`}
+                      style={{ animationDelay: `${index * 0.05 + 0.04}s` }}
+                    />
                   </div>
                 </div>
 
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
                 <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/20 transition-all duration-300" />
                 
+                {/* Icono de play para móvil */}
                 {(deviceType === 'xs' || deviceType === 'sm') && (
                   <div className="absolute top-2 right-2 bg-black/60 p-1.5 opacity-0 group-active:opacity-100 transition-opacity duration-200">
                     <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -540,6 +517,7 @@ const ProjectsSection = ({
                   </div>
                 )}
 
+                {/* Icono de play para desktop/tablet */}
                 {(deviceType !== 'xs' && deviceType !== 'sm') && (
                   <div className="absolute top-3 right-3 bg-black/60 p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -561,7 +539,7 @@ const ProjectsSection = ({
           }
         }
         .project-card {
-          opacity: 0;
+          opacity: 1; /* Cambiado de 0 a 1 ya que eliminamos las animaciones GSAP */
         }
         @media (prefers-reduced-motion: reduce) {
           .project-card {

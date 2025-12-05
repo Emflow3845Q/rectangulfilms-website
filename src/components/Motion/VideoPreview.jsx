@@ -36,7 +36,7 @@ const VideoPreview = ({
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
         <motion.div
-          className="relative overflow-hidden border-2 border-white bg-black-pure shadow-2xl"
+          className="relative overflow-hidden bg-black-pure"
           style={{ width: '400px', height: '225px' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -69,26 +69,6 @@ const VideoPreview = ({
               <source src={activeProject.video} type="video/mp4" />
             </motion.video>
           )}
-          
-          {/* Overlay con información */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black-pure to-transparent p-4">
-            <div className="flex justify-between items-end">
-              <div>
-                <h3 className="text-white-pure font-gotham font-bold text-sm uppercase mb-1">
-                  {activeProject.title}
-                </h3>
-                <p className="text-red-primary text-xs uppercase tracking-widest font-gotham font-medium">
-                  {activeProject.category}
-                </p>
-              </div>
-              <p className="text-white text-xs uppercase tracking-widest font-gotham font-light">
-                {activeProject.client}
-              </p>
-            </div>
-          </div>
-
-          {/* Borde rojo en hover */}
-          <div className="absolute inset-0 border-2 border-transparent group-hover:border-red-primary transition-all duration-300 pointer-events-none" />
         </motion.div>
       </motion.div>
     </AnimatePresence>

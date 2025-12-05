@@ -1,7 +1,7 @@
-// components/Home/HeroSection.jsx
 import React, { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
-import VideoBackground from "../Background/RedDistortionBackground"; // Ajusta la ruta según tu estructura
+import VideoBackground from "../Background/RedDistortionBackground";
+import RevealText from "../RevealText"; // Ajusta la ruta según tu estructura
 
 const HeroSection = ({ 
   dynamicTexts, 
@@ -10,86 +10,23 @@ const HeroSection = ({
   onButtonClick 
 }) => {
   const textContainerRef = useRef(null);
-  const weAreRef = useRef(null);
-  const buttonRef = useRef(null);
-  const titleWrapperRef = useRef(null);
+  const sectionRef = useRef(null);
 
-  // Quitamos el TempBackground y usamos VideoBackground
-
-  // Resto del código de animaciones permanece igual...
+  // Animación de fade-in para toda la sección
   useEffect(() => {
-    const initAnimations = () => {
-      const tl = gsap.timeline({
-        defaults: {
-          duration: 1.2,
-          ease: "power3.out"
+    if (sectionRef.current) {
+      gsap.fromTo(
+        sectionRef.current,
+        {
+          opacity: 0
+        },
+        {
+          opacity: 1,
+          duration: 0.8,
+          ease: "power1.inOut"
         }
-      });
-
-      if (weAreRef.current) {
-        tl.fromTo(
-          weAreRef.current,
-          { 
-            y: "115%",
-            opacity: 0
-          },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1.6,
-            ease: "power3.out",
-            delay: 0.8
-          },
-          0
-        );
-      }
-
-      if (textContainerRef.current) {
-        tl.fromTo(
-          textContainerRef.current,
-          { 
-            x: "-102%",
-            opacity: 0
-          },
-          {
-            x: 0,
-            opacity: 1,
-            duration: 1.5,
-            ease: "expo.inOut",
-            delay: 0.5
-          },
-          0.3
-        );
-      }
-
-      if (buttonRef.current) {
-        tl.fromTo(
-          buttonRef.current,
-          { 
-            opacity: 0,
-            y: 30
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            delay: 1.2
-          },
-          0.8
-        );
-      }
-
-      return tl;
-    };
-
-    const timeline = initAnimations();
-
-    return () => {
-      if (timeline) {
-        timeline.kill();
-      }
-    };
+      );
+    }
   }, []);
 
   // Resto del código de texto dinámico permanece igual...
@@ -205,13 +142,12 @@ const HeroSection = ({
       tempSpan.style.letterSpacing = '-0.05em';
       tempSpan.style.lineHeight = '0.95';
       
-      // Tamaños de texto reducidos un poquito
       if (isMobile) {
-        tempSpan.style.fontSize = '3rem'; // Reducido de 3.2rem
+        tempSpan.style.fontSize = '3rem';
       } else if (isTablet) {
-        tempSpan.style.fontSize = '4.2rem'; // Reducido de 4.5rem
+        tempSpan.style.fontSize = '4.2rem';
       } else {
-        tempSpan.style.fontSize = '5.4rem'; // Reducido de 5.8rem
+        tempSpan.style.fontSize = '5.4rem';
       }
       
       tempSpan.textContent = longestText;
@@ -237,33 +173,31 @@ const HeroSection = ({
 
   return (
     <section 
+      ref={sectionRef}
       className="h-screen snap-start relative flex items-end justify-start overflow-hidden px-4 xs:px-5 sm:px-6 md:px-8 lg:px-12 xl:px-16 pb-24 xs:pb-28 sm:pb-32 md:pb-36 lg:pb-40 xl:pb-44"
       style={{ background: 'transparent' }}
     >
-      {/* Reemplazar TempBackground con VideoBackground */}
       <VideoBackground />
 
       <div className="relative z-10 text-left w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-0 px-3 xs:px-4 sm:px-5 md:px-6 lg:px-8">
-        <div 
-          ref={titleWrapperRef}
-          className="flex flex-col items-start space-y-3 xs:space-y-3 sm:space-y-4 md:space-y-4 lg:space-y-4 xl:space-y-4"
-        >
+        <div className="flex flex-col items-start space-y-3 xs:space-y-3 sm:space-y-4 md:space-y-4 lg:space-y-4 xl:space-y-4">
           <h1 className="text-white uppercase flex flex-col xs:flex-row items-start xs:items-end justify-start flex-nowrap gap-1 xs:gap-2 sm:gap-2 md:gap-2 w-full leading-none overflow-hidden">
-            <span 
-              ref={weAreRef}
-              className="block flex-shrink-0 whitespace-nowrap font-accent font-normal text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl pb-0" // Reducido un poquito
-              style={{ lineHeight: '0.95' }}
-            >
-              we are
-            </span>
+            {/* "we are" con RevealText */}
+            <div className="block flex-shrink-0 whitespace-nowrap font-accent font-normal text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl pb-0 overflow-hidden">
+              <div style={{ lineHeight: '0.95' }}>
+                <RevealText as="span">
+                  we are
+                </RevealText>
+              </div>
+            </div>
             
+            {/* Texto dinámico - mantiene la animación typewriter */}
             <span
               ref={textContainerRef}
               className="inline-block relative flex-shrink-0 pointer-events-none min-w-0 font-gotham font-bold text-left overflow-visible tracking-tighter leading-none"
               style={{ 
                 minHeight: '0.95em',
-                // Tamaños de texto reducidos un poquito
-                fontSize: isMobile ? '3rem' : isTablet ? '4.2rem' : '5.4rem', // Reducidos
+                fontSize: isMobile ? '3rem' : isTablet ? '4.2rem' : '5.4rem',
                 letterSpacing: '-0.05em',
                 lineHeight: '0.95',
                 marginTop: '-0.02em'
@@ -271,12 +205,16 @@ const HeroSection = ({
             />
           </h1>
 
+          {/* Botón con RevealText */}
           <button
-            ref={buttonRef}
             onClick={onButtonClick}
-            className="bg-white text-black px-6 xs:px-7 sm:px-8 md:px-9 lg:px-10 xl:px-11 py-2.5 xs:py-3 sm:py-3.5 md:py-4 lg:py-4.5 font-gotham font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl uppercase tracking-widest transition-all duration-300 border-2 border-white hover:bg-black hover:text-white hover:border-white mt-4 xs:mt-5 sm:mt-6 md:mt-7 lg:mt-8 xl:mt-9"
+            className="bg-white text-black px-6 xs:px-7 sm:px-8 md:px-9 lg:px-10 xl:px-11 py-2.5 xs:py-3 sm:py-3.5 md:py-4 lg:py-4.5 font-gotham font-bold text-xs xs:text-sm sm:text-base md:text-lg lg:text-xl uppercase tracking-widest transition-all duration-300 border-2 border-white hover:bg-black hover:text-white hover:border-white mt-4 xs:mt-5 sm:mt-6 md:mt-7 lg:mt-8 xl:mt-9 overflow-hidden"
           >
-            who we are
+            <div>
+              <RevealText as="span">
+                who we are
+              </RevealText>
+            </div>
           </button>
         </div>
       </div>

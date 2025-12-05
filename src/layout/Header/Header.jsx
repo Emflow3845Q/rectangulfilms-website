@@ -1,10 +1,9 @@
 // src/layout/Header/Header.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { gsap } from 'gsap'; // IMPORTAR GSAP DIRECTAMENTE
+import { gsap } from 'gsap';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { useMenuImages } from './hooks/useMenuImages';
-import { useScroll } from './hooks/useScroll';
 import { useMenuAnimation } from './hooks/useMenuAnimation';
 import HeaderNav from './HeaderNav';
 import MenuDesktop from './MenuDesktop';
@@ -26,7 +25,6 @@ const Header = () => {
   const navigate = useNavigate();
 
   const { currentLanguage, toggleLanguage, t } = useLanguage();
-  const { isScrolled, isVisible, setIsVisible } = useScroll();
   const { randomImageOrder, randomRentalsOrder, aboutMenuImagesArray } = useMenuImages();
 
   // Función para limpiar media
@@ -52,10 +50,10 @@ const Header = () => {
       
       setTimeout(() => {
         if (currentImageRef.current) {
-          gsap.set(currentImageRef.current, { opacity: 1 }); // USAR GSAP DIRECTAMENTE
+          gsap.set(currentImageRef.current, { opacity: 1 });
         }
         if (nextImageRef.current) {
-          gsap.set(nextImageRef.current, { opacity: 0 }); // USAR GSAP DIRECTAMENTE
+          gsap.set(nextImageRef.current, { opacity: 0 });
         }
       }, 50);
     } else if (mediaType === 'gif') {
@@ -123,7 +121,7 @@ const Header = () => {
     nextImage.src = currentMedia[newNextIndex].image;
     
     nextImage.onload = () => {
-      gsap.timeline({ // USAR GSAP DIRECTAMENTE
+      gsap.timeline({
         onComplete: () => {
           setCurrentImageIndex(newNextIndex);
           setIsTransitioning(false);
@@ -148,7 +146,6 @@ const Header = () => {
       setIsMenuOpen(true);
       document.body.style.overflow = 'hidden';
       playAnimation();
-      setIsVisible(false);
     } else {
       reverseAnimation();
       setTimeout(() => {
@@ -157,7 +154,6 @@ const Header = () => {
         setCurrentMedia('');
         setCurrentMediaType('');
         cleanupMedia();
-        setIsVisible(true);
       }, 500);
     }
   };
@@ -176,15 +172,15 @@ const Header = () => {
 
   const handleMenuItemHover = (item) => {
     if (window.innerWidth > 768 && item.media) {
-      gsap.to(mediaContainerRef.current, { // USAR GSAP DIRECTAMENTE
+      gsap.to(mediaContainerRef.current, {
         y: -30,
         opacity: 0,
         duration: 0.3,
         ease: "power2.inOut",
         onComplete: () => {
           initializeMedia(item.media, item.mediaType);
-          gsap.set(mediaContainerRef.current, { y: 30 }); // USAR GSAP DIRECTAMENTE
-          gsap.to(mediaContainerRef.current, { // USAR GSAP DIRECTAMENTE
+          gsap.set(mediaContainerRef.current, { y: 30 });
+          gsap.to(mediaContainerRef.current, {
             y: 0,
             opacity: 1,
             duration: 0.4,
@@ -238,7 +234,6 @@ const Header = () => {
   return (
     <>
       <HeaderNav
-        isVisible={isVisible}
         isMenuOpen={isMenuOpen}
         toggleLanguage={toggleLanguage}
         currentLanguage={currentLanguage}
@@ -254,7 +249,8 @@ const Header = () => {
           transform: window.innerWidth <= 768 ? 'translateY(-100%)' : 'translateX(-100%)',
           zIndex: 99,
           opacity: isMenuOpen ? 1 : 0,
-          pointerEvents: isMenuOpen ? 'auto' : 'none'
+          pointerEvents: isMenuOpen ? 'auto' : 'none',
+          backgroundColor: '#000000'
         }}
       >
         <CloseButton toggleMenu={toggleMenu} t={t} />

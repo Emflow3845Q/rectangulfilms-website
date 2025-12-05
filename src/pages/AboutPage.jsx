@@ -1,9 +1,10 @@
 import React from "react";
-import { 
-  HeroSection, 
-  BtsGallery, 
-  ServicesSection, 
-  ContactSection 
+import {
+  HeroSection,
+  BtsGallery,
+  ServicesSection,
+  ContactSection,
+  TheStage
 } from "../components/About";
 
 const AboutPage = ({ fullpageApi }) => {
@@ -13,17 +14,22 @@ const AboutPage = ({ fullpageApi }) => {
       <section className="hero-section w-full">
         <HeroSection />
       </section>
-      
+
       {/* Behind the Scenes Gallery */}
       <section className="gallery-section w-full">
         <BtsGallery />
       </section>
-      
+
       {/* Services Section */}
       <section className="services-section w-full">
         <ServicesSection />
       </section>
-      
+
+      {/* Services Section */}
+      <section className="services-section w-full">
+        <TheStage />
+      </section>
+
       {/* Contact Section */}
       <section className="contact-section w-full">
         <ContactSection />

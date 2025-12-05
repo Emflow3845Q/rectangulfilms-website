@@ -1,9 +1,12 @@
 export const rentalsMenuImages = {
-    rentalsMenuImages1: 'https://res.cloudinary.com/dhoyps3vk/image/upload/v1764225479/PTFA3861_xhkmnx.jpg',
-    rentalsMenuImages2: 'https://res.cloudinary.com/dhoyps3vk/image/upload/v1764225478/Copia_de_Encore_AMCO-5_c8jyr1.jpg',
-    rentalsMenuImages3: 'https://res.cloudinary.com/dhoyps3vk/image/upload/v1764225474/P1069837_irqlue.jpg',
-    rentalsMenuImages4: 'https://res.cloudinary.com/dhoyps3vk/image/upload/v1764225474/P1069746_j0t06d.jpg',
-    rentalsMenuImages5: 'https://res.cloudinary.com/dhoyps3vk/image/upload/v1764225473/_0019555_kf5yj5.jpg'
+    rentalsMenuImages1: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789047/P1069563_rqaija.jpg',
+    rentalsMenuImages2: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789048/P1069746_fiqpso.jpg',
+    rentalsMenuImages3: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789048/_3711347_b7fplt.jpg',
+    rentalsMenuImages4: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789050/_0019673_tgadok.jpg',
+    rentalsMenuImages5: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789050/Encore_AMCO-5_pxm5kb.jpg',
+    rentalsMenuImages6: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789051/IBTM-1056809_jf5u2i.jpg',
+    rentalsMenuImages7: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789052/P1602389_xj2o1g.jpg',
+    rentalsMenuImages8: 'https://res.cloudinary.com/dl416umfa/image/upload/v1764789053/PTFA5532_hxcpet.jpg'
 };
 
 export default rentalsMenuImages;

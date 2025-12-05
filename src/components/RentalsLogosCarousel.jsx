@@ -6,28 +6,27 @@ const RentalsLogosCarousel = () => {
 
     // Logos de rentals - URLs de Cloudinary
     const rentalsLogos = [
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo1_kfqcbt.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo2_o5pyg4.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo3_oiun5m.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo4_agqjjj.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo5_vldj88.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo6_aqwlq6.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo7_veupxg.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo8_ocb27g.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo9_jd5a8o.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo10_h4pcjp.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo11_ipaq87.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo12_uhjicq.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo13_b4hzh7.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo14_kxdkht.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo15_sczf89.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo16_ojuosj.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo17_wsu1rt.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo18_sulnzh.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/logo19_dobe9e.png",
-        "https://res.cloudinary.com/dhoyps3vk/image/upload/zoom_p3wsfi.png"
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907657/logo1_kfqcbt_u1f8vh.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907656/logo2_o5pyg4_haancr.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907656/logo3_oiun5m_xcspuk.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907656/logo4_agqjjj_s9wjon.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907656/logo5_vldj88_bqj1hg.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907656/logo6_aqwlq6_ekfz1z.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907656/logo7_veupxg_gwoads.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907657/logo8_ocb27g_wpufkw.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907657/logo9_jd5a8o_lfbejo.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907657/logo10_h4pcjp_mt9fut.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907657/logo11_ipaq87_uvebcl.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907657/logo12_uhjicq_wiinxv.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907657/logo13_b4hzh7_cvpn7r.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907659/logo14_kxdkht_dkdvod.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907659/logo15_sczf89_cncydx.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907659/logo16_ojuosj_cygou5.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907659/logo17_wsu1rt_lltfzo.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907659/logo18_sulnzh_deaom1.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907660/logo19_dobe9e_vngnsa.png",
+        "https://res.cloudinary.com/dl416umfa/image/upload/v1764907660/zoom_p3wsfi_buxult.png"
     ];
-
     // Duplicar logos para loop infinito
     const duplicatedLogos = [...rentalsLogos, ...rentalsLogos];
 
