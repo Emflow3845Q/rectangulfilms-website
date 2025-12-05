@@ -45,7 +45,7 @@ const VideoBackground = forwardRef((props, ref) => {
     videoRef.current = video;
     document.body.appendChild(video);
 
-    // Shaders - Con grid visible
+    // Shaders - Versión modificada con tu efecto
     const vertexShader = `
       varying vec2 vUv;
       void main() {
@@ -60,70 +60,33 @@ const VideoBackground = forwardRef((props, ref) => {
       uniform vec2 u_mouse;
       uniform vec2 u_prevMouse;
       uniform float u_aberrationIntensity;
-      uniform float u_time;
 
       void main() {
-        // Grid de 30x30 (más cuadritos)
-        float gridSize = 30.0;
-        vec2 gridUV = floor(vUv * gridSize) / gridSize;
-        vec2 centerOfPixel = gridUV + vec2(1.0/(gridSize * 2.0), 1.0/(gridSize * 2.0));
+        // Grid de 40x40 (ajustable)
+        vec2 gridUV = floor(vUv * vec2(30.0, 40.0)) / vec2(30.0, 40.0);
+        vec2 centerOfPixel = gridUV + vec2(1.0/80.0, 1.0/80.0);
         
         // Dirección del movimiento del mouse
         vec2 mouseDirection = u_mouse - u_prevMouse;
         
-        // Distancia lineal desde el pixel al mouse
+        // Distancia lineal desde el pixel al mouse (sin aspect ratio)
         vec2 pixelToMouseDirection = centerOfPixel - u_mouse;
         float pixelDistanceToMouse = length(pixelToMouseDirection);
         
-        // Fuerza basada en distancia lineal
-        float strength = smoothstep(0.2, 0.0, pixelDistanceToMouse);
+        // Fuerza basada en distancia lineal - se activa cerca del mouse
+        // smoothstep(0.3, 0.0, ...) da 1.0 cuando distance=0 y 0.0 cuando distance=0.3
+        float strength = smoothstep(0.3, 0.0, pixelDistanceToMouse);
         
         // Offset basado en la dirección del mouse
-        vec2 uvOffset = strength * -mouseDirection * 0.25;
+        vec2 uvOffset = strength * -mouseDirection * 0.2;
         vec2 uv = vUv - uvOffset;
 
         // Aberración cromática (separación de colores RGB)
-        vec4 colorR = texture2D(u_texture, uv + vec2(strength * u_aberrationIntensity * 0.015, 0.0));
+        vec4 colorR = texture2D(u_texture, uv + vec2(strength * u_aberrationIntensity * 0.01, 0.0));
         vec4 colorG = texture2D(u_texture, uv);
-        vec4 colorB = texture2D(u_texture, uv - vec2(strength * u_aberrationIntensity * 0.015, 0.0));
+        vec4 colorB = texture2D(u_texture, uv - vec2(strength * u_aberrationIntensity * 0.01, 0.0));
 
-        vec4 distortedColor = vec4(colorR.r, colorG.g, colorB.b, 1.0);
-        
-        // DIBUJAR EL GRID - Líneas transparentes blancas
-        vec2 gridPos = vUv * gridSize;
-        vec2 gridCell = floor(gridPos);
-        vec2 gridFract = fract(gridPos);
-        
-        // Grosor de las líneas del grid (entre 0.01 y 0.03 para líneas finas)
-        float gridLineWidth = 0.015;
-        
-        // Calcular distancia a las líneas verticales y horizontales
-        float verticalLine = smoothstep(gridLineWidth, 0.0, gridFract.x) + 
-                           smoothstep(1.0 - gridLineWidth, 1.0, gridFract.x);
-        float horizontalLine = smoothstep(gridLineWidth, 0.0, gridFract.y) + 
-                              smoothstep(1.0 - gridLineWidth, 1.0, gridFract.y);
-        
-        // Intensidad del grid (0.3 = 30% de opacidad)
-        float gridIntensity = 0.3;
-        
-        // Crear el color del grid (blanco semi-transparente)
-        vec4 gridColor = vec4(1.0, 1.0, 1.0, gridIntensity);
-        
-        // Mezclar el color del video con el grid
-        // Si hay una línea (vertical u horizontal), mezclamos con gridColor
-        float hasGridLine = clamp(verticalLine + horizontalLine, 0.0, 1.0);
-        vec4 finalColor = mix(distortedColor, gridColor, hasGridLine * 0.5);
-        
-        // Alternativa: Añadir brillo a las líneas del grid cerca del mouse
-        float gridGlow = smoothstep(0.15, 0.0, pixelDistanceToMouse);
-        float glowIntensity = gridGlow * 0.3;
-        
-        // Añadir brillo a las líneas cerca del mouse
-        if (hasGridLine > 0.0) {
-          finalColor.rgb += glowIntensity;
-        }
-
-        gl_FragColor = finalColor;
+        gl_FragColor = vec4(colorR.r, colorG.g, colorB.b, 1.0);
       }
     `;
 
@@ -141,12 +104,11 @@ const VideoBackground = forwardRef((props, ref) => {
       // Camera setup - OrthographicCamera para cubrir toda la pantalla
       camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-      // Uniforms
+      // Uniforms - incluyendo u_aberrationIntensity
       let shaderUniforms = {
         u_mouse: { value: new THREE.Vector2(0.5, 0.5) },
         u_prevMouse: { value: new THREE.Vector2(0.5, 0.5) },
         u_aberrationIntensity: { value: 0.0 },
-        u_time: { value: 0.0 },
         u_texture: { value: videoTexture }
       };
 
@@ -166,7 +128,7 @@ const VideoBackground = forwardRef((props, ref) => {
       // Render
       renderer = new THREE.WebGLRenderer({ 
         alpha: false,
-        antialias: true, // Cambiado a true para ver mejor las líneas
+        antialias: false,
         powerPreference: "high-performance"
       });
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -183,8 +145,6 @@ const VideoBackground = forwardRef((props, ref) => {
       animate();
     }
 
-    let startTime = Date.now();
-    
     function animate() {
       animationIdRef.current = requestAnimationFrame(animate);
 
@@ -208,9 +168,6 @@ const VideoBackground = forwardRef((props, ref) => {
         );
 
         planeMesh.material.uniforms.u_aberrationIntensity.value = aberrationIntensity.current;
-        
-        // Actualizar tiempo para efectos dinámicos
-        planeMesh.material.uniforms.u_time.value = (Date.now() - startTime) * 0.001;
       }
 
       if (renderer && scene && camera) {
@@ -361,9 +318,8 @@ const VideoBackground = forwardRef((props, ref) => {
         height: '100%',
         zIndex: 0,
         overflow: 'hidden',
-        backgroundColor: '#000'
       }}
-      title="Video background con efecto de distorsión y grid visible"
+      title="Video background con efecto de distorsión"
     />
   );
 });
