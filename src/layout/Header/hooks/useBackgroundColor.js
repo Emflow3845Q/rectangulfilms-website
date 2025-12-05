@@ -19,22 +19,18 @@ const useBackgroundColor = () => {
           continue;
         }
         
-        // DETECCIÓN DIRECTA DEL CANVAS DE THREE.JS
-        // Verificar por clase
+        // DETECCIÓN DE VIDEO Y CANVAS (FONDOS ANIMADOS)
+        // Siempre usar logo BLANCO sobre videos y canvas
+        if (element.tagName.toLowerCase() === 'video' ||
+            element.tagName.toLowerCase() === 'canvas') {
+          return false; // false = logo BLANCO
+        }
+        
+        // Verificar por clases de Three.js
         if (element.classList.contains('threejs-background') ||
             element.classList.contains('threejs-red-distortion') ||
             element.classList.contains('threejs-canvas')) {
-          return false; // false = usar logo BLANCO sobre fondo Three.js
-        }
-        
-        // Verificar por tag y z-index
-        if (element.tagName.toLowerCase() === 'canvas') {
-          const style = window.getComputedStyle(element);
-          const zIndex = style.zIndex;
-          // Si es un canvas con z-index bajo (probablemente fondo)
-          if (zIndex === '0' || zIndex === '-1' || zIndex === '') {
-            return false; // Usar logo BLANCO
-          }
+          return false; // logo BLANCO
         }
         
         const style = window.getComputedStyle(element);
@@ -50,28 +46,30 @@ const useBackgroundColor = () => {
             if (rgb && rgb.length >= 3) {
               const [r, g, b] = rgb.map(Number);
               
-              // Detectar si es blanco o muy claro
-              const isWhite = r > 240 && g > 240 && b > 240;
+              // Calcular luminancia
               const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-              const isLight = luminance > 0.7;
               
-              if (isWhite || isLight) {
-                return true; // true = usar logo NEGRO en fondos claros
+              // SOLO usar logo NEGRO si el fondo es MUY claro (casi blanco)
+              // Umbrales más estrictos para evitar logo negro sobre fondos rojos
+              const isVeryLight = luminance > 0.85 && r > 230 && g > 230 && b > 230;
+              
+              if (isVeryLight) {
+                return true; // logo NEGRO solo en fondos muy claros
               }
               
-              // Para cualquier otro color (incluido rojo), usar logo blanco
+              // Para TODOS los demás colores (rojo, oscuro, etc.), usar logo BLANCO
               return false;
             }
           }
         }
       }
       
-      // Si llegamos aquí, no encontramos ningún elemento con fondo claro
-      return false; // Usar logo BLANCO por defecto
+      // Por defecto: logo BLANCO
+      return false;
       
     } catch (error) {
       console.error('Error checking background:', error);
-      return false; // En caso de error, usar logo blanco (más seguro)
+      return false; // En caso de error, usar logo blanco
     }
   };
 
@@ -84,7 +82,7 @@ const useBackgroundColor = () => {
       if (now - lastCheckRef.current < 200) return;
       lastCheckRef.current = now;
       
-      // Verificar solo en un punto central (donde está el logo)
+      // Verificar en la posición del logo
       const shouldUseBlack = checkBackgroundAtPosition(100, 30);
       
       setUseBlackLogo(prev => {
@@ -95,10 +93,10 @@ const useBackgroundColor = () => {
       });
     };
 
-    // Verificar inmediatamente con delay para que Three.js se renderice
+    // Verificar inmediatamente con delay para que el video/Three.js se cargue
     setTimeout(checkBackground, 500);
     
-    // Configurar intervalo para verificar periódicamente
+    // Verificar periódicamente
     checkIntervalRef.current = setInterval(checkBackground, 1000);
     
     // Verificar en eventos importantes
