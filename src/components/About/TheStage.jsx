@@ -28,6 +28,7 @@ const TheStage = () => {
   const imageRefs = useRef([]);
   const containerRefs = useRef([]);
   const paragraphRef = useRef(null);
+  const paragraphContainerRef = useRef(null);
 
   useEffect(() => {
     // Animación de entrada para todas las imágenes
@@ -80,6 +81,30 @@ const TheStage = () => {
       });
     });
 
+    // Animación para el párrafo (revelado de izquierda a derecha con clipPath)
+    if (paragraphRef.current && paragraphContainerRef.current) {
+      const paragraph = paragraphRef.current;
+      
+      // Configurar estado inicial del párrafo
+      gsap.set(paragraph, {
+        clipPath: "polygon(0 0, 0% 0, 0% 100%, 0 100%)" // Comienza completamente oculto (ancho 0%)
+      });
+
+      // Animación del párrafo con ScrollTrigger
+      ScrollTrigger.create({
+        trigger: paragraphContainerRef.current,
+        start: "top 85%",
+        once: true,
+        onEnter: () => {
+          gsap.to(paragraph, {
+            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", // Se expande completamente
+            duration: 1.5,
+            ease: "power2.out"
+          });
+        }
+      });
+    }
+
     // Limpiar
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
@@ -119,13 +144,17 @@ const TheStage = () => {
           </h3>
 
           {/* Description - Alineado verticalmente con el título */}
-          <div className="text-justify">
+          <div 
+            ref={paragraphContainerRef}
+            className="text-justify overflow-hidden"
+          >
             <p 
               ref={paragraphRef}
               className="font-gotham font-medium text-xs md:text-sm lg:text-base text-white leading-relaxed mb-4 md:mb-6"
               style={{
                 textAlign: 'justify',
-                textJustify: 'inter-word'
+                textJustify: 'inter-word',
+                willChange: 'clip-path' // Optimización para animaciones
               }}
             >
               We have our own soundstage designed for high-level audiovisual productions. It's a versatile space
